@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
+/* Reset ve Font Mühürleme */
+* {
+  font-family: 'Indie Flower', cursive !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  background-color: #011059;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Parçaları ekrana yayar, alttaki butonları yukarı çeker */
+  justify-content: space-between; 
+  color: white;
+  position: relative;
+  overflow: hidden; /* Kaydırma çubuklarını öldürür */
+  padding: 2vh 0 4vh 0; /* Alttan 4vh boşluk butonu yukarıda tutar */
+}
+
+/* 1. AYARLAR BUTONU: Çakışma yaşamaması için izole edildi */
+.settings-button {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border: 2px solid white;
+  border-radius: 10px;
+  color: white !important;
+  font-size: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 110; /* En üstte durur */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s;
+}
+
+/* Neon Stilleri */
+.neon-text {
+  color: white !important;
+  text-shadow: 0 0 4px #fff, 0 0 15px rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+
+.neon-box {
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent !important;
+}
+
+/* 2. HOŞ GELDİNN! KUTUSU: margin-top ile çakışma engellendi */
+.title-box {
+  width: 87.4vw; 
+  height: 15vh;
+  margin-top: 75px !important; /* Ayarlar butonunun altına ittik */
+  padding: 0 10px;
+}
+.title-text {
+  /* Hem ekrana oranlanır (vmin) hem de kutuyu aşmaz */
+  font-size: clamp(1rem, 10vmin, 11vh); 
+  line-height: 1;
+}
+
+/* 3. FİGÜR ALANI */
+.characters-container {
+  flex: 1; /* Diğer parçalardan kalan boşluğu doldurur, ferahlık sağlar */
+  width: 100%;
+  min-height: 10vh;
+}
+
+/* 4. ALT BAŞLIK KUTUSU */
+.subtitle-box {
+  width: 93.2vw;
+  height: 11vh;
+  margin-bottom: 2vh;
+}
+.subtitle-text {
+  font-size: clamp(0.8rem, 6vmin, 6.5vh);
+}
+
+/* 5. BUTONLAR: Ekran dışına taşmayı engelleyen yapı */
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 3vw;
+  width: 100%;
+  flex-wrap: wrap;
+  padding: 0 10px;
+}
+
+.action-button {
+  /* Yükseklik clamp ile sınırlandı ki ekrandan taşmasın */
+  width: clamp(280px, 45vw, 45.7vw);
+  height: clamp(120px, 28vh, 33vh);
+  background-color: #000C42 !important;
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  cursor: pointer;
+  flex-direction: column;
+  color: white !important;
+  transition: transform 0.1s;
+}
+
+.action-button span {
+  /* Yazı boyutu buton küçüldükçe oranlanır */
+  font-size: clamp(1rem, 8vmin, 10vh);
+  white-space: nowrap;
+}
+
+/* Mobilde her şeyin sığması için tek dokunuş */
+@media (max-width: 768px) {
+  .button-container { 
+    flex-direction: row; /* Yan yana kalmaya çalışsın */
+    gap: 10px;
+  }
+  .action-button {
+    width: 45vw; /* Mobilde de yan yana sığması için genişliği kıstık */
+    height: 20vh;
+  }
+}
