@@ -122,6 +122,7 @@
   white-space: nowrap;
 }
 
+/* ... */
 /* Mobilde her şeyin sığması için tek dokunuş */
 @media (max-width: 768px) {
   .button-container { 
@@ -132,4 +133,5 @@
     width: 45vw; /* Mobilde de yan yana sığması için genişliği kıstık */
     height: 20vh;
   }
+  
 }
