@@ -16,12 +16,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Parçaları ekrana yayar, alttaki butonları yukarı çeker */
   justify-content: space-between; 
   color: white;
   position: relative;
-  overflow: hidden; /* Kaydırma çubuklarını öldürür */
-  padding: 2vh 0 4vh 0; /* Alttan 4vh boşluk butonu yukarıda tutar */
+  /* SİHİRLİ DOKUNUŞ 1: Sadece sağa-sola taşmayı kapatıp, yukarı-aşağı kaydırmayı açtık! */
+  overflow-x: hidden; 
+  overflow-y: auto; 
+  padding: 2vh 0 4vh 0;
 }
 
 /* 1. AYARLAR BUTONU: Çakışma yaşamaması için izole edildi */
@@ -31,7 +32,7 @@
   left: 15px;
   width: 50px;
   height: 50px;
-  background: transparent;
+  background-color: #000C42 !important;
   border: 2px solid white;
   border-radius: 10px;
   color: white !important;
@@ -133,5 +134,294 @@
     width: 45vw; /* Mobilde de yan yana sığması için genişliği kıstık */
     height: 20vh;
   }
-  
 }
+
+/* TIKLAMA EFEKTİ: Tüm butonlara basılma hissi verir */
+.action-button:active, .settings-button:active {
+  transform: scale(0.92); /* Butonu %8 oranında küçültür */
+  filter: brightness(1.2); /* Hafifçe parlatır */
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8); /* Gölgeyi içeri doğru baskılar */
+}  
+  
+
+
+
+
+
+/* --- YENİ SAYFA: KAYIT OL / GİRİŞ YAP EKRANI --- */
+
+/* Yeni sayfanın içindeki elemanları alt alta ve ortalayarak dizer */
+.auth-page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15vh; /* İki buton arasındaki boşluk (tasarımındaki o geniş aralık) */
+  height: 100%;
+  width: 100%;
+  padding-top: 10vh; /* Üstten biraz boşluk */
+}
+
+/* Yeni yatay uzun butonlarımızın stili */
+.auth-button {
+  width: 85vw; 
+  height: clamp(150px, 20vh, 300px); 
+  background-color: #000C42 !important; /* Şeffaf yerine bu renk geldi */
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.auth-button span {
+  font-size: clamp(2rem, 12vmin, 15vh); /* Yazıların o devasa ve okunaklı hali */
+}
+
+/* Tıklama efektini bu yeni butonlara da verelim */
+.auth-button:active {
+  transform: scale(0.95) !important;
+  filter: brightness(1.2);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+
+
+
+/* --- AYARLAR SAYFASI --- */
+.settings-page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 6vh, 100px); /* ESNEK: Ekran daralınca boşluklar küçülür */
+  min-height: 100%; /* ESNEK: Butonun altta kaybolmasını engeller */
+  width: 100%;
+  padding: 5vh 0;
+}
+
+.setting-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(10px, 4vw, 50px); /* ESNEK: Çubukla buton arası boşluk daralabilir */
+  width: 90vw; /* ESNEK: %85'ten %90'a çıktı, telefonda rahatlar */
+  max-width: 1200px;
+  justify-content: center;
+}
+
+/* Kare İkon Butonları (Ses/Müzik) */
+.icon-btn {
+  width: clamp(50px, 11vw, 150px); 
+  height: clamp(50px, 11vw, 150px); 
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  background-color: #000C42 !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; 
+  transition: all 0.2s;
+  flex-shrink: 0; /* ESNEK: Ekran daralınca çubuğun butonu ezmesi yasaklandı! */
+}
+
+.icon-content {
+  font-size: clamp(2rem, 5vw, 6rem);
+  transition: opacity 0.2s; 
+}
+
+/* Susturulmuş (Muted) Durumu Efektleri */
+.icon-btn.muted .icon-content {
+  opacity: 0.3; 
+}
+
+/* 1. ÇUBUĞUN KENDİSİ (İncecik ve zarif kalacak) */
+.neon-slider {
+  -webkit-appearance: none;
+  width: clamp(120px, 50vw, 1045px); /* ESNEK: Telefonda 120px'e kadar küçülebilir */
+  background: transparent; 
+  outline: none;
+}
+
+/* 2. CHROME/EDGE ÇUBUK YOLU (İncecik 5px) */
+.neon-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px; 
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* 3. CHROME/EDGE NOKTA (Büyük ve Parlak) */
+.neon-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 30px; 
+  width: 30px;  
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.8);
+  margin-top: -12.5px; /* 30px'lik noktayı 5px'lik çubuğa kusursuz ortalar */
+}
+
+/* 4. FIREFOX İÇİN ÇUBUK (İncecik 5px) */
+.neon-slider::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(255,255,255,0.5);
+}
+
+/* 5. FIREFOX İÇİN NOKTA (Büyük ve Parlak) */
+.neon-slider::-moz-range-thumb {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.8);
+  border: none;
+}
+
+/* Geri Dön Butonunu Auth Butonundan Türettik, biraz daha daralttık */
+.back-button {
+  width: clamp(280px, 60vw, 1113px) !important;
+  margin-top: 5vh;
+}
+
+/* Emojiler yerine SVG kullandığımız için genişlik/yükseklik ayarı */
+.neon-svg {
+  width: clamp(30px, 6vw, 80px); /* ESNEK: 40px'ten 30px'e inebilme izni verildi */
+  height: clamp(30px, 6vw, 80px);
+  filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+/* Beyaz SVG Çarpı İşareti (Gereksiz eski kodlar temizlendi) */
+.mute-x {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(40px, 8vw, 100px) !important; /* ESNEK: 50px'ten 40px'e inebilir */
+  height: clamp(40px, 8vw, 100px) !important;
+  opacity: 1 !important; 
+  z-index: 10;
+}
+
+
+
+/* --- KAYIT FORMU SAYFASI (KİLİTLENMİŞ YAPI) --- */
+.register-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* SİHİRLİ DOKUNUŞ 2: Ortalamak yerine en üstten başlatıyoruz ki yukarı taşmasın */
+  justify-content: flex-start; 
+  gap: clamp(20px, 4vh, 40px); /* Kutular birbirini ezmesin diye alt sınır (20px) koyduk */
+  width: 100%;
+  min-height: 100%;
+  /* Üst padding'i 100px yaptık, Ayarlar butonu (50px) her zaman güvende kalacak */
+  padding: 100px 5vw 5vh 5vw;
+}
+
+/* Her bir satır (Etiket + Girdi Kutusu) */
+.form-row {
+  display: grid; /* Flex yerine Grid kullandık! */
+  grid-template-columns: 37.6% 60%; /* KESİN EMİR: Sadece 2 sütun olacak. Biri %37.6, diğeri %60 */
+  justify-content: space-between; /* Aradaki %2.4'lük boşluğu kusursuz bırakır */
+  width: 90vw;
+  max-width: 1200px;
+  align-items: center; /* İkisinin boyunu hizalar */
+}
+
+/* Soldaki Etiket Kutusu */
+.form-label {
+  width: 100%; /* Artık genişlik ayarlamıyoruz, Grid'in ona verdiği 37.6 hücreyi tam dolduracak */
+  height: clamp(60px, 10vh, 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000C42 !important; 
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  box-sizing: border-box !important;
+}
+
+.form-label span {
+  font-size: clamp(1.5rem, 4vw, 4rem);
+  color: white !important;
+}
+
+/* Sağdaki Yazı Yazılacak Girdi Kutusu (Input) */
+.neon-input {
+  width: 100%; /* Grid'in ona verdiği 60'lık hücreyi tam dolduracak */
+  height: clamp(60px, 10vh, 120px);
+  background-color: #000C42 !important; 
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: clamp(1.5rem, 4vw, 4rem);
+  padding: 0 20px;
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box !important;
+  -webkit-appearance: none; 
+  appearance: none;
+}
+
+/* Tıklanıp yazı yazılmaya başlandığında daha çok parlasın */
+.neon-input:focus {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.9), inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* Şifre kısmındaki yıldızların opaklığını düşürme */
+.neon-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  text-shadow: none; 
+}
+
+/* Kaydı Onayla Butonu */
+.submit-button {
+  margin-top: 3vh;
+  width: clamp(280px, 60vw, 1113px) !important;
+  background-color: #000C42 !important;
+  min-height: clamp(60px, 10vh, 120px); /* Çok daralınca butonun kağıt gibi olmasını engeller */
+}
+
+/* SİHİRLİ DOKUNUŞ 3: Kaydı onayla yazısının buton dışına taşmasını kesin olarak engeller */
+.submit-button span {
+  font-size: clamp(1.2rem, 5vw, 4rem) !important;
+  white-space: nowrap; /* Yazının alt satıra geçip butonu patlatmasını engeller */
+}
+
+/* --- TELEFONLAR İÇİN GRID GÜNCELLEMESİ --- */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 100%; /* Telefona geçince 2 sütunu tek sütun yapar, alt alta dizer */
+    gap: 2vh; 
+  }
+}
+
+/* TARAYICININ ŞİFRE KUTUSUNA GİZLİCE EKLEDİĞİ İKONLARI (GÖZ/KİLİT) YOK EDER */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
+}
+
+/* CHROME'UN OTOMATİK DOLDURMA İKONLARINI GİZLER */
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+
+
+
