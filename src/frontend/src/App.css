@@ -25,11 +25,48 @@
   padding: 2vh 0 4vh 0;
 }
 
-/* 1. AYARLAR BUTONU: Çakışma yaşamaması için izole edildi */
+/* --- ÜST PANEL BUTONLARI (SOL KÖŞE) --- */
+
+/* 1. GERİ DÖN BUTONU: En başta (left: 15px) */
+.back-navigation-button {
+  position: absolute;
+  top: 15px;
+  left: 15px; /* En sol köşe */
+  width: 50px; /* Orijinal ebat */
+  height: 50px; /* Orijinal ebat */
+  background-color: #000C42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  color: white !important;
+  font-size: 25px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s;
+}
+
+.nav-icon-svg {
+  width: 60%;  
+  height: 60%;
+  /* Çerçeve beyazlığı ile birebir uyumlu kalınlık */
+  stroke: white;
+  stroke-width: 2.8; 
+  fill: none; /* İçinin boş olması çok kritik! */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* Tasarımdaki o hafif beyaz ışımayı ekler */
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5)); 
+}
+
+/* 2. AYARLAR BUTONU: Geri butonunun hemen sağında (15 + 50 + 10 = 75px) */
 .settings-button {
   position: absolute;
   top: 15px;
-  left: 15px;
+  /* Geri butonu varken 75px, yokken 15px olacak (JS ile yöneteceğiz) */
+  left: 75px; 
   width: 50px;
   height: 50px;
   background-color: #000C42 !important;
@@ -41,9 +78,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 110; /* En üstte durur */
+  z-index: 110;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
   transition: transform 0.1s;
+}
+
+/* Tıklama efektleri bozulmasın */
+.back-navigation-button:active, .settings-button:active {
+  transform: scale(0.92);
+  filter: brightness(1.2);
 }
 
 /* Neon Stilleri */
@@ -424,4 +467,756 @@ input::-webkit-contacts-auto-fill-button {
 
 
 
+/* --- YENİ EKLENEN: DASHBOARD (QUİZLİ & PROFİLLİ) --- */
 
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw; 
+  max-width: 100%; 
+  min-height: 100%;
+  box-sizing: border-box;
+  padding-top: 100px; /* Üst paneli ezmemesi için */
+}
+
+/* 1. KULLANICI ADI ÇERÇEVESİ (Profilin yanına, 135px'e taşındı!) */
+.username-box {
+  position: absolute; 
+  top: 15px;
+  left: 135px; /* Ayarlar + Profil'den sonra başlar */
+  height: 50px; 
+  padding: 0 clamp(15px, 2vw, 40px); 
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100vw - 150px); 
+  z-index: 100;
+}
+
+.username-box span {
+  font-size: clamp(0.9rem, 2.5vw, 2.5rem); 
+  color: white;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 2. PROFİL BUTONU VE MENÜSÜ */
+.profile-button {
+  width: 50px;
+  height: 50px;
+  background-color: #000C42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.profile-dropdown-menu {
+  position: absolute;
+  top: 60px; 
+  left: 0;
+  background-color: #000C42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 10px 15px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  z-index: 1100;
+}
+
+.logout-button {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: white;
+  cursor: pointer;
+}
+
+/* 3. QUİZLERİN BAŞLIĞI */
+.quizzes-title-box {
+  align-self: flex-start;
+  margin-left: 15px; 
+  height: clamp(50px, 8vh, 104px); 
+  width: clamp(120px, 24vw, 465px); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 4. QUİZ KAYDIRMA (CAROUSEL) SİSTEMİ */
+.quizzes-carousel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 95vw;
+  margin: 50px auto;
+  position: relative;
+  gap: 15px;
+}
+
+.quizzes-scroll-area {
+  display: flex;
+  gap: 30px; 
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.quizzes-scroll-area::-webkit-scrollbar { display: none; }
+
+.quiz-card {
+  flex-shrink: 0;
+  width: clamp(250px, 21vw, 406px); 
+  height: clamp(150px, 16.5vh, 240px); 
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  border: 2px solid white;
+  border-radius: 15px;
+}
+
+/* Yön Okları */
+.carousel-arrow {
+  flex-shrink: 0;
+  width: clamp(40px, 5vw, 85px);
+  height: clamp(40px, 5vw, 85px);
+  background-color: transparent !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+
+
+
+
+/* --- GİRİŞ YAP SAYFASI İÇİN ŞEFFAF ETİKETLER --- */
+.transparent-label {
+  background-color: transparent !important;
+}
+/* --- GİRİŞ YAP FORMU SAYFASI (FİGMA 1920x1444 ORANLARI) --- */
+
+.login-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; 
+  /* Kutuların arasındaki ferah Figma boşluğu */
+  gap: clamp(30px, 6vh, 60px); 
+  width: 100%;
+  min-height: 100%;
+  /* Ayarlar butonunu ezmemek için üstten boşluk */
+  padding: 120px 3vw 5vh 3vw; 
+}
+
+/* Her bir satır (Şeffaf Etiket + Lacivert Girdi Kutusu) */
+.login-form-row {
+  display: grid;
+  /* FİGMA MATEMATİĞİ: W=672 ve W=1113 oranlarına göre kusursuz sütun dağılımı */
+  grid-template-columns: 37% 61.5%; 
+  justify-content: space-between; 
+  width: 94vw;
+  max-width: 1808px; /* İkisinin toplam genişliği + aradaki minik boşluk */
+  align-items: center; 
+}
+
+/* Soldaki ŞEFFAF Etiket Kutusu (e-mail, şifre) */
+.login-label {
+  width: 100%; 
+  /* FİGMA ORANI: H=210px devasa yükseklik */
+  height: clamp(70px, 14.5vh, 210px); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Senin belirttiğin gibi içi tamamen transparan! */
+  background-color: transparent !important; 
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  box-sizing: border-box !important;
+}
+
+.login-label span {
+  /* FİGMA ORANI: 100 Punto devasa ve okunaklı yazı */
+  font-size: clamp(1.5rem, 6vw, 6.25rem); 
+  color: white !important;
+  white-space: nowrap;
+}
+
+/* Sağdaki Yazı Yazılacak Girdi Kutusu (Input) */
+.login-input {
+  width: 100%; 
+  /* FİGMA ORANI: H=210px devasa yükseklik */
+  height: clamp(70px, 14.5vh, 210px); 
+  /* Senin belirttiğin gibi içi lacivert */
+  background-color: #000C42 !important; 
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  color: white;
+  /* FİGMA ORANI: Yazılan yazılar da 100 Punto büyüklüğünde olacak */
+  font-size: clamp(1.5rem, 6vw, 6.25rem); 
+  padding: 0 clamp(15px, 3vw, 40px);
+  outline: none;
+  transition: all 0.2s;
+  box-sizing: border-box !important;
+  -webkit-appearance: none; 
+  appearance: none;
+  /* Yazı sığmadığında kaymasını sağlar (Zaten default olarak input'larda böyledir ama garantiye aldık) */
+  overflow: hidden;
+  text-overflow: clip; 
+}
+
+.login-input:focus {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.9), inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  text-shadow: none; 
+}
+
+/* Giriş Yap Butonu */
+.login-submit-button {
+  margin-top: 5vh;
+  /* FİGMA ORANI: W=1113px devasa genişlik */
+  width: clamp(280px, 60vw, 1113px) !important; 
+  /* FİGMA ORANI: H=210px yükseklik */
+  height: clamp(70px, 14.5vh, 210px) !important; 
+  background-color: #000C42 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.login-submit-button span {
+  /* FİGMA ORANI: 100 Punto yazı */
+  font-size: clamp(1.5rem, 6vw, 6.25rem) !important; 
+  white-space: nowrap; 
+}
+
+.login-submit-button:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* --- TELEFONLAR İÇİN GİRİŞ YAP GRID GÜNCELLEMESİ --- */
+@media (max-width: 768px) {
+  .login-form-row {
+    grid-template-columns: 100%; /* Telefona geçince etiket ve kutu alt alta dizilir */
+    gap: 2vh; 
+  }
+}
+
+
+/* --- SADECE DASHBOARD'A ÖZEL KODLAR (DİĞER SAYFALARI ETKİLEMEZ) --- */
+
+.profile-button {
+  width: 50px;
+  height: 50px;
+  background-color: #000C42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.profile-dropdown-menu {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background-color: #000C42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 10px 15px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.logout-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+}
+
+/* FİGMA EBATLARI KİLİTLENDİ */
+/* =========================================
+   DASHBOARD ÖZEL STİLLERİ (FİGMA'YA SADIK, DEV BOYUTLAR)
+   ========================================= */
+
+.dash-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 120px;
+}
+
+/* Profil Butonu ve Menüsü */
+.dash-profile-btn {
+  width: 50px; height: 50px;
+  background-color: #000C42 !important;
+  border: 2px solid white; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s;
+}
+.dash-profile-btn:active { transform: scale(0.92); }
+
+.dash-dropdown {
+  position: absolute; top: 60px; left: 0;
+  background-color: #000C42 !important; border: 2px solid white; border-radius: 10px;
+  padding: 10px 15px; box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+.dash-logout { background: transparent; border: none; font-size: 1.5rem; color: white; cursor: pointer; }
+
+/* Kullanıcı Adı - SENİN ESKİ DEV BOYUTLARIN GERİ GELDİ! */
+.dash-username {
+  position: absolute; top: 15px; left: 135px;
+  height: clamp(50px, 8vh, 104px); /* Eski büyük boyut */
+  padding: 0 clamp(15px, 2vw, 40px); /* Eski ferah boşluk */
+  background-color: transparent !important;
+  display: flex; align-items: center; justify-content: center;
+  max-width: calc(100vw - 150px);
+}
+.dash-username span { font-size: clamp(0.9rem, 2.5vw, 2.8rem); white-space: nowrap; }
+
+/* Quizlerin Başlığı - SENİN ESKİ DEV BOYUTLARIN GERİ GELDİ! */
+.dash-title {
+  align-self: flex-start; margin-left: 15px;
+  height: clamp(50px, 8vh, 104px); 
+  width: clamp(120px, 24vw, 465px); 
+  background-color: transparent !important;
+  display: flex; align-items: center; justify-content: center;
+}
+.dash-title span { font-size: clamp(1rem, 4.5vw, 4.5rem); }
+
+/* BOŞ DURUM MESAJI */
+.dash-empty {
+  align-self: center; width: 90vw; max-width: 1571px; 
+  height: clamp(60px, 14.5vh, 210px);
+  background-color: transparent !important; margin-top: clamp(20px, 8vh, 150px);
+  display: flex; align-items: center; justify-content: center;
+}
+.dash-empty span { font-size: clamp(1rem, 5vw, 5rem); text-align: center; }
+
+/* Carousel (Kaydırma) Bölgesi */
+.dash-carousel {
+  display: flex; align-items: center; justify-content: center; align-self: center;
+  width: 95vw; margin-top: clamp(20px, 8vh, 100px); gap: 15px; position: relative;
+}
+.dash-scroll-area {
+  display: flex; gap: 30px; overflow-x: auto; scroll-behavior: smooth;
+  padding: 10px 5px; scrollbar-width: none;
+}
+.dash-scroll-area::-webkit-scrollbar { display: none; }
+
+/* KARTLAR ARTIK BUTON! Üzerine gelince tıklanabilir hissi verir */
+/* KARTLAR ARTIK BUTON! Üzerine gelince tıklanabilir hissi verir */
+.dash-quiz-card {
+  flex-shrink: 0;
+  width: 406px; 
+  height: 240px;
+  background-color: #000C42 !important; /* İŞTE BURASI DEĞİŞTİ: Şeffaftı, lacivert oldu! */
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; box-sizing: border-box;
+  border: 0.5vh solid white; border-radius: 1.6vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  cursor: pointer; 
+  transition: transform 0.1s, filter 0.1s; 
+}
+
+.dash-quiz-card:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+.dash-quiz-card span {
+  font-size: 60px; text-align: center; white-space: normal;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* OKLAR FİGMA ORANI: 85x85 */
+.dash-arrow {
+  flex-shrink: 0; width: 85px; height: 85px;
+  background-color: transparent !important;
+  border: 2px solid white; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s;
+}
+.dash-arrow:active { transform: scale(0.9); }
+
+/* YENİ QUİZ BUTONU (DİĞERLERİNDEN FARKLI RENK VE TIKLANABİLİR) */
+.dash-new-btn {
+  align-self: center; 
+  width: clamp(280px, 60vw, 1113px); 
+  height: clamp(60px, 14.5vh, 210px);
+  background-color: #000C42 !important; /* Lacivert arka plan */
+  margin-top: clamp(20px, 10vh, 150px);
+  border: 0.5vh solid white; border-radius: 2vh;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: transform 0.1s, filter 0.1s;
+}
+.dash-new-btn:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+.dash-new-btn span { font-size: clamp(1.5rem, 6vw, 6.25rem); }
+
+
+
+
+
+/* =========================================
+   YENİ QUİZ OLUŞTURMA SAYFASI (FİNAL KURTARMA)
+   ========================================= */
+
+.cq-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  /* Ekran daralırsa kutular birbirini ezmesin, sayfa uzasın diye min-height kullanıyoruz */
+  min-height: 100vh; 
+  padding-top: 100px; /* Üst panelden güvenli uzaklık */
+  padding-bottom: 5vh;
+  box-sizing: border-box;
+}
+
+/* 1. KULLANICI ADI MİLİMETRİK HİZASI (Geri ve Ayarlar ile aynı satırda) */
+.cq-username {
+  position: absolute;
+  top: 15px; /* Ayarlar butonu ile aynı yükseklik! */
+  left: 140px; /* Geri(50) + Boşluk(10) + Ayarlar(50) + Boşluk(30) = 140px (Güvenli alan) */
+  height: 50px; /* Ayarlar butonu ile birebir aynı boy! */
+  padding: 0 20px;
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.cq-username span {
+  font-size: clamp(0.9rem, 2.5vw, 2.5rem);
+  color: white;
+  white-space: nowrap;
+}
+
+/* 2. KUTULAR ARASI MESAFE (Birbirlerini ezmeleri engellendi) */
+.cq-form-area {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  max-width: 1400px;
+  margin-top: 20px;
+  gap: 30px; /* DİKEY BOŞLUK: Kutular arası 30px net, ferah mesafe! */
+  align-items: center;
+}
+
+.cq-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+/* 3. SOLDAKİ ETİKETLER (Yazı Taşma Sorunu Çözüldü) */
+.cq-label {
+  width: 37%; 
+  /* Kutu içi yazının rahat etmesi için esnek yükseklik */
+  height: clamp(70px, 12vh, 160px);
+  background-color: transparent !important; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.cq-label span {
+  /* SİHİRLİ DOKUNUŞ: Yazı artık dışarı taşmak yerine küçülecek ve gerekirse 2 SATIRA inebilecek! */
+  font-size: clamp(1rem, 2.5vw, 3.5rem); 
+  color: white !important;
+  text-align: center;
+  white-space: normal; /* "Soru Başına Geçecek Süre"nin iki satır olabilmesi için kilit nokta */
+  line-height: 1.1;
+  word-wrap: break-word;
+}
+
+/* SAĞDAKİ GİRDİ KUTULARI */
+.cq-input {
+  width: 61%;
+  height: clamp(70px, 12vh, 160px);
+  background-color: #000C42 !important; 
+  border: 0.5vh solid white; 
+  border-radius: 1.6vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  color: white; 
+  font-size: clamp(1.2rem, 3vw, 4rem); 
+  padding: 0 30px; 
+  outline: none; 
+  box-sizing: border-box; 
+  transition: all 0.2s;
+}
+
+.cq-input:focus {
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.9), inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.cq-pin-display {
+  display: flex; 
+  align-items: center; 
+  cursor: not-allowed; 
+  letter-spacing: 5px; 
+}
+
+/* SÜRE KUTULARI (DK ve SN) */
+.cq-time-container {
+  width: 61%; 
+  display: flex; 
+  justify-content: space-between;
+}
+
+.cq-select-box {
+  width: 48%; 
+  height: clamp(70px, 12vh, 160px);
+  background-color: #000C42 !important; 
+  border: 0.5vh solid white; 
+  border-radius: 1.6vh;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.cq-select {
+  width: 100%; 
+  height: 100%; 
+  background: transparent; 
+  border: none; 
+  color: white;
+  font-size: clamp(1.2rem, 3vw, 4rem); 
+  text-align: center; 
+  padding-right: 50px; 
+  appearance: none; 
+  outline: none; 
+  cursor: pointer;
+}
+
+/* AÇILIR LİSTE RENGİ (Windows'un izin verdiği maksimum CSS müdahalesi) */
+.cq-select option {
+  background-color: rgba(0, 12, 66, 0.9); /* Ana temanın laciverti */
+  color: white; 
+  font-size: 1.5rem;
+}
+
+.cq-suffix {
+  position: absolute; 
+  right: 20px; 
+  top: 50%; 
+  transform: translateY(-50%);
+  font-size: clamp(1.2rem, 3vw, 4rem); 
+  pointer-events: none;
+}
+
+/* SEVİYE ALANI */
+.cq-level-section {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  width: 100%; 
+  margin-top: 10px; 
+  gap: 20px; 
+}
+
+.cq-level-title-row {
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 100%; 
+  position: relative;
+}
+
+.cq-level-title {
+  width: clamp(250px, 40vw, 600px); 
+  height: clamp(50px, 8vh, 120px);
+  background-color: transparent !important; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+}
+
+.cq-level-title span {
+  font-size: clamp(1.2rem, 3vw, 4rem); 
+}
+
+/* İLERİ OKU */
+.cq-next-btn {
+  position: absolute; 
+  right: 0;
+  width: clamp(50px, 6vw, 80px); 
+  height: clamp(50px, 6vw, 80px);
+  background-color: #000C42 !important; 
+  border-radius: 50%; 
+  border: 0.5vh solid white;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); 
+  transition: transform 0.1s;
+}
+
+.cq-next-btn:active { transform: scale(0.9); }
+
+/* SEVİYE BUTONLARI (Kolay, Orta, Zor) */
+.cq-level-buttons {
+  display: flex; 
+  justify-content: space-between; 
+  width: 100%;
+}
+
+.cq-level-btn {
+  width: 31%; 
+  height: clamp(70px, 12vh, 180px); 
+  background-color: #000C42 !important; 
+  border: 0.5vh solid white; 
+  border-radius: 1.6vh;
+  cursor: pointer; 
+  transition: all 0.3s;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.cq-level-btn span {
+  font-size: clamp(1.2rem, 3.5vw, 4.5rem); 
+}
+
+.cq-level-btn:active { transform: scale(0.95); }
+
+/* SEÇİLMEYENLER (PERDE EFEKTİ) */
+.cq-level-btn.dimmed { position: relative; }
+.cq-level-btn.dimmed::after {
+  content: ""; 
+  position: absolute; 
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.4); 
+  border-radius: 1vh; 
+  pointer-events: none;
+}
+
+
+
+/* =========================================
+   YENİ: SORU EDİTÖRÜ SAYFASI (QQ) KODLARI
+   ========================================= */
+
+.qq-container {
+  display: flex; flex-direction: column; align-items: center;
+  width: 100vw; min-height: 100vh; padding-top: 100px; padding-bottom: 50px;
+  gap: 30px; box-sizing: border-box;
+}
+
+.qq-main-box {
+  width: 95vw; max-width: 1793px;
+  height: clamp(250px, 35vh, 487px);
+  background-color: #000C42 !important; position: relative;
+  overflow: hidden; border: 0.5vh solid white; border-radius: 1.6vh;
+}
+
+.qq-giant-plus {
+  width: 100%; height: 100%; background: transparent; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.3s;
+}
+.qq-giant-plus:hover { background-color: rgba(255,255,255,0.1); }
+.qq-giant-plus svg { width: 100px; height: 100px; stroke: white; stroke-width: 1; fill: none; }
+
+.qq-selection-options { display: flex; gap: 40px; width: 100%; height: 100%; align-items: center; justify-content: center; }
+.qq-select-btn { width: clamp(150px, 20vw, 250px); height: 80px; background-color: transparent !important; cursor: pointer; font-size: clamp(1.5rem, 3vw, 2.5rem); transition: transform 0.1s; }
+.qq-select-btn:active { transform: scale(0.95); }
+
+.qq-filled-content { display: flex; width: 100%; height: 100%; position: relative; }
+.qq-image-wrapper { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; border-right: 1px solid rgba(255,255,255,0.2); }
+.qq-image { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+.qq-text-wrapper { flex: 1; position: relative; display: flex; padding: 20px; }
+.qq-textarea { width: 100%; height: 100%; background: transparent; border: none; color: white; font-size: clamp(1.5rem, 3vw, 4rem); outline: none; resize: none; text-align: center; }
+
+.qq-trash-btn { position: absolute; bottom: 10px; left: 10px; background: transparent; border: none; cursor: pointer; opacity: 0.3; transition: opacity 0.2s; z-index: 10; }
+.qq-trash-btn:hover { opacity: 1; }
+.qq-trash-btn svg { width: 40px; height: 40px; stroke: white; stroke-width: 2; fill: none; }
+
+.qq-add-more-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(255,255,255,0.1); opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 5;}
+.qq-filled-content:hover .qq-add-more-overlay { opacity: 1; pointer-events: auto; }
+.qq-overlay-btn { padding: 15px 30px; font-size: clamp(1.5rem, 3vw, 2rem); cursor: pointer; background-color: #000C42 !important; pointer-events: auto; }
+
+.qq-middle-section { display: flex; align-items: center; justify-content: center; gap: 2vw; width: 98vw; }
+.qq-side-arrow { width: clamp(50px, 6vw, 80px); height: clamp(50px, 6vw, 80px); background-color: #000C42 !important; border-radius: 50%; border: 0.5vh solid white; cursor: pointer; flex-shrink: 0; }
+
+.qq-answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 1600px; }
+@media (max-width: 1024px) { .qq-answers-grid { grid-template-columns: 1fr; } }
+.qq-answer-box { height: clamp(150px, 20vh, 235px); background-color: #000C42 !important; position: relative; overflow: hidden; }
+
+.qq-answer-edit-mode { width: 100%; height: 100%; display: flex; padding: 15px; position: relative; }
+.qq-answer-input { width: 100%; height: 100%; background: transparent; border: none; color: white; font-size: clamp(1.5rem, 3vw, 3rem); outline: none; resize: none; text-align: center; }
+.qq-ok-btn { position: absolute; bottom: 10px; right: 15px; background: transparent; border: none; font-size: 2rem; cursor: pointer; z-index: 10;}
+
+.qq-answer-filled { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.qq-ans-text { font-size: clamp(1.5rem, 3vw, 3rem); word-break: break-word; }
+
+/* Doğru Cevap Hover Efekti */
+.qq-correct-overlay { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  /* SİHİRLİ DOKUNUŞ: Perde artık en alta kadar inmiyor, çöp kutusu serbest kaldı! */
+  height: calc(100% - 60px); 
+  background-color: rgba(255, 255, 255, 0.9); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  opacity: 0; 
+  cursor: pointer; 
+  transition: opacity 0.2s; 
+  z-index: 5;
+}
+
+/* Doğru Cevap Yazısı - Eski Zarif Boyutuna Döndü */
+.qq-correct-overlay span { 
+  color: #000C42 !important; 
+  text-shadow: none !important; 
+  font-size: 2rem !important; /* İşte eski kibar boyutu! */ 
+  font-weight: bold;
+  text-align: center;
+  padding: 0 10px;
+}
+.qq-answer-box:hover .qq-correct-overlay { opacity: 1; }
+.qq-correct-badge { position: absolute; top: 10px; right: 10px; background-color: rgba(0, 255, 0, 0.3); padding: 5px 10px; border-radius: 5px; font-size: 1rem; color: white; border: 1px solid lime; z-index: 10;}
+
+.qq-bottom-buttons { display: flex; gap: 20px; width: 95vw; max-width: 1700px; justify-content: center; }
+@media (max-width: 768px) { .qq-bottom-buttons { flex-direction: column; } }
+.qq-bottom-btn { flex: 1; height: clamp(80px, 12vh, 163px); background-color: #000C42 !important; cursor: pointer; border: 0.5vh solid white; border-radius: 2vh; display: flex; align-items: center; justify-content: center;}
+.qq-bottom-btn span { font-size: clamp(1.5rem, 4vw, 3rem); }
