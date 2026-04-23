@@ -290,6 +290,7 @@
 /* 1. ÇUBUĞUN KENDİSİ (İncecik ve zarif kalacak) */
 .neon-slider {
   -webkit-appearance: none;
+  appearance: none; /* İŞTE SARI UYARIYI YOK EDEN KOD BURADA! */
   width: clamp(
     120px,
     50vw,
@@ -641,12 +642,12 @@ input::-webkit-contacts-auto-fill-button {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  /* Kutuların arasındaki ferah Figma boşluğu */
-  gap: clamp(30px, 6vh, 60px);
+  /* Hata varken boşluğu biraz daha daraltmak için gap'i esnetiyoruz */
+  gap: clamp(15px, 4vh, 40px); 
   width: 100%;
   min-height: 100%;
-  /* Ayarlar butonunu ezmemek için üstten boşluk */
-  padding: 120px 3vw 5vh 3vw;
+  /* Üstten padding'i mobilde biraz azaltalım */
+  padding: clamp(80px, 10vh, 120px) 3vw 5vh 3vw;
 }
 
 /* Her bir satır (Şeffaf Etiket + Lacivert Girdi Kutusu) */
@@ -949,6 +950,7 @@ input::-webkit-contacts-auto-fill-button {
   white-space: normal;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -1041,7 +1043,8 @@ input::-webkit-contacts-auto-fill-button {
   width: 90vw;
   max-width: 1400px;
   margin-top: 20px;
-  gap: 30px; /* DİKEY BOŞLUK: Kutular arası 30px net, ferah mesafe! */
+  /* Dikey boşluğu (gap) koruyoruz ama kutular büyüyeceği için daha dengeli duracak */
+  gap: 3.5vh; 
   align-items: center;
 }
 
@@ -1057,7 +1060,7 @@ input::-webkit-contacts-auto-fill-button {
 .cq-label {
   width: 37%;
   /* Kutu içi yazının rahat etmesi için esnek yükseklik */
-  height: clamp(70px, 12vh, 160px);
+  height: clamp(85px, 14vh, 180px) !important;
   background-color: transparent !important;
   display: flex;
   align-items: center;
@@ -1079,7 +1082,7 @@ input::-webkit-contacts-auto-fill-button {
 /* SAĞDAKİ GİRDİ KUTULARI */
 .cq-input {
   width: 61%;
-  height: clamp(70px, 12vh, 160px);
+  height: clamp(85px, 14vh, 180px) !important;
   background-color: #000c42 !important;
   border: 0.5vh solid white;
   border-radius: 1.6vh;
@@ -1116,7 +1119,7 @@ input::-webkit-contacts-auto-fill-button {
 
 .cq-select-box {
   width: 48%;
-  height: clamp(70px, 12vh, 160px);
+  height: clamp(85px, 14vh, 180px) !important;
   background-color: #000c42 !important;
   border: 0.5vh solid white;
   border-radius: 1.6vh;
@@ -1162,25 +1165,31 @@ input::-webkit-contacts-auto-fill-button {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 10px;
-  gap: 20px;
+  /* Üstteki satırlar arasındaki gap neyse, seviye kutusunun üstündeki boşluk da o olsun */
+  margin-top: 0; 
+  gap: 3.5vh; /* Form alanındaki gap ile aynı. */
 }
 
 .cq-level-title-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  position: relative;
+  flex-direction: row; /* Yan yana diz */
+  align-items: center; /* Dikeyde ortala */
+  justify-content: center; /* Yatayda ortala */
+  width: 90vw; /* Ekran genişliğine göre daralsın */
+  max-width: 1400px;
+  position: relative; /* Okun konumlanması için referans */
+  gap: 15px; /* Ok ile kutu arasına mobilde nefes payı bırakır */
 }
 
 .cq-level-title {
-  width: clamp(250px, 40vw, 600px);
-  height: clamp(50px, 8vh, 120px);
+  /* Genişliği sabit vermek yerine, içindeki yazı kadar ama sınırları olan bir yapı kuruyoruz */
+  width: clamp(150px, 50vw, 600px) !important; 
+  height: clamp(60px, 10vh, 120px);
   background-color: transparent !important;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 1; /* Gerektiğinde küçülmesine izin ver */
 }
 
 .cq-level-title span {
@@ -1189,10 +1198,11 @@ input::-webkit-contacts-auto-fill-button {
 
 /* İLERİ OKU */
 .cq-next-btn {
+  /* absolute kalsın ama sağa çok dayanmasın, titreşimi engelle */
   position: absolute;
-  right: 0;
-  width: clamp(50px, 6vw, 80px);
-  height: clamp(50px, 6vw, 80px);
+  right: 0; 
+  width: clamp(45px, 10vw, 80px); /* Mobilde biraz daha küçülebilir */
+  height: clamp(45px, 10vw, 80px);
   background-color: #000c42 !important;
   border-radius: 50%;
   border: 0.5vh solid white;
@@ -1200,7 +1210,7 @@ input::-webkit-contacts-auto-fill-button {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  z-index: 5;
   transition: transform 0.1s;
 }
 
@@ -1217,7 +1227,7 @@ input::-webkit-contacts-auto-fill-button {
 
 .cq-level-btn {
   width: 31%;
-  height: clamp(70px, 12vh, 180px);
+  height: clamp(85px, 14vh, 180px) !important;
   background-color: #000c42 !important;
   border: 0.5vh solid white;
   border-radius: 1.6vh;
@@ -1265,21 +1275,23 @@ input::-webkit-contacts-auto-fill-button {
   align-items: center;
   width: 100vw;
   min-height: 100vh;
-  padding-top: 100px;
-  padding-bottom: 50px;
-  gap: 30px;
+  padding-top: 80px; /* Üstten boşluğu biraz kıstık */
+  padding-bottom: 20px;
+  gap: 2vh; /* Sabit 30px yerine esnek gap verdik */
   box-sizing: border-box;
 }
 
 .qq-main-box {
   width: 95vw;
   max-width: 1793px;
-  height: clamp(250px, 35vh, 487px);
+  /* ESKİ: height: clamp(250px, 35vh, 487px); */
+  height: clamp(200px, 30vh, 400px); /* Yüksekliği biraz tıraşladık */
   background-color: #000c42 !important;
   position: relative;
   overflow: hidden;
   border: 0.5vh solid white;
   border-radius: 1.6vh;
+  flex-shrink: 0; 
 }
 
 .qq-giant-plus {
@@ -1441,10 +1453,12 @@ input::-webkit-contacts-auto-fill-button {
   }
 }
 .qq-answer-box {
-  height: clamp(150px, 20vh, 235px);
+  /* ESKİ: height: clamp(150px, 20vh, 235px); */
+  height: clamp(120px, 15vh, 180px); /* Kutuları biraz incelttik */
   background-color: #000c42 !important;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0; 
 }
 
 .qq-answer-edit-mode {
@@ -1557,4 +1571,403 @@ input::-webkit-contacts-auto-fill-button {
 }
 .qq-bottom-btn span {
   font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+
+
+
+
+/* --- GİRİŞ HATASI KUTUSU --- */
+.login-error-box {
+  margin-top: 3vh;
+  width: clamp(280px, 60vw, 1113px); /* Buton genişliği ile aynı */
+  min-height: clamp(80px, 15vh, 200px); /* İçindeki yazıya göre esneyecek */
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Düşük opaklık beyaz */
+  border: 0.3vh solid rgba(255, 255, 255, 0.5);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* YANIP SÖNME EFEKTİ */
+  animation: blinkError 2s infinite ease-in-out;
+}
+
+.error-text {
+  color: #fff;
+  /* SİHİRLİ DOKUNUŞ: Yazı her zaman kutuya sığar, kutu küçüldükçe küçülür */
+  font-size: clamp(0.9rem, 2.5vw, 2rem); 
+  text-align: center;
+  line-height: 1.4;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  white-space: normal; /* Yazının alt satıra geçmesine izin ver */
+  word-wrap: break-word;
+}
+
+/* Yanıp sönme animasyonu */
+@keyframes blinkError {
+  0% { opacity: 0.3; transform: scale(0.98); }
+  50% { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0.3; transform: scale(0.98); }
+}
+
+/* ======================================================== */
+/* --- MOBİL VE DAR EKRANLAR İÇİN TÜM UYUM AYARLARI --- */
+/* ======================================================== */
+@media (max-width: 768px) {
+
+  /* --- 1. GİRİŞ YAP (LOGIN) SAYFASI --- */
+  .login-form-row {
+    grid-template-columns: 100%;
+    gap: 10px;
+  }
+  .login-label, .login-input {
+    height: clamp(50px, 10vh, 80px); 
+  }
+  .login-submit-button {
+    height: clamp(60px, 12vh, 90px) !important;
+    margin-top: 2vh;
+  }
+  .login-error-box {
+    width: 90vw;
+    margin-top: 15px;
+    padding: 10px;
+    min-height: auto;
+  }
+
+  /* --- 2. QUİZ OLUŞTUR (CREATE QUIZ) SAYFASI --- */
+  .cq-level-title span {
+    font-size: 1.5rem !important; 
+  }
+
+  /* --- 3. QUİZE GİR (DEV BUTONLAR) SAYFASI --- */
+  .join-quiz-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; 
+    padding-bottom: 8vh; 
+    gap: 12vh; 
+    height: 100vh;
+  }
+  .join-main-button {
+    width: 88vw; 
+    height: 24vh; 
+    border-radius: 3.5vh;
+    border: 0.6vh solid white;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+  }
+  .join-main-button span {
+    font-size: clamp(1.6rem, 9vw, 3rem);
+    white-space: normal; 
+    text-align: center;
+    line-height: 1.1;
+    padding: 0 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  /* --- 4. YENİ EKLENEN: QUİZ SEÇ (KÜTÜPHANE) SAYFASI --- */
+  .quiz-grid-container {
+    grid-template-columns: repeat(2, 1fr); /* Telefonda 4'ten 2'ye düşer */
+    gap: 15px;
+    width: 90vw;
+  }
+  .quiz-select-page {
+    padding-left: 5vw;
+    padding-top: 15vh; /* Mobilde figür boşluğu biraz azalır */
+  }
+  .search-box-container {
+    top: 80px; /* Geri butonuna çarpmasın diye aşağı kayar */
+    right: 5vw;
+    width: 90vw;
+  }
+  .sort-dropdown-menu {
+    left: 15px; /* Ekranda taşmasın diye hizalanır */
+    width: 70vw;
+  }
+}
+
+
+/* --- QUİZE GİRİŞ SAYFASI (1920x1444 ORANLARI) --- */
+
+.join-quiz-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Butonları aşağıya doğru iter */
+  justify-content: flex-end; 
+  width: 100vw;
+  height: 100vh;
+  /* Alt kısımdan biraz nefes payı bırakıyoruz */
+  padding-bottom: clamp(40px, 8vh, 100px); 
+  /* İKİ BUTON ARASINDAKİ BOŞLUĞU ARTIRDIK (Figürlerin için dev alan!) */
+  gap: clamp(60px, 15vh, 250px); 
+  box-sizing: border-box;
+}
+
+.join-main-button {
+  /* Genişliği biraz daralttık ki mobilde yanlardan çok yapışmasın */
+  width: clamp(280px, 85vw, 1724px); 
+  
+  /* Yüksekliği 'tok' durması için alt sınırı 100px'e çektik */
+  height: clamp(100px, 20vh, 307px); 
+  
+  background-color: #000c42 !important;
+  border: 0.6vh solid white; /* Çerçeveyi bir tık kalınlaştırdık */
+  border-radius: 3vh; /* Daha oval değil, daha modern bir kavis */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  
+  /* Gölgeyi biraz daha belirginleştirdik, karanlıkta daha iyi parlar */
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.25); 
+  
+  transition: transform 0.1s, box-shadow 0.2s, filter 0.2s;
+  position: relative;
+  overflow: hidden; /* İçindeki parlamalar dışa taşmasın */
+}
+
+.join-main-button span {
+  /* Alt sınırı 1.8rem'e çekerek mobilde daha okunur yaptık */
+  font-size: clamp(1.8rem, 8vw, 110px); 
+  
+  /* ARTIK TAŞMAYA İZİN VERMİYORUZ: */
+  white-space: normal; /* Yazı çok uzunsa alt satıra geçebilir, kutuyu doldurur */
+  text-align: center; /* Alt satıra geçerse ortalı dursun */
+  
+  font-weight: 800; /* Daha kalın ve güçlü bir yazı tipi */
+  text-transform: uppercase; /* Tüm harfler büyük (Daha modern ve tok durur) */
+  line-height: 1.1; /* Satır aralığını daraltarak kelimelerin birbirinden kopmamasını sağladık */
+  
+  padding: 0 20px; /* Yazı butonun kenarlarına sıfıra sıfır yapışmasın, nefes alsın */
+  
+  /* Hafif bir yazı gölgesiyle neon etkisini destekleyelim */
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.join-main-button:active {
+  transform: scale(0.96);
+  filter: brightness(1.2);
+}
+
+/* --- MOBİL VE DAR EKRANLAR İÇİN TÜM DÜZENLEMELER --- */
+@media (max-width: 768px) {
+
+  /* 1. LOGIN & REGISTER SAYFASI DÜZENLEMELERİ */
+  .login-form-row {
+    grid-template-columns: 100%;
+    gap: 10px;
+  }
+
+  .login-label, .login-input {
+    height: clamp(50px, 10vh, 80px); 
+  }
+
+  .login-submit-button {
+    height: clamp(60px, 12vh, 90px) !important;
+    margin-top: 2vh;
+  }
+
+  .login-error-box {
+    width: 90vw;
+    margin-top: 15px;
+    padding: 10px;
+    min-height: auto;
+  }
+
+  /* 2. CREATE QUIZ (SEVİYE BAŞLIĞI) DÜZENLEMESİ */
+  .cq-level-title span {
+    font-size: 1.5rem !important; 
+  }
+
+  /* 3. QUİZE GİRİŞ MENÜSÜ (YENİ SAYFA - TOK VE ALTTA DURUŞ) */
+  .join-quiz-container {
+    display: flex;
+    flex-direction: column;
+    /* Butonları aşağı yaslar, üstte figürler için koca bir alan bırakır */
+    justify-content: flex-end; 
+    padding-bottom: 8vh; 
+    /* İki butonun arasını figür sığacak kadar açar */
+    gap: 12vh; 
+    height: 100vh;
+  }
+  
+  .join-main-button {
+    /* İnce uzun yerine daha "karemsi" ve tok bir form */
+    width: 88vw; 
+    height: 24vh; 
+    border-radius: 3.5vh;
+    border: 0.6vh solid white;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+  }
+  
+  .join-main-button span {
+    /* Butonu dolduran, gerekirse alt satıra geçen güçlü yazılar */
+    font-size: clamp(1.6rem, 9vw, 3rem);
+    white-space: normal; 
+    text-align: center;
+    line-height: 1.1;
+    padding: 0 15px;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+}
+
+
+/* --- QUİZ SEÇİM SAYFASI --- */
+
+/* Sayfa Konteyneri: Scroll barındırır, üstten figürler için koca bir boşluk bırakır */
+.quiz-select-page {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto; /* Aşağı kaydırmayı açar */
+  padding-top: clamp(150px, 28vh, 416px); /* y=416 oranlaması (Figür boşluğu) */
+  padding-bottom: 10vh;
+  box-sizing: border-box;
+  align-items: flex-start;
+  padding-left: 5vw;
+}
+
+/* Aktif Sıralama Göstergesi (Transparan İçi, Dinamik Genişlik) */
+.current-sort-label {
+  background-color: transparent !important;
+  border: 0.4vh solid white;
+  border-radius: 1.5vh;
+  padding: 10px 25px;
+  margin-bottom: clamp(20px, 5vh, 60px); /* Grid ile arasındaki boşluk */
+  height: clamp(50px, 10vh, 149px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.current-sort-label span {
+  font-size: clamp(1.2rem, 3vw, 2.5rem);
+  white-space: nowrap;
+}
+
+/* Quizlerin 4'lü Grid Dizilimi */
+.quiz-grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Bilgisayarda 4 kolon */
+  gap: clamp(20px, 2vw, 40px); /* Aradaki mükemmel oranlı boşluklar */
+  width: 90vw;
+  padding-bottom: 50px;
+}
+
+/* Quiz Butonu (h=300, w=430 oranlaması) */
+.quiz-item-button {
+  background-color: #000C42 !important;
+  border: 0.4vh solid white;
+  border-radius: 2vh;
+  height: clamp(120px, 20vh, 300px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  /* BURASI ÖNEMLİ: Geçiş efekti ekledik */
+  transition: transform 0.1s, box-shadow 0.1s, filter 0.2s; 
+  padding: 10px;
+}
+
+.quiz-item-button:active {
+  transform: scale(0.95); /* Buton hafifçe küçülür */
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Gölge daralır */
+  filter: brightness(1.3); /* Hafifçe parlar */
+}
+
+.quiz-item-button span {
+  font-size: clamp(1rem, 2.5vw, 2.5rem);
+  text-align: center;
+  word-wrap: break-word;
+}
+
+/* --- ARAMA KUTUCUĞU VE SIRALAMA AÇILIR MENÜSÜ --- */
+
+/* Arama Kutusu (Sağ üst köşe) */
+.search-box-container {
+  position: absolute;
+  top: 15px; /* Ayarlar butonuyla aynı hizada */
+  right: 15px;
+  background-color: #000C42 !important;
+  border: 0.3vh solid white;
+  border-radius: 2vh;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  width: clamp(200px, 25vw, 400px);
+  height: clamp(40px, 7vh, 80px);
+  z-index: 10;
+}
+
+.search-icon-svg {
+  width: clamp(20px, 2.5vw, 35px);
+  height: clamp(20px, 2.5vw, 35px);
+  stroke: white;
+  stroke-width: 2.5;
+  fill: none;
+  margin-right: 10px;
+}
+
+.search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: clamp(1rem, 2vw, 1.8rem);
+  width: 100%;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Sıralama Açılır Menüsü */
+.sort-dropdown-container {
+  position: absolute;
+  z-index: 20;
+}
+
+.sort-dropdown-menu {
+  position: absolute;
+  top: 115%; 
+  left: 0; 
+  background-color: #011059 !important;
+  border: 0.3vh solid white;
+  border-radius: 1.5vh;
+  display: flex;
+  flex-direction: column;
+  width: clamp(200px, 20vw, 350px);
+  /* BURASI YENİ: İçeriden boşluk verdik ve butonların arasına mesafe koyduk */
+  padding: 10px; 
+  gap: 8px; 
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.sort-option-btn {
+  background-color: #000C42 !important; 
+  /* İŞTE ÇERÇEVELER GELDİ! */
+  border: 0.2vh solid white; 
+  border-radius: 1vh; /* Tatlı kavisler */
+  padding: 10px;
+  text-align: center; /* Yazıları ortaladık */
+  font-size: clamp(0.9rem, 1.5vw, 1.5rem);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.sort-option-btn:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transform: scale(0.98);
+}
+
+/* Quiz butonlarına basılma hissi */
+.quiz-item-button:active {
+  transform: scale(0.95) !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+  filter: brightness(1.3);
 }
