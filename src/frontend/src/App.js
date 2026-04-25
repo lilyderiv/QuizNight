@@ -16,9 +16,9 @@ function App() {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [quizzes, setQuizzes] = useState([]);
-  const [loginError, setLoginError] = useState(false); // Hata mesajı kontrolü
+  const [loginError, setLoginError] = useState(false);
+  const [enteredPin, setEnteredPin] = useState("");
 
-  // Yeni Quiz Oluşturma Sayfası State'leri
   const [quizForm, setQuizForm] = useState({
     name: "",
     category: "",
@@ -28,7 +28,6 @@ function App() {
     level: "",
   });
 
-  // --- YENİ: SORU EDİTÖRÜ STATE'LERİ ---
   const [questions, setQuestions] = useState([
     {
       id: 1,
@@ -46,14 +45,23 @@ function App() {
   ]);
 
   const [currentQIndex, setCurrentQIndex] = useState(0);
-  const currentQ = questions[currentQIndex]; // Aktif soruyu tutar
+  const currentQ = questions[currentQIndex];
 
-  // --- QUİZ SEÇİM SAYFASI STATE'LERİ ---
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("Son eklenenler");
   const [isSortOpen, setIsSortOpen] = useState(false);
 
-  // Görselindeki gibi örnek Quiz Listesi (Sıralama testi için tarih ve zorluk ekledim)
+  const [currentPin, setCurrentPin] = useState("");
+
+  const generateRandomPin = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let newPin = '';
+    for (let i = 0; i < 6; i++) {
+      newPin += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return newPin;
+  };
+
   const [quizList, setQuizList] = useState([
     { id: 1, name: "English A2 test", difficulty: 1, date: 8 },
     { id: 2, name: "Ülkeler", difficulty: 2, date: 7 },
@@ -65,7 +73,6 @@ function App() {
     { id: 8, name: "Savaşlar", difficulty: 3, date: 1 }
   ]);
 
-  // Arama ve Sıralama Mantığı
   let filteredQuizzes = quizList.filter(q => 
     q.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -75,7 +82,7 @@ function App() {
   else if (sortOption === "Zordan Kolaya") filteredQuizzes.sort((a,b) => b.difficulty - a.difficulty);
   else if (sortOption === "Kolaydan Zora") filteredQuizzes.sort((a,b) => a.difficulty - b.difficulty);
   else if (sortOption === "İlk Eklenenler Başta") filteredQuizzes.sort((a,b) => a.date - b.date);
-  else filteredQuizzes.sort((a,b) => b.date - a.date); // Varsayılan: Son eklenenler
+  else filteredQuizzes.sort((a,b) => b.date - a.date);
 
   // --- 2. FONKSİYONLAR ---
 
@@ -108,18 +115,14 @@ function App() {
   };
 
   const handleRegisterClick = () => {
-    setQuizzes([]); // Kayıt olan kişi TERTEMİZ boş bir sayfa görür
+    setQuizzes([]);
     setCurrentView("dashboard");
   };
 
   const handleLoginClick = () => {
-    // GIRIS EKRANINDA HATALI GIRIS VARSA
-    // TEST İÇİN: Burayı true yaptığımızda hep hata verir, false yaparsak normal girer.
     const errorCondition = false; 
-
     if (errorCondition) {
       setLoginError(true);
-      // Mesajın 15 saniye sonra kendi kendine kapanması için:
       setTimeout(() => setLoginError(false), 15000);
     } else {
       setLoginError(false);
@@ -161,26 +164,20 @@ function App() {
     }
   };
 
-  // --- AÇILIR MENÜ DIŞINA TIKLAMAYI ALGILAMA ---
   const sortMenuRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Eğer menü açıksa ve tıklanan yer menünün İÇİNDE değilse menüyü kapat
       if (sortMenuRef.current && !sortMenuRef.current.contains(event.target)) {
         setIsSortOpen(false);
       }
     };
-
-    // Dinleyiciyi ekle
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      // Bileşen ekrandan gidince dinleyiciyi temizle
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
-  // --- SORU EDİTÖRÜ FONKSİYONLARI ---
   const updateCurrentQuestion = (updates) => {
     const updatedQs = [...questions];
     updatedQs[currentQIndex] = { ...updatedQs[currentQIndex], ...updates };
@@ -196,6 +193,68 @@ function App() {
         isSelectingType: false,
       });
     }
+  };
+
+  // --- OYUN OYNAMA (PLAY) STATE'LERİ VE YENİ EKLENENLER ---
+  const [playQIndex, setPlayQIndex] = useState(0); 
+  const [timeLeft, setTimeLeft] = useState(30); 
+  const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false); 
+  
+  // YENİ: Ekranda tik/çarpı çıkmasını kontrol eden hafıza
+  const [feedbackStatus, setFeedbackStatus] = useState(null); // null, 'correct' veya 'incorrect'
+
+  // YENİ: Sorulara "correct" (doğru cevap) eklendi
+  const [activeQuizQs, setActiveQuizQs] = useState([
+    { id: 1, text: "İstiklal Marşı'mızın şairi kimdir?", time: 25, answers: ["Mehmet Akif Ersoy", "Attila İlhan", "Sait Faik Abasıyanık", "Cahit Zarifoğlu"], correct: "Mehmet Akif Ersoy" },
+    { id: 2, text: "Türkiye'nin başkenti neresidir?", time: 15, answers: ["İstanbul", "Ankara", "İzmir", "Bursa"], correct: "Ankara" }
+  ]);
+
+  // --- ZAMANLAYICI VE GERİ BİLDİRİM MANTIĞI ---
+  useEffect(() => {
+    // Eğer ekranda geri bildirim (tik/çarpı) YOKSA süre akar, VARSA süre donar!
+    if (currentView === "playingQuiz" && timeLeft > 0 && !feedbackStatus) {
+      const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timerId);
+    } else if (currentView === "playingQuiz" && timeLeft === 0 && !feedbackStatus) {
+      // Süre biterse otomatik yanlış kabul et ve atla
+      handleAnswerClick(""); 
+    }
+  }, [currentView, timeLeft, feedbackStatus]);
+
+  const handleNextOrEnd = () => {
+    if (playQIndex < activeQuizQs.length - 1) {
+      setPlayQIndex(playQIndex + 1);
+      setTimeLeft(activeQuizQs[playQIndex + 1].time);
+    } else {
+      setCurrentView("mainMenu"); // Şimdilik sıralama olmadığı için ana menüye döner
+    }
+  };
+
+  // ŞIKLARA TIKLANDIĞINDA ÇALIŞACAK FONKSİYON
+  const handleAnswerClick = (ans) => {
+    if (feedbackStatus) return; // Zaten ekranda tik varken art arda tıklanmasını engeller
+
+    const isCorrect = ans === activeQuizQs[playQIndex].correct;
+    setFeedbackStatus(isCorrect ? "correct" : "incorrect");
+
+    // Tam 0.5 saniye bekle ve sonraki soruya uç!
+    setTimeout(() => {
+      setFeedbackStatus(null); 
+      handleNextOrEnd(); 
+    }, 500);
+  };
+
+  const handleNextPlayQuestion = () => {
+    if (feedbackStatus) return;
+    handleNextOrEnd(); // İleri okuna basılırsa direkt atlar
+  };
+
+  const startQuiz = () => {
+    setPlayQIndex(0);
+    setTimeLeft(activeQuizQs[0].time);
+    setIsOptionsMenuOpen(false); 
+    setFeedbackStatus(null); // Başlarken ekranı temizle
+    setCurrentView("playingQuiz");
   };
 
   const removeImage = () => {
@@ -278,6 +337,8 @@ function App() {
       currentView === "createQuizQuestions"
     ) {
       setCurrentView("dashboard");
+    } else if (currentView === "enterPin") {
+      setCurrentView("joinQuizMenu");
     } else {
       setCurrentView(previousView);
     }
@@ -292,36 +353,53 @@ function App() {
       {/* --- EVRENSEL BUTONLAR (Geri ve Ayarlar) --- */}
       {currentView !== "mainMenu" &&
         currentView !== "settings" &&
-        currentView !== "dashboard" && (
+        currentView !== "dashboard" &&
+        currentView !== "playingQuiz" && ( /* 1. DEĞİŞİKLİK: Oyun ekranında "Geri Oku" gizleniyor! */
           <button
             className="back-navigation-button"
             onClick={() => {
-              if (
-                currentView === "loginForm" ||
-                currentView === "registerForm"
-              ) {
+              if (currentView === "loginForm" || currentView === "registerForm") {
                 setCurrentView("authMenu");
-              } else if (currentView === "createQuizSettings") {
+              } else if (currentView === "createQuizSettings" || currentView === "createQuizQuestions") {
                 setCurrentView("dashboard");
               } else if (currentView === "joinQuizMenu") {
                 setCurrentView("mainMenu");
               } else if (currentView === "quizSelect") {
-                // İŞTE YENİ ROTAMIZ: Quiz Seç'teyken geri basarsan dev butonlu ekrana döner
-                setCurrentView("joinQuizMenu");
-              } else if (currentView === "quizSelect") {
                 setCurrentView("joinQuizMenu");
               } else if (currentView === "quizPinDetails") {
                 setCurrentView("quizSelect");
+              } else if (currentView === "enterPin") {
+                setCurrentView("joinQuizMenu");
+              } else if (currentView === "waitingRoom") {
+                setCurrentView("mainMenu");
               } else {
                 setCurrentView("mainMenu");
               }
             }}
           >
             <svg className="nav-icon-svg" viewBox="0 0 24 24">
-              <path d="M15 18l-6-6 6-6" />
+              <path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
         )}
+
+      {/* --- EVRENSEL AYARLAR BUTONU --- */}
+      {currentView !== "settings" && ( /* 2. KURAL: Ayarlar çarkı oyun ekranında GÖRÜNMEYE DEVAM EDECEK! */
+        <button
+          className="settings-button"
+          onClick={openSettings}
+          style={{
+            /* Oyun ekranındayken Geri/Hamburger butonu 15px'te olduğu için Ayarlar 75px'e kayacak (tam istediğimiz gibi) */
+            left: currentView === "mainMenu" || currentView === "dashboard" ? "15px" : "75px",
+          }}
+        >
+          {/* AYARLAR ÇARK İKONU */}
+          <svg className="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+      )}
 
       {currentView !== "settings" && (
         <button
@@ -891,18 +969,22 @@ function App() {
       {/* --- QUİZE GİRİŞ SEÇENEKLERİ SAYFASI --- */}
       {currentView === "joinQuizMenu" && (
         <div className="join-quiz-container">
-          {/* Üst Panel (Geri ve Ayarlar zaten evrensel butonlar kısmında olduğu için burada sadece içerik olacak) */}
           
+          {/* Her iki butonu da 'auth-button' sınıfına çektik ki tasarım kardeş olsun */}
           <button 
-            className="join-main-button neon-box"
+            className="auth-button neon-box"
             onClick={() => setCurrentView("quizSelect")} 
           >
-            <span className="neon-text">Quiz Seç</span>
+            <span className="neon-text">QUİZ SEÇ</span>
           </button>
 
-          <button className="join-main-button neon-box">
-            <span className="neon-text">Pin ile Quize Gir</span>
+          <button 
+            className="auth-button neon-box" 
+            onClick={() => setCurrentView("enterPin")}
+          >
+            <span className="neon-text">PİN İLE GİRİŞ</span>
           </button>
+
         </div>
       )}
 
@@ -921,7 +1003,10 @@ function App() {
               <button 
                 key={quiz.id} 
                 className="quiz-item-button neon-box"
-                onClick={() => setCurrentView("quizPinDetails")}
+                onClick={() => {
+                  setCurrentPin(generateRandomPin()); // Tıklanınca yeni 6 haneli pin üretir
+                  setCurrentView("quizPinDetails");   // Ve pin sayfasına geçer
+                }}
               >
                 <span className="neon-text">{quiz.name}</span>
               </button>
@@ -930,6 +1015,188 @@ function App() {
 
         </div>
       )}
+
+
+      {/* --- PİN GİRİŞ EKRANI (OYUNCULAR İÇİN) --- */}
+      {currentView === "enterPin" && (
+        <div className="enter-pin-container">
+          {/* Üstteki Transparan Başlık Kutusu */}
+          <div className="enter-pin-label neon-box">
+            <span className="neon-text">Pini Gir</span>
+          </div>
+
+          {/* Alttaki Tıklanabilir Lacivert Girdi (Input) Kutusu */}
+          <input
+            type="text"
+            className="enter-pin-input neon-box neon-text"
+            value={enteredPin}
+            onChange={(e) => setEnteredPin(e.target.value.toUpperCase())}
+            maxLength={6}
+            autoFocus
+            autoComplete="off"
+            spellCheck="false"
+          />
+
+          {/* YENİ: Pini Onayla Butonu */}
+          {/* Pini Onayla Butonunun onClick kısmını güncelle */}
+          <button 
+            className="pin-confirm-button neon-box"
+            onClick={() => {
+              if(enteredPin.length === 6) {
+                setCurrentView("waitingRoom"); // Bekleme odasına uçuyoruz!
+              } else {
+                alert("Lütfen 6 haneli pini girin.");
+              }
+            }}
+          >
+            <span className="neon-text">Pini Onayla</span>
+          </button>
+        </div>
+      )}
+
+
+
+      {/* --- QUİZ PİN DETAY SAYFASI --- */}
+      {currentView === "quizPinDetails" && (
+        <div className="pin-screen-container">
+          
+          {/* Oyun Pini (Üstteki dar, transparan kutu) */}
+          <div className="pin-label-box neon-box">
+            <span className="neon-text">OYUN PİNİ</span>
+          </div>
+
+          {/* Ana Pin Kodu (İçi lacivert dolu kutu) */}
+          <div className="pin-code-box neon-box">
+            <span className="neon-text">{currentPin}</span>
+          </div>
+
+          {/* Bilgi Yazısı (Transparan alt kutu) */}
+          <div className="pin-info-box neon-box">
+            <span className="neon-text">Arkadaşlarını bu pine çağır!</span>
+          </div>
+
+          {/* Oyunu Başlat Butonu */}
+          <button className="pin-start-button neon-box">
+            <span className="neon-text">OYUNU BAŞLAT</span>
+          </button>
+          
+        </div>
+      )}
+
+
+      {/* --- BEKLEME ODASI EKRANI --- */}
+      {currentView === "waitingRoom" && (
+        <div className="waiting-room-container">
+          <div className="waiting-message-box neon-box">
+            <span className="neon-text">
+              HERKES TOPLANANA<br />
+              KADAR<br />
+              BEKLEMEDESİN :)
+            </span>
+          </div>
+          {/* SADECE TASARIMI TEST ETMEK İÇİN GEÇİCİ BUTON */}
+          <button 
+            className="pin-confirm-button neon-box" 
+            style={{ marginTop: "3dvh", backgroundColor: "rgba(0, 12, 66, 0.8)" }}
+            onClick={startQuiz} // Bu fonksiyon seni doğrudan o şahane oyun ekranına uçuracak!
+          >
+            <span className="neon-text">TEST: OYUNU BAŞLAT</span>
+          </button>
+
+        </div>
+      )}
+
+
+      {/* --- QUİZ OYNAMA EKRANI (PLAYING QUIZ) --- */}
+      {currentView === "playingQuiz" && activeQuizQs[playQIndex] && (
+        <div 
+          className="play-quiz-container" 
+          onClick={() => { if(isOptionsMenuOpen) setIsOptionsMenuOpen(false); }} // Ekrana tıklandığında menüyü kapatır
+        >
+          {/* ÜST BAR: SADECE Hamburger Menü (Sabit Konum) */}
+          <div className="play-top-fixed-bar">
+            <div style={{ position: "relative" }}>
+              <button 
+                className="back-navigation-button" 
+                style={{ position: "relative", top: 0, left: 0 }}
+                onClick={(e) => { e.stopPropagation(); setIsOptionsMenuOpen(!isOptionsMenuOpen); }}
+              >
+                <svg className="nav-icon-svg" viewBox="0 0 24 24">
+                  <path d="M3 12h18M3 6h18M3 18h18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              
+              {isOptionsMenuOpen && (
+                <div className="play-options-dropdown neon-box" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => setCurrentView("mainMenu")}>
+                    <span className="neon-text">Quizden Çık</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* SAYAÇ VE SÜRE */}
+          <div className="play-info-row">
+            <div className="play-counter-box neon-box">
+              <span className="neon-text">{playQIndex + 1}/{activeQuizQs.length}</span>
+            </div>
+            <div className="play-timer-box neon-box">
+              <span className="neon-text">00.{timeLeft < 10 ? `0${timeLeft}` : timeLeft}</span>
+            </div>
+          </div>
+
+          {/* SORU METNİ */}
+          <div className="play-question-box neon-box">
+            <span className="neon-text">{activeQuizQs[playQIndex].text}</span>
+          </div>
+
+          {/* CEVAPLAR VE İLERİ OKU */}
+          <div className="play-answers-wrapper">
+            <div className="play-answers-grid">
+              {activeQuizQs[playQIndex].answers.map((ans, i) => (
+                <button key={i} className="play-answer-btn neon-box" onClick={() => handleAnswerClick(ans)}>
+                  <span className="neon-text">{ans}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Son soruda değilsek Ok tuşu çıksın */}
+            {playQIndex < activeQuizQs.length - 1 && (
+              <button className="play-next-arrow neon-box" onClick={handleNextPlayQuestion}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* QUİZİ BİTİR BUTONU */}
+          <button className="play-end-quiz-btn neon-box" onClick={() => setCurrentView("mainMenu")}>
+            <span className="neon-text">Quizi Bitir</span>
+          </button>
+
+          {/* --- YENİ: DEV TİK VEYA ÇARPI EKRANI (0.5 SANİYE GÖRÜNÜR) --- */}
+          {feedbackStatus && (
+            <div className="feedback-overlay">
+              <div className="feedback-circle neon-box">
+                {feedbackStatus === "correct" ? (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                )}
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
+
+
 
       {/* --- AYARLAR EKRANI --- */}
       {currentView === "settings" && (
