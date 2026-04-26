@@ -1,0 +1,100 @@
+.settings-page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 6vh, 100px);
+  min-height: 100%;
+  width: 100%;
+  padding: 5vh 0;
+}
+
+.setting-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(10px, 4vw, 50px);
+  width: 90vw;
+  max-width: 1200px;
+  justify-content: center;
+}
+
+.icon-btn {
+  width: clamp(50px, 11vw, 150px);
+  height: clamp(50px, 11vw, 150px);
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  background-color: #000c42 !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.icon-content {
+  font-size: clamp(2rem, 5vw, 6rem);
+  transition: opacity 0.2s;
+}
+
+.icon-btn.muted .icon-content {
+  opacity: 0.3;
+}
+
+.neon-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: clamp(120px, 50vw, 1045px);
+  background: transparent;
+  outline: none;
+}
+
+.neon-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.neon-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.8);
+  margin-top: -12.5px;
+}
+
+.neon-slider::-moz-range-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.neon-slider::-moz-range-thumb {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.8);
+  border: none;
+}
+
+.neon-svg {
+  width: clamp(30px, 6vw, 80px);
+  height: clamp(30px, 6vw, 80px);
+  filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+}
+
+.back-button {
+  width: clamp(280px, 60vw, 1113px) !important;
+  margin-top: 5vh;
+}

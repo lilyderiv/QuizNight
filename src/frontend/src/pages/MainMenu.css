@@ -1,0 +1,71 @@
+.title-box {
+  width: 87.4vw;
+  height: 15vh;
+  margin-top: 75px !important;
+  padding: 0 10px;
+}
+
+.title-text {
+  font-size: clamp(1rem, 10vmin, 11vh);
+  line-height: 1;
+}
+
+.characters-container {
+  flex: 1;
+  width: 100%;
+  min-height: 10vh;
+}
+
+.subtitle-box {
+  width: 93.2vw;
+  height: 11vh;
+  margin-bottom: 2vh;
+}
+
+.subtitle-text {
+  font-size: clamp(0.8rem, 6vmin, 6.5vh);
+}
+
+.button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 3vw;
+  width: 100%;
+  flex-wrap: wrap;
+  padding: 0 10px;
+}
+
+.action-button {
+  width: clamp(280px, 45vw, 45.7vw);
+  height: clamp(120px, 28vh, 33vh);
+  background-color: #000c42 !important;
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  cursor: pointer;
+  flex-direction: column;
+  color: white !important;
+  transition: transform 0.1s;
+}
+
+.action-button span {
+  font-size: clamp(1rem, 8vmin, 10vh);
+  white-space: nowrap;
+}
+
+.action-button:active {
+  transform: scale(0.92);
+  filter: brightness(1.2);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+  .button-container {
+    flex-direction: row;
+    gap: 10px;
+  }
+  .action-button {
+    width: 45vw;
+    height: 20vh;
+  }
+}

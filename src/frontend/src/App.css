@@ -1755,107 +1755,171 @@ input::-webkit-contacts-auto-fill-button {
 
 
 /* ========================================= */
-/* --- KUSURSUZ PİN EKRANI (TÜM CİHAZLAR İÇİN) --- */
+/* --- YENİ EŞSİZ PİN EKRANI (KURUCU/HOST) --- */
 /* ========================================= */
 
 .pin-screen-container {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* Her şeyi alta yaslar, üstü boş bırakır */
   align-items: center;
+  justify-content: center; /* Her şeyi dikeyde kusursuz ortalar */
   width: 100vw;
-  height: 100dvh; /* dvh mobildeki adres çubuğunu hesaba katar, kaydırmayı engeller */
-  padding-bottom: 5dvh;
-  gap: 3dvh; /* Kutular arası ekran boyuna göre esnek boşluk */
+  height: 100dvh;
+  padding-top: 10dvh; /* Geri/Ayarlar ikonundan kaçış payı */
+  padding-bottom: 2dvh;
+  gap: 2.5dvh; /* Kutular arası dinamik boşluk (Asla iç içe geçmez) */
   box-sizing: border-box;
-  overflow: hidden; /* Asla kaydırma çubuğu çıkmaz */
+  overflow: hidden; /* Taşma yasaklandı */
 }
 
-/* 1. OYUN PİNİ (Genişliği sadece yazının boyu kadar) */
+/* 1. KENDİNE BİR İSİM VER (w: 1705, h: 169) - Transparan */
+.pin-host-label {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0; /* Ekran daralsa da kutu formunu korur */
+}
+
+.pin-host-label span {
+  font-size: min(4.5vw, 5dvh, 60px);
+  white-space: nowrap;
+}
+
+/* 2. İSİM GİRİŞ KUTUSU (w: 1705, h: 169) - Lacivert */
+.pin-host-input {
+  background-color: #000C42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  color: white;
+  font-family: inherit;
+  font-size: min(6vw, 7dvh, 80px);
+  outline: none;
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+
+/* 3. OYUN PİNİ BAŞLIĞI (w: 797, h: 169) - Transparan ve Daha Dar */
 .pin-label-box {
   background-color: transparent !important;
   border: min(0.4dvh, 4px) solid white;
   border-radius: min(2dvh, 20px);
-  height: 14dvh;
-  max-height: 203px;
-  padding: 0 5vw; /* Genişliği yazının etrafına göre otomatik ayarlar */
+  width: 41.5vw;
+  max-width: 797px;
+  height: 11.7dvh;
+  max-height: 169px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .pin-label-box span {
-  font-size: min(5vw, 5dvh); /* Ekrana göre küçülür, kutudan asla taşmaz */
-  white-space: nowrap; /* Yazının alt satıra geçmesini engeller */
+  font-size: min(4.5vw, 5dvh, 60px);
+  white-space: nowrap;
 }
 
-/* 2. EŞSİZ PİN KODU KUTUSU (Geniş Kutu %90) */
+/* 4. ANA PİN KODU (w: 1705, h: 169) - Lacivert */
 .pin-code-box {
   background-color: #000C42 !important;
   border: min(0.5dvh, 5px) solid white;
   border-radius: min(2.5dvh, 25px);
-  width: 90vw;
-  max-width: 1724px;
-  height: 14dvh;
-  max-height: 203px;
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
 }
 
 .pin-code-box span {
-  font-size: min(10vw, 8dvh);
-  letter-spacing: min(3vw, 15px); /* Pin harfleri arası dinamik boşluk */
+  font-size: min(7vw, 8dvh, 90px);
+  letter-spacing: min(2vw, 15px); /* Pin arası boşluk */
   white-space: nowrap;
 }
 
-/* 3. BİLGİ YAZISI (Şeffaf Kutu %90, Biraz Daha İnce) */
+/* 5. BİLGİ YAZISI (w: 1705, h: 143) - Transparan ve Bir Tık İnce */
 .pin-info-box {
   background-color: transparent !important;
   border: min(0.4dvh, 4px) solid white;
   border-radius: min(2dvh, 20px);
-  width: 90vw;
-  max-width: 1724px;
-  height: 11.8dvh;
-  max-height: 171px;
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 9.9dvh;
+  max-height: 143px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .pin-info-box span {
-  font-size: min(4vw, 4.5dvh);
+  font-size: min(4vw, 4.5dvh, 55px);
   white-space: nowrap;
 }
 
-/* 4. OYUNU BAŞLAT BUTONU (%63 Genişlik) */
+/* 6. OYUNU BAŞLAT BUTONU (w: 1728, h: 169) - Lacivert ve Tıklanabilir */
 .pin-start-button {
   background-color: #000C42 !important;
   border: min(0.5dvh, 5px) solid white;
   border-radius: min(2.5dvh, 25px);
-  width: 63vw; /* Tam senin istediğin altın oran */
-  max-width: 1211px;
-  height: 14dvh;
-  max-height: 203px;
+  width: 90vw; 
+  max-width: 1728px;
+  height: 11.7dvh;
+  max-height: 169px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: transform 0.1s, box-shadow 0.2s;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
 }
 
 .pin-start-button span {
-  font-size: min(5vw, 5.5dvh);
+  font-size: min(5vw, 5.5dvh, 65px);
   white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
 .pin-start-button:active {
   transform: scale(0.96);
   filter: brightness(1.2);
+}
+
+/* --- MOBİL VE DAR EKRANLAR İÇİN MİNİK BİR DOKUNUŞ --- */
+@media (max-width: 768px) {
+  .pin-screen-container {
+    gap: 1.5dvh; /* Ekrana sığmaları için boşluğu biraz daralttık */
+    padding-top: 8dvh;
+  }
+  .pin-info-box span {
+    white-space: normal; /* Mobilde uzun gelirse alt satıra geçsin, kutuyu patlatmasın */
+    text-align: center;
+    line-height: 1.1;
+  }
 }
 
 
@@ -2109,41 +2173,149 @@ input::-webkit-contacts-auto-fill-button {
 
 
 
-/* ========================================= */
-/* --- PİN GİRİŞ EKRANI (OYUNCU EKRANI) --- */
-/* ========================================= */
+/* ======================================================= */
+/* --- YENİ EŞSİZ PİN GİRİŞ EKRANI (DİĞER OYUNCULAR) --- */
+/* ======================================================= */
 
 .enter-pin-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center; /* Kutuları ekranın ortasında tutar */
+  justify-content: flex-start;
   width: 100vw;
-  height: 100dvh;
-  gap: 15dvh; /* İki kutu arasındaki DEV boşluk (Figürler için) */
+  min-height: 100vh; 
+  
+  /* 1. ADIM ÇÖZÜMÜ: Üstteki ikonlara ASLA değmemesi için kesin 140px boşluk! */
+  padding-top: clamp(140px, 15vh, 200px) !important; 
+  
+  /* 2. ADIM ÇÖZÜMÜ: 4 kutu arasındaki mesafeyi iyice AZALTTIK! */
+  gap: 8px !important; 
+  
+  padding-bottom: 5dvh;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-y: auto; 
+  overflow-x: hidden;
 }
 
-/* PİNİ GİR YAZISI (Transparan, w=1724, h=307) */
+/* 3. ADIM ÇÖZÜMÜ: 1, 2 ve 3. KUTULARIN BOYUTLARI BİREBİR AYNI EŞİTLENDİ */
+.enter-pin-name-label,
+.enter-pin-name-input,
 .enter-pin-label {
-  background-color: transparent !important;
-  border: min(0.5dvh, 5px) solid white;
-  border-radius: min(2.5dvh, 25px);
   width: 90vw;
-  max-width: 1724px;
-  height: 21dvh;
-  max-height: 307px;
+  max-width: 1754px;
+  /* KESİN EMİR: Üçünün de boyu aynı olacak! */
+  height: clamp(50px, 10vh, 140px) !important; 
+  min-height: 50px; 
+  flex-shrink: 0;
+  
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+  box-sizing: border-box;
 }
 
-.enter-pin-label span {
-  font-size: min(10vw, 10dvh); /* Ekran daraldıkça yazı da ufalır */
+/* Transparan Kutular (İsim ve Pin Başlıkları) */
+.enter-pin-name-label, .enter-pin-label {
+  background-color: transparent !important;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+/* Lacivert Kutu (İsim Yazılacak İmleç) */
+.enter-pin-name-input {
+  background-color: #000C42 !important;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  color: white;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+  padding: 0 20px;
+}
+
+/* Yazı Boyutları */
+.enter-pin-name-label span, .enter-pin-label span {
+  font-size: clamp(1.5rem, 4vw, 55px);
   white-space: nowrap;
 }
+.enter-pin-name-input {
+  font-size: clamp(2rem, 5vw, 70px);
+}
+
+/* 4. PİN GİRİŞ İMLECİ (SADECE BU UZUN OLACAK) */
+.enter-pin-input {
+  width: 90vw;
+  max-width: 1754px;
+  /* KESİN EMİR: Diğerleri max 140px iken, bu kutu uzun olacak! */
+  height: clamp(90px, 16vh, 263px) !important; 
+  background-color: #000C42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-family: inherit;
+  font-size: clamp(3rem, 8vw, 110px);
+  letter-spacing: 15px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  outline: none;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.enter-pin-input::placeholder, .enter-pin-name-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* 5. PİNİ ONAYLA BUTONU */
+.pin-confirm-button {
+  background-color: #000C42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  
+  /* Orjinal kibar oranlar */
+  width: clamp(200px, 30vw, 563px);
+  height: clamp(50px, 8vh, 126px);
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  
+  /* İleride resim koyacağın kutsal boşluk */
+  margin-top: clamp(40px, 10vh, 200px); 
+  margin-bottom: 40px; 
+  
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  transition: transform 0.1s, box-shadow 0.2s, filter 0.2s;
+  flex-shrink: 0;
+}
+
+.pin-confirm-button span {
+  font-size: clamp(1.2rem, 3vw, 40px); 
+  white-space: nowrap;
+}
+
+.pin-confirm-button:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+/* --- TELEFON VE DAR EKRAN UYUMLULUĞU --- */
+@media (max-width: 768px) {
+  .pin-confirm-button {
+    /* Mobilde o daracık ekranda buton çok küçülmesin diye genişletiyoruz */
+    width: 60vw; 
+    /* Mobilde aradaki büyük boşluk ekranı patlatmasın diye biraz kısıyoruz */
+    margin-top: 5vh; 
+    margin-bottom: 5vh; 
+  }
+}
+
+
+
 
 /* ========================================= */
 /* --- PİN GİRİŞ EKRANI (DÜZELTİLMİŞ ORANLAR) --- */
@@ -2556,4 +2728,170 @@ input::-webkit-contacts-auto-fill-button {
 @keyframes popIn {
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+
+/* ======================================================= */
+/* --- SIRALAMA (LEADERBOARD) EKRANI KUSURSUZ TASARIM --- */
+/* ======================================================= */
+
+.leaderboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  height: 100dvh; /* Ekranı kilitler */
+  
+  /* ÇAKIŞMA ÖNLEYİCİ: Üst ikonlara ASLA çarpmaması için 140px garanti boşluk */
+  padding-top: clamp(140px, 15vh, 200px); 
+  padding-bottom: 5dvh;
+  gap: min(3dvh, 30px); /* Kutular arası estetik dikey boşluk */
+  box-sizing: border-box;
+  overflow: hidden; /* Dış ekran kaymaz, iç liste kayar */
+}
+
+/* 1. VE KAZANAN BAŞLIĞI (w: 1196, h: 154) */
+.lb-title-box {
+  background-color: #000C42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 62.3vw; 
+  max-width: 1196px;
+  height: clamp(60px, 10.6vh, 154px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+.lb-title-box span {
+  font-size: min(4vw, 5dvh, 60px);
+  white-space: nowrap;
+}
+
+/* 2. BİRİNCİ OYUNCU KUTUSU (w: 1759, h: 232) */
+.lb-first-place-box {
+  background-color: #000C42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 91.6vw; 
+  max-width: 1759px;
+  height: clamp(80px, 16vh, 232px);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* İsmi tam ortaya hizalar */
+  position: relative; /* İçindeki skor kutusunu hizalamak için KİLİT */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+.lb-first-name {
+  font-size: min(8vw, 9dvh, 100px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* İsim çok uzunsa sığması için */
+  max-width: 65%; /* Skor kutusuna çarpmasını engeller */
+}
+
+/* Birinci Oyuncunun Skor Kutusu (w: 269, h: 117) */
+.lb-first-score-box {
+  background-color: #000C42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(1.5dvh, 15px);
+  width: clamp(80px, 14vw, 269px);
+  height: clamp(40px, 8vh, 117px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute; /* Ana kutunun sağına yapışır */
+  right: clamp(10px, 2vw, 30px); /* Sağdan bırakılan boşluk */
+}
+.lb-first-score-box span {
+  font-size: min(3vw, 4dvh, 50px);
+}
+
+/* 3. DİĞER OYUNCULAR LİSTESİ (Kaydırılabilir) */
+.lb-runners-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: min(2dvh, 25px); /* Satırlar arası boşluk */
+  overflow-y: auto; /* SADECE BU ALAN KAYDIRILABİLİR YANİ 6. KİŞİ ÇIKARSA AŞAĞI KAYAR */
+  overflow-x: hidden;
+  flex-grow: 1; /* Kalan tüm alt alanı doldurur */
+  padding-bottom: 20px;
+  /* Scrollbar gizleme */
+  scrollbar-width: none;
+}
+.lb-runners-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/* Satır Taşıyıcısı (Rank Kutusu + İsim Kutusu) */
+.lb-runner-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: min(2vw, 30px); /* 189 ile 1195 genişlikli iki kutu arası boşluk */
+  width: 90vw; /* Ekrana sığması için */
+  max-width: 1414px;
+  flex-shrink: 0;
+}
+
+/* Sıra Numarası Kutusu (w: 189, h: 154) */
+.lb-runner-rank {
+  background-color: #000C42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 13.3%; /* Figma oranına göre tam yüzdesi */
+  max-width: 189px;
+  height: clamp(60px, 10.6vh, 154px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lb-runner-rank span {
+  font-size: min(4vw, 5dvh, 60px);
+}
+
+/* Diğer Oyuncu Adı Kutusu (w: 1195, h: 154) */
+.lb-runner-name-box {
+  background-color: #000C42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 84.5%; /* Figma oranına göre tam yüzdesi */
+  max-width: 1195px;
+  height: clamp(60px, 10.6vh, 154px);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* İsmi ortalar */
+  position: relative; /* Skor kutusunu hizalamak için KİLİT */
+  padding: 0 15px;
+}
+.lb-runner-name {
+  font-size: min(5vw, 6dvh, 70px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%; /* Skora çarpmasını engeller */
+}
+
+/* Diğer Oyuncu Skor Kutusu (w: 191, h: 107) */
+.lb-runner-score-box {
+  background-color: #000C42 !important;
+  border: min(0.3dvh, 3px) solid white;
+  border-radius: min(1.5dvh, 15px);
+  width: clamp(60px, 13vw, 191px);
+  height: clamp(30px, 7.4vh, 107px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute; /* Ana kutunun sağına yapışır */
+  right: clamp(10px, 1.5vw, 20px);
+}
+.lb-runner-score-box span {
+  font-size: min(2.5vw, 3dvh, 40px);
 }
