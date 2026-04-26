@@ -1,0 +1,196 @@
+.dash-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 120px;
+}
+
+.dash-profile-btn {
+  width: 50px;
+  height: 50px;
+  background-color: #000c42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s;
+}
+
+.dash-profile-btn:active {
+  transform: scale(0.92);
+}
+
+.dash-dropdown {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  background-color: #000c42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 10px 15px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.dash-logout {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+}
+
+.dash-username {
+  position: absolute;
+  top: 15px;
+  left: 135px;
+  height: clamp(50px, 8vh, 104px);
+  padding: 0 clamp(15px, 2vw, 40px);
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100vw - 150px);
+}
+
+.dash-username span {
+  font-size: clamp(0.9rem, 2.5vw, 2.8rem);
+  white-space: nowrap;
+}
+
+.dash-title {
+  align-self: flex-start;
+  margin-left: 15px;
+  height: clamp(50px, 8vh, 104px);
+  width: clamp(120px, 24vw, 465px);
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-title span {
+  font-size: clamp(1rem, 4.5vw, 4.5rem);
+}
+
+.dash-empty {
+  align-self: center;
+  width: 90vw;
+  max-width: 1571px;
+  height: clamp(60px, 14.5vh, 210px);
+  background-color: transparent !important;
+  margin-top: clamp(20px, 8vh, 150px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-empty span {
+  font-size: clamp(1rem, 5vw, 5rem);
+  text-align: center;
+}
+
+.dash-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 95vw;
+  margin-top: clamp(20px, 8vh, 100px);
+  gap: 15px;
+  position: relative;
+}
+
+.dash-scroll-area {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 5px;
+  scrollbar-width: none;
+}
+
+.dash-scroll-area::-webkit-scrollbar {
+  display: none;
+}
+
+.dash-quiz-card {
+  flex-shrink: 0;
+  width: 406px;
+  height: 240px;
+  background-color: #000c42 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.dash-quiz-card:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+.dash-quiz-card span {
+  font-size: 60px;
+  text-align: center;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dash-arrow {
+  flex-shrink: 0;
+  width: 85px;
+  height: 85px;
+  background-color: transparent !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s;
+}
+
+.dash-arrow:active {
+  transform: scale(0.9);
+}
+
+.dash-new-btn {
+  align-self: center;
+  width: clamp(280px, 60vw, 1113px);
+  height: clamp(60px, 14.5vh, 210px);
+  background-color: #000c42 !important;
+  margin-top: clamp(20px, 10vh, 150px);
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.dash-new-btn:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+.dash-new-btn span {
+  font-size: clamp(1.5rem, 6vw, 6.25rem);
+}
