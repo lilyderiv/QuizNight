@@ -1,67 +1,53 @@
-const redis = require("./redisClient");
+/**
+ * scoringManager.js  (REFACTORED v2.0)
+ * ─────────────────────────────────────────────────────────────
+ * Düşük seviyeli puan hesaplama yardımcısı.
+ * Bu modül artık doğrudan Redis'e değil, redisOperations.js
+ * üzerinden erişir. Socket.io handler'ları bu modülü değil,
+ * roomManager.js'yi çağırmalıdır.
+ * ─────────────────────────────────────────────────────────────
+ */
+
+"use strict";
+
+const { ScoringOperations } = require("./redisOperations");
 
 class ScoringManager {
-  // 1. Sorunun Başlaması (Server Saati Alınır)
-  static async startQuestion(roomId, questionId) {
-    const serverTime = Date.now(); // İstemci saati değil, Node.js sunucu saati
-
-    await redis.hset(`room:${roomId}`, {
-      status: "playing",
-      currentQuestionId: questionId,
-      questionStartTime: serverTime,
-    });
-
-    return serverTime; // İstemcilere referans olarak gönderilecek
+  /**
+   * Soruyu başlatır, sunucu saatini döner.
+   * @param {string} pin
+   * @param {number} questionId
+   * @param {number} questionIdx
+   * @returns {number} serverTime (ms) — istemcilere referans olarak gönderilir
+   */
+  static async startQuestion(pin, questionId, questionIdx = 0) {
+    return ScoringOperations.startQuestion(pin, questionId, questionIdx);
   }
 
-  // 2. Cevap Gönderimi ve Puan Hesaplama
-  static async submitAnswer(roomId, playerId, isCorrect) {
-    if (!isCorrect) return 0; // Yanlışsa puan yok
-
-    // Odanın güncel durumunu ve sorunun ne zaman başladığını alıyoruz
-    const roomData = await redis.hgetall(`room:${roomId}`);
-    if (roomData.status !== "playing") return 0;
-
-    const answerTime = Date.now();
-    const startTime = parseInt(roomData.questionStartTime);
-
-    // Hız hesaplaması (Milisaniye cinsinden geçen süre)
-    const timeTaken = answerTime - startTime;
-
-    // Örnek Puan Algoritması: 10 saniye (10000ms) üzerinden azalan puan
-    const maxTimeLimit = 10000;
-    let points = 1000 - Math.floor((timeTaken / maxTimeLimit) * 1000);
-
-    // Negatif puanı engelle, en az 10 puan garanti olsun
-    points = Math.max(10, points);
-
-    // Redis üzerinde skoru atomik olarak (ZINCRBY) artırıyoruz
-    await redis.zincrby(`leaderboard:${roomId}`, points, playerId);
-
-    return points;
-  }
-
-  // 3. Güncel Puan Tablosunu Çekme
-  static async getLeaderboard(roomId) {
-    // En yüksekten en düşüğe (ZREVRANGE) skorlarla beraber (WITHSCORES) getir
-    const results = await redis.zrevrange(
-      `leaderboard:${roomId}`,
-      0,
-      -1,
-      "WITHSCORES",
+  /**
+   * Cevabı işler, puanı hesaplar ve Redis'e yazar.
+   * @param {string}  pin
+   * @param {string}  playerId
+   * @param {boolean} isCorrect      — doğruluk dışarıda (MySQL'de) belirlenir
+   * @param {number}  timeLimitMs    — quizden gelen süre limiti
+   * @returns {{ points: number, alreadyAnswered: boolean }}
+   */
+  static async submitAnswer(pin, playerId, isCorrect, timeLimitMs = 30000) {
+    return ScoringOperations.submitAnswer(
+      pin,
+      playerId,
+      isCorrect,
+      timeLimitMs,
     );
+  }
 
-    const leaderboard = [];
-    // Redis bu veriyi düz bir array olarak döner: ["player1", "900", "player2", "850"]
-    // Bunu JSON formatına dönüştürüyoruz
-    for (let i = 0; i < results.length; i += 2) {
-      leaderboard.push({
-        playerId: results[i],
-        score: parseInt(results[i + 1]),
-      });
-    }
-
-    return leaderboard;
+  /**
+   * Anlık liderlik tablosunu döner (sıralı, nicknameli).
+   * @param {string} pin
+   * @returns {Array} [{ rank, playerId, nickname, score }]
+   */
+  static async getLeaderboard(pin) {
+    return ScoringOperations.getLeaderboard(pin);
   }
 }
 
