@@ -1,3 +1,5 @@
+import "./CreateQuizSettings.css";
+import { mockUser } from "../mockData";
 import React from "react";
 
 export default function CreateQuizSettings({
@@ -8,8 +10,8 @@ export default function CreateQuizSettings({
   return (
     <div className="cq-container">
       <div className="cq-username neon-box">
-        <span className="neon-text" title="Hilal Çakıroğlu">
-          Hilal Çakıroğlu
+        <span className="neon-text" title={mockUser.fullName}>
+          {mockUser.fullName}
         </span>
       </div>
       <div className="cq-form-area">

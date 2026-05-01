@@ -1,0 +1,156 @@
+.pin-screen-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100dvh;
+  padding-top: 10dvh;
+  padding-bottom: 2dvh;
+  gap: 2.5dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.pin-host-label {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.pin-host-label span {
+  font-size: min(4.5vw, 5dvh, 60px);
+  white-space: nowrap;
+}
+
+.pin-host-input {
+  background-color: #000c42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  color: white;
+  font-family: inherit;
+  font-size: min(6vw, 7dvh, 80px);
+  outline: none;
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+
+.pin-label-box {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 41.5vw;
+  max-width: 797px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.pin-label-box span {
+  font-size: min(4.5vw, 5dvh, 60px);
+  white-space: nowrap;
+}
+
+.pin-code-box {
+  background-color: #000c42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.pin-code-box span {
+  font-size: min(7vw, 8dvh, 90px);
+  letter-spacing: min(2vw, 15px);
+  white-space: nowrap;
+}
+
+.pin-info-box {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 9.9dvh;
+  max-height: 143px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.pin-info-box span {
+  font-size: min(4vw, 4.5dvh, 55px);
+  white-space: nowrap;
+}
+
+.pin-start-button {
+  background-color: #000c42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 90vw;
+  max-width: 1728px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.pin-start-button span {
+  font-size: min(5vw, 5.5dvh, 65px);
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.pin-start-button:active {
+  transform: scale(0.96);
+  filter: brightness(1.2);
+}
+
+@media (max-width: 768px) {
+  .pin-screen-container {
+    gap: 1.5dvh;
+    padding-top: 8dvh;
+  }
+  .pin-info-box span {
+    white-space: normal;
+    text-align: center;
+    line-height: 1.1;
+  }
+}

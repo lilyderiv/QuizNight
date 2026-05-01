@@ -1,0 +1,44 @@
+.waiting-room-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100vw;
+  height: 100dvh;
+  padding-bottom: 8dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.waiting-message-box {
+  background-color: transparent !important;
+  border: min(0.6dvh, 6px) solid white;
+  border-radius: min(3dvh, 30px);
+  width: 90vw;
+  max-width: 1724px;
+  height: 51dvh;
+  max-height: 741px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+  padding: 20px;
+}
+
+.waiting-message-box span {
+  font-size: min(8vw, 9dvh, 160px);
+  line-height: 1.2;
+  font-weight: bold;
+  text-transform: uppercase;
+  word-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .waiting-message-box span {
+    font-size: min(7vw, 6dvh);
+  }
+  .waiting-message-box {
+    height: 40dvh;
+  }
+}

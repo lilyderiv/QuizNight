@@ -1,3 +1,4 @@
+import "./JoinQuizMenu.css";
 import React from "react";
 
 export default function JoinQuizMenu({ setCurrentView }) {

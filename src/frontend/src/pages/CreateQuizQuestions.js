@@ -1,3 +1,4 @@
+import "./CreateQuizQuestions.css";
 import React from "react";
 
 export default function CreateQuizQuestions({

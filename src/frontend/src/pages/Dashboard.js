@@ -1,3 +1,5 @@
+import "./Dashboard.css";
+import { mockUser } from "../mockData";
 import React, { useRef, useEffect, useState } from "react";
 
 export default function Dashboard({ quizzes, openCreateQuiz, setCurrentView }) {
@@ -58,8 +60,8 @@ export default function Dashboard({ quizzes, openCreateQuiz, setCurrentView }) {
       </div>
 
       <div className="dash-username neon-box">
-        <span className="neon-text" title="Hilal Çakıroğlu">
-          Hilal Çakıroğlu
+        <span className="neon-text" title={mockUser.fullName}>
+          {mockUser.fullName}
         </span>
       </div>
 

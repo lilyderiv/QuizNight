@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
+import "./styles/components.css";
+
+import {
+  mockUser,
+  mockUserQuizzes,
+  mockQuizList,
+  mockLeaderboardData,
+  mockActiveQuizQs,
+} from "./mockData";
 
 import BackButton from "./components/BackButton";
 import SettingsButton from "./components/SettingsButton";
@@ -65,47 +74,16 @@ function App() {
 
   const [currentQIndex, setCurrentQIndex] = useState(0);
 
-  const [quizList] = useState([
-    { id: 1, name: "English A2 test", difficulty: 1, date: 8 },
-    { id: 2, name: "Ülkeler", difficulty: 2, date: 7 },
-    { id: 3, name: "Genel Kültür", difficulty: 2, date: 6 },
-    { id: 4, name: "Şairler / Yazarlar", difficulty: 3, date: 5 },
-    { id: 5, name: "İlçeler", difficulty: 1, date: 4 },
-    { id: 6, name: "Futbolcular", difficulty: 1, date: 3 },
-    { id: 7, name: "Pop Şarkılar", difficulty: 1, date: 2 },
-    { id: 8, name: "Savaşlar", difficulty: 3, date: 1 },
-  ]);
+  const [quizList] = useState(mockQuizList);
 
-  const [leaderboardData, setLeaderboardData] = useState([
-    { id: 1, name: "Cookie", score: 10, total: 10 },
-    { id: 2, name: "Alice", score: 9, total: 10 },
-    { id: 3, name: "Strawberry", score: 9, total: 10 },
-    { id: 4, name: "The Champ", score: 7, total: 10 },
-    { id: 5, name: "Eugene", score: 2, total: 10 },
-    { id: 6, name: "Hilal", score: 1, total: 10 },
-  ]);
+  const [leaderboardData, setLeaderboardData] = useState(mockLeaderboardData);
 
   const [playQIndex, setPlayQIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
   const [feedbackStatus, setFeedbackStatus] = useState(null);
 
-  const [activeQuizQs] = useState([
-    {
-      id: 1,
-      text: "İstiklal Marşı'mızın şairi kimdir?",
-      time: 25,
-      answers: ["Mehmet Akif Ersoy", "Attila İlhan", "Sait Faik Abasıyanık", "Cahit Zarifoğlu"],
-      correct: "Mehmet Akif Ersoy",
-    },
-    {
-      id: 2,
-      text: "Türkiye'nin başkenti neresidir?",
-      time: 15,
-      answers: ["İstanbul", "Ankara", "İzmir", "Bursa"],
-      correct: "Ankara",
-    },
-  ]);
+  const [activeQuizQs] = useState(mockActiveQuizQs);
 
   const generateRandomPin = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -144,14 +122,7 @@ function App() {
 
   const handleLoginClick = () => {
     setLoginError(false);
-    setQuizzes([
-      { id: 1, name: "A2 İngilizce Kelimeler" },
-      { id: 2, name: "Genel Kültür 1" },
-      { id: 3, name: "Eser-Yazar Eşleşmeleri" },
-      { id: 4, name: "Dört İşlem" },
-      { id: 5, name: "Organik Kimya" },
-      { id: 6, name: "Şarkı sözleri" },
-    ]);
+    setQuizzes(mockUserQuizzes);
     setCurrentView("dashboard");
   };
 
@@ -248,7 +219,12 @@ function App() {
 
   const finishAndGoToLeaderboard = () => {
     const activeName = hostNickname || playerNickname || "Gizli Oyuncu";
-    const myResult = { id: 999, name: activeName, score: 11, total: 10 };
+    const myResult = { 
+      id: 999, 
+      name: activeName, 
+      score: DEV_MODE ? 11 : 0, // DEV_MODE false olunca gerçek skor gelecek
+      total: 10 
+    };
     const updatedLeaderboard = [
       ...leaderboardData.filter((p) => p.id !== 999),
       myResult,
