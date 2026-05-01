@@ -1,3 +1,4 @@
+import "./Leaderboard.css";
 import React from "react";
 
 export default function Leaderboard({ leaderboardData }) {

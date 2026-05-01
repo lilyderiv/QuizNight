@@ -1,3 +1,4 @@
+import "./RegisterForm.css";
 import React from "react";
 
 export default function RegisterForm({ onRegister }) {

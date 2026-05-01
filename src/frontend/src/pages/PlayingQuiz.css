@@ -1,0 +1,222 @@
+.play-quiz-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  height: 100dvh;
+  padding-top: 12dvh;
+  padding-bottom: 3dvh;
+  gap: 2.5dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.play-top-fixed-bar {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  display: flex;
+  gap: 15px;
+  z-index: 100;
+}
+
+.play-options-dropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: #000c42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 5px;
+  min-width: 150px;
+}
+
+.play-options-dropdown button {
+  background: transparent;
+  border: none;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 1.2rem;
+}
+
+.play-info-row {
+  display: flex;
+  justify-content: space-between;
+  width: 96vw;
+  max-width: 1846px;
+}
+
+.play-counter-box,
+.play-timer-box {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(1.5dvh, 15px);
+  width: 21vw;
+  max-width: 415px;
+  height: 13dvh;
+  max-height: 193px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.play-counter-box span,
+.play-timer-box span {
+  font-size: min(6vw, 6dvh, 70px);
+  white-space: nowrap;
+}
+
+.play-question-box {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 96vw;
+  max-width: 1846px;
+  height: 14dvh;
+  max-height: 203px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  padding: 0 2vw;
+}
+
+.play-question-box span {
+  font-size: min(5vw, 5dvh, 60px);
+  text-align: center;
+}
+
+.play-answers-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96vw;
+  max-width: 1846px;
+  gap: 2vw;
+}
+
+.play-answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2vw;
+  flex-grow: 1;
+}
+
+.play-answer-btn {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  height: 19dvh;
+  max-height: 285px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+  padding: 0 10px;
+}
+
+.play-answer-btn span {
+  font-size: min(4.5vw, 4dvh, 50px);
+  text-align: center;
+}
+
+.play-answer-btn:active {
+  transform: scale(0.97);
+  filter: brightness(1.2);
+}
+
+.play-next-arrow {
+  background-color: #000c42 !important;
+  border: min(0.3dvh, 3px) solid white;
+  border-radius: 50%;
+  width: min(8vw, 90px);
+  height: min(8vw, 90px);
+  flex-shrink: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.play-next-arrow:active {
+  transform: scale(0.9);
+}
+
+.play-end-quiz-btn {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 39vw;
+  max-width: 755px;
+  height: 10dvh;
+  max-height: 146px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.play-end-quiz-btn span {
+  font-size: min(5vw, 5dvh, 55px);
+  white-space: nowrap;
+}
+
+.feedback-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100dvh;
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.feedback-circle {
+  background-color: #000c42 !important;
+  border: min(0.6dvh, 6px) solid white;
+  border-radius: 50%;
+  width: min(30vw, 30dvh, 300px);
+  height: min(30vw, 30dvh, 300px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.9),
+    inset 0 0 20px rgba(255, 255, 255, 0.5);
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.feedback-circle svg {
+  width: 60%;
+  height: 60%;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .play-answers-grid {
+    gap: 10px;
+  }
+  .play-answers-wrapper {
+    gap: 10px;
+  }
+  .play-next-arrow {
+    width: 45px;
+    height: 45px;
+  }
+}

@@ -1,4 +1,7 @@
 import React from "react";
+import "./WaitingRoom.css";
+
+const DEV_MODE = true; // Projeyi teslim ederken false yapilacak
 
 export default function WaitingRoom({ startQuiz }) {
   return (
@@ -12,13 +15,16 @@ export default function WaitingRoom({ startQuiz }) {
           BEKLEMEDESİN :)
         </span>
       </div>
-      <button
-        className="pin-confirm-button neon-box"
-        style={{ marginTop: "3dvh", backgroundColor: "rgba(0, 12, 66, 0.8)" }}
-        onClick={startQuiz}
-      >
-        <span className="neon-text">TEST: OYUNU BAŞLAT</span>
-      </button>
+
+      {DEV_MODE && (
+        <button
+          className="pin-confirm-button neon-box"
+          style={{ marginTop: "3dvh", backgroundColor: "rgba(0, 12, 66, 0.8)" }}
+          onClick={startQuiz}
+        >
+          <span className="neon-text">TEST: OYUNU BAŞLAT</span>
+        </button>
+      )}
     </div>
   );
 }

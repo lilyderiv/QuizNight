@@ -1,3 +1,4 @@
+import "./AuthMenu.css";
 import React from "react";
 
 export default function AuthMenu({ setCurrentView }) {

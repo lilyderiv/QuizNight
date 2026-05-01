@@ -1,0 +1,244 @@
+.cq-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  min-height: 100vh;
+  padding-top: 100px;
+  padding-bottom: 5vh;
+  box-sizing: border-box;
+}
+
+.cq-username {
+  position: absolute;
+  top: 15px;
+  left: 140px;
+  height: 50px;
+  padding: 0 20px;
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.cq-username span {
+  font-size: clamp(0.9rem, 2.5vw, 2.5rem);
+  color: white;
+  white-space: nowrap;
+}
+
+.cq-form-area {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  max-width: 1400px;
+  margin-top: 20px;
+  gap: 3.5vh;
+  align-items: center;
+}
+
+.cq-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.cq-label {
+  width: 37%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.cq-label span {
+  font-size: clamp(1rem, 2.5vw, 3.5rem);
+  color: white !important;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.1;
+  word-wrap: break-word;
+}
+
+.cq-input {
+  width: 61%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: #000c42 !important;
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: clamp(1.2rem, 3vw, 4rem);
+  padding: 0 30px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s;
+}
+
+.cq-input:focus {
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.9),
+    inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.cq-time-container {
+  width: 61%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cq-select-box {
+  width: 48%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: #000c42 !important;
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  position: relative;
+}
+
+.cq-select {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: clamp(1.2rem, 3vw, 4rem);
+  text-align: center;
+  padding-right: 50px;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.cq-select option {
+  background-color: rgba(0, 12, 66, 0.9);
+  color: white;
+  font-size: 1.5rem;
+}
+
+.cq-suffix {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(1.2rem, 3vw, 4rem);
+  pointer-events: none;
+}
+
+.cq-level-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 0;
+  gap: 3.5vh;
+}
+
+.cq-level-title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 90vw;
+  max-width: 1400px;
+  position: relative;
+  gap: 15px;
+}
+
+.cq-level-title {
+  width: clamp(150px, 50vw, 600px) !important;
+  height: clamp(60px, 10vh, 120px);
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 1;
+}
+
+.cq-level-title span {
+  font-size: clamp(1.2rem, 3vw, 4rem);
+}
+
+.cq-next-btn {
+  position: absolute;
+  right: 0;
+  width: clamp(45px, 10vw, 80px);
+  height: clamp(45px, 10vw, 80px);
+  background-color: #000c42 !important;
+  border-radius: 50%;
+  border: 0.5vh solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.1s;
+}
+
+.cq-next-btn:active {
+  transform: scale(0.9);
+}
+
+.cq-level-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cq-level-btn {
+  width: 31%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: #000c42 !important;
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.cq-level-btn span {
+  font-size: clamp(1.2rem, 3.5vw, 4.5rem);
+}
+
+.cq-level-btn:active {
+  transform: scale(0.95);
+}
+
+.cq-level-btn.dimmed {
+  position: relative;
+}
+
+.cq-level-btn.dimmed::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 1vh;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .cq-level-title span {
+    font-size: 1.5rem !important;
+  }
+}

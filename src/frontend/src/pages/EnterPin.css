@@ -1,0 +1,135 @@
+.enter-pin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100dvh;
+  gap: 5dvh;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-top: 5dvh;
+}
+
+.enter-pin-name-label {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 90vw;
+  max-width: 1754px;
+  height: clamp(50px, 10vh, 140px);
+  min-height: 50px;
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.enter-pin-name-label span {
+  font-size: clamp(1.5rem, 4vw, 55px);
+  white-space: nowrap;
+}
+
+.enter-pin-name-input {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 90vw;
+  max-width: 1754px;
+  height: clamp(50px, 10vh, 140px);
+  min-height: 50px;
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-family: inherit;
+  font-size: clamp(2rem, 5vw, 70px);
+  outline: none;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.enter-pin-label {
+  background-color: transparent !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 90vw;
+  max-width: 1724px;
+  height: 18dvh;
+  max-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.enter-pin-label span {
+  font-size: min(8vw, 8dvh);
+  white-space: nowrap;
+}
+
+.enter-pin-input {
+  background-color: #000c42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 90vw;
+  max-width: 1724px;
+  height: 20dvh;
+  max-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  text-align: center;
+  color: white;
+  font-family: inherit;
+  font-size: min(11vw, 11dvh);
+  letter-spacing: min(3vw, 20px);
+  outline: none;
+}
+
+.enter-pin-input::placeholder,
+.enter-pin-name-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.pin-confirm-button {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  height: clamp(60px, 10dvh, 100px);
+  padding: 0 60px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 4dvh;
+  transition: transform 0.1s, box-shadow 0.2s;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.pin-confirm-button span {
+  font-size: min(4.5vw, 3.5dvh, 32px);
+  white-space: nowrap;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.pin-confirm-button:active {
+  transform: scale(0.96);
+  filter: brightness(1.3);
+}
+
+@media (max-width: 768px) {
+  .pin-confirm-button {
+    width: 60vw;
+    margin-top: 5vh;
+    margin-bottom: 5vh;
+  }
+}
