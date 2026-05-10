@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import "./styles/components.css";
 
@@ -28,6 +28,9 @@ import Leaderboard from "./pages/Leaderboard";
 import Settings from "./pages/Settings";
 import CreateQuizSettings from "./pages/CreateQuizSettings";
 import CreateQuizQuestions from "./pages/CreateQuizQuestions";
+
+// Test modu için eklendi (Hata vermemesi için)
+const DEV_MODE = true;
 
 function App() {
   const [currentView, setCurrentView] = useState("mainMenu");
@@ -73,9 +76,7 @@ function App() {
   ]);
 
   const [currentQIndex, setCurrentQIndex] = useState(0);
-
   const [quizList] = useState(mockQuizList);
-
   const [leaderboardData, setLeaderboardData] = useState(mockLeaderboardData);
 
   const [playQIndex, setPlayQIndex] = useState(0);
@@ -84,6 +85,36 @@ function App() {
   const [feedbackStatus, setFeedbackStatus] = useState(null);
 
   const [activeQuizQs] = useState(mockActiveQuizQs);
+
+  // --- MÜZİK MOTORU (YENİ EKLENEN KISIM) ---
+  const audioRef = useRef(null);
+
+  // 1. Müzik Aç/Kapat Kontrolü
+  useEffect(() => {
+    if (audioRef.current) {
+      if (isMusicMuted) {
+        audioRef.current.pause();
+      } else {
+        // Tarayıcı engelini aşmak için catch bloğu
+        audioRef.current.play().catch((e) => console.log("Otomatik oynatma bekliyor..."));
+      }
+    }
+  }, [isMusicMuted]);
+
+  // 2. Müzik Ses Seviyesi Kontrolü (1 ile 100 arası değeri 0.0 ile 1.0 arasına çevirir)
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = musicVolume / 100;
+    }
+  }, [musicVolume]);
+
+  // 3. Tarayıcı engelini kırmak için ilk tıklamada müziği tetikleme
+  const handleFirstInteraction = () => {
+    if (audioRef.current && audioRef.current.paused && !isMusicMuted) {
+      audioRef.current.play().catch((e) => console.log("Müzik başlatılamadı", e));
+    }
+  };
+  // ----------------------------------------
 
   const generateRandomPin = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -222,7 +253,7 @@ function App() {
     const myResult = { 
       id: 999, 
       name: activeName, 
-      score: DEV_MODE ? 11 : 0, // DEV_MODE false olunca gerçek skor gelecek
+      score: DEV_MODE ? 11 : 0, 
       total: 10 
     };
     const updatedLeaderboard = [
@@ -280,7 +311,17 @@ function App() {
   }, [currentView, timeLeft, feedbackStatus]);
 
   return (
-    <div className="app-container">
+    // Ekrana tıklama olayı (onClick) tarayıcı güvenlik politikasını aşmak için eklendi
+    <div className="app-container" onClick={handleFirstInteraction}>
+      
+      {/* ARKA PLAN SES OYNATICISI */}
+      <audio 
+        ref={audioRef} 
+        src="/background-music.mp3" 
+        autoPlay 
+        loop 
+      />
+
       <BackButton
         currentView={currentView}
         setCurrentView={setCurrentView}
