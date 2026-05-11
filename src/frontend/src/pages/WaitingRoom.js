@@ -1,11 +1,17 @@
 import React from "react";
 import "./WaitingRoom.css";
 
-const DEV_MODE = true; // Projeyi teslim ederken false yapilacak
+// DEV_MODE: true iken "TEST: OYUNU BAŞLAT" butonu görünür.
+// Projeyi teslim ederken false yap, buton otomatik kaybolur.
+const DEV_MODE = true;
 
-export default function WaitingRoom({ startQuiz }) {
+// Bekleme odası ekranı.
+// Oyuncular quize katılırken host bu ekranda bekler.
+// Gerçek uygulamada WebSocket ile oyuncu listesi burada görünecek.
+export default function WaitingRoom({ startQuiz, playClick }) {
   return (
     <div className="waiting-room-container">
+      {/* Büyük bekleme mesajı kutusu */}
       <div className="waiting-message-box neon-box">
         <span className="neon-text">
           HERKES TOPLANANA
@@ -16,11 +22,12 @@ export default function WaitingRoom({ startQuiz }) {
         </span>
       </div>
 
+      {/* DEV_MODE açıkken görünen test butonu. Database bağlanınca kaldırılacak. */}
       {DEV_MODE && (
         <button
           className="pin-confirm-button neon-box"
           style={{ marginTop: "3dvh", backgroundColor: "rgba(0, 12, 66, 0.8)" }}
-          onClick={startQuiz}
+          onClick={() => { playClick(); startQuiz(); }}
         >
           <span className="neon-text">TEST: OYUNU BAŞLAT</span>
         </button>

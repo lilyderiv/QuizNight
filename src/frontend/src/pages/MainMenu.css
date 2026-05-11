@@ -6,12 +6,12 @@
 }
 
 .title-text {
-  font-size: clamp(1rem, 10vmin, 11vh);
-  line-height: 1;
+  font-size: clamp(1rem, 10vmin, 11vh); /* Ekranın hem dikey hem yatay olarak en küçük kenarını baz alan (vmin) bir hesaplama kullanır */
+  line-height: 1; /* Satır aralığını daraltarak metnin kutusuna tam oturmasını sağlar */
 }
 
 .characters-container {
-  flex: 1;
+  flex: 1; /* Kapsayıcı içindeki kalan tüm boşluğu (diğer öğelerden artan alanı) doldurur */
   width: 100%;
   min-height: 10vh;
 }
@@ -19,7 +19,7 @@
 .subtitle-box {
   width: 93.2vw;
   height: 11vh;
-  margin-bottom: 2vh;
+  margin-bottom: 2vh; /* Öğenin alt kısmından dış boşluk bırakır */
 }
 
 .subtitle-text {
@@ -28,11 +28,11 @@
 
 .button-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: row; /* Butonları yan yana dizer */
   justify-content: center;
   gap: 3vw;
   width: 100%;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Öğeler ekrana sığmadığında otomatik olarak alt satıra geçmelerine izin verir */
   padding: 0 10px;
 }
 
@@ -61,11 +61,11 @@
 
 @media (max-width: 768px) {
   .button-container {
-    flex-direction: row;
+    flex-direction: row; /* Mobilde de butonların yan yana dizilmesini zorunlu tutar */
     gap: 10px;
   }
   .action-button {
-    width: 45vw;
-    height: 20vh;
+    width: 45vw; /* Mobilde butonların genişliğini ekranın %45'i ile sabitler */
+    height: 20vh; /* Yüksekliğini ekranın %20'si yapar */
   }
 }

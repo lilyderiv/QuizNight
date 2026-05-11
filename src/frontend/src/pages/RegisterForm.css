@@ -1,41 +1,41 @@
 .register-page-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: clamp(20px, 4vh, 40px);
-  width: 100%;
-  min-height: 100%;
-  padding: 100px 5vw 5vh 5vw;
+  display: flex; /* Esnek hizalama (flexbox) modelini açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: flex-start; /* İçerikleri ekranın en üstünden başlatır */
+  gap: clamp(20px, 4vh, 40px); /* Flex içindeki öğeler arasına dinamik (min, ideal, max) bir boşluk koyar */
+  width: 100%; /* Bulunduğu alanın tüm genişliğini kaplar */
+  min-height: 100%; /* Bulunduğu alanın en az tamamı kadar uzamasını sağlar */
+  padding: 100px 5vw 5vh 5vw; /* Üst, sağ, alt, sol iç boşlukları sırasıyla ayarlar */
 }
 
 .form-row {
-  display: grid;
-  grid-template-columns: 37.6% 60%;
-  justify-content: space-between;
+  display: grid; /* Öğeleri tablo (ızgara) düzeninde hizalamak için Grid modelini açar */
+  grid-template-columns: 37.6% 60%; /* Sütunları bölüştürür (Sol sütun %37.6, sağ sütun %60 genişliğinde) */
+  justify-content: space-between; /* İki sütun arasındaki boşluğu (kalan %2.4'ü) araya dağıtır */
   width: 90vw;
-  max-width: 1200px;
+  max-width: 1200px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
   align-items: center;
 }
 
 .form-label {
   width: 100%;
-  height: clamp(60px, 10vh, 120px);
+  height: clamp(60px, 10vh, 120px); /* Yüksekliği ekran boyutuna göre dinamik olarak sınırlar */
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #000c42 !important;
-  border: 0.5vh solid white;
-  border-radius: 2vh;
-  box-shadow:
-    0 0 15px rgba(255, 255, 255, 0.5),
+  background-color: #000c42 !important; /* Arka plan rengini zorunlu (!important) koyu lacivert yapar */
+  border: 0.5vh solid white; /* Beyaz çerçeve ekler */
+  border-radius: 2vh; /* Köşeleri dinamik olarak yuvarlatır */
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.5), /* Kutuya dışarı doğru parlama ve içe doğru (inset) gölge efekti verir */
     inset 0 0 10px rgba(255, 255, 255, 0.3);
-  box-sizing: border-box !important;
+  box-sizing: border-box !important; /* Zorunlu olarak padding ve border değerlerini toplam boyuta dahil eder */
 }
 
 .form-label span {
-  font-size: clamp(1.5rem, 4vw, 4rem);
-  color: white !important;
+  font-size: clamp(1.5rem, 4vw, 4rem); /* Yazı boyutunu ekran büyüklüğüne göre dinamik ayarlar */
+  color: white !important; /* Yazı rengini zorunlu beyaz yapar */
 }
 
 .neon-input {
@@ -44,32 +44,32 @@
   background-color: #000c42 !important;
   border: 0.5vh solid white;
   border-radius: 2vh;
-  box-shadow:
+  box-shadow: 
     0 0 15px rgba(255, 255, 255, 0.5),
     inset 0 0 10px rgba(255, 255, 255, 0.3);
   color: white;
   font-size: clamp(1.5rem, 4vw, 4rem);
   padding: 0 20px;
-  outline: none;
-  transition: all 0.2s;
+  outline: none; /* Tıklanınca çıkan varsayılan odaklanma (focus) çerçevesini kaldırır */
+  transition: all 0.2s; /* Durum değişikliklerindeki (hover/focus) animasyonu yumuşatır */
   box-sizing: border-box !important;
-  -webkit-appearance: none;
-  appearance: none;
+  -webkit-appearance: none; /* iOS/Safari gibi tarayıcılardaki varsayılan form stillerini sıfırlar */
+  appearance: none; /* Standart varsayılan form stillerini sıfırlar */
 }
 
 .neon-input:focus {
-  box-shadow:
+  box-shadow: 
     0 0 25px rgba(255, 255, 255, 0.9),
     inset 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 .neon-input::placeholder {
   color: rgba(255, 255, 255, 0.3);
-  text-shadow: none;
+  text-shadow: none; /* Varsa metin gölgesini kaldırır */
 }
 
 .submit-button {
-  margin-top: 3vh;
+  margin-top: 3vh; /* Öğenin üstünden dış boşluk bırakır */
   width: clamp(280px, 60vw, 1113px) !important;
   background-color: #000c42 !important;
   min-height: clamp(60px, 10vh, 120px);
@@ -77,10 +77,11 @@
 
 .submit-button span {
   font-size: clamp(1.2rem, 5vw, 4rem) !important;
-  white-space: nowrap;
+  white-space: nowrap; /* Metnin alt satıra geçmesini engeller, tek satırda tutar */
 }
 
 @media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil cihazlar) ve altındayken uygulanacak kurallar */
   .form-row {
     grid-template-columns: 100%;
     gap: 2vh;
