@@ -1,76 +1,79 @@
 .settings-page-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: clamp(20px, 6vh, 100px);
-  min-height: 100%;
-  width: 100%;
-  padding: 5vh 0;
+  display: flex; /* Esnek hizalama (flexbox) modelini açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  justify-content: center; /* İçerikleri dikey eksende ortalar */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  gap: clamp(20px, 6vh, 100px); /* Flex içindeki öğeler arasına dinamik (min, ideal, max) bir boşluk koyar */
+  min-height: 100%; /* Bulunduğu alanın en az tamamı kadar uzamasını sağlar */
+  width: 100%; /* Bulunduğu alanın tüm genişliğini kaplar */
+  padding: 5vh 0; /* Üst ve alttan 5vh iç boşluk bırakır, sağ/sol boşlukları sıfırlar */
 }
 
 .setting-row {
   display: flex;
-  flex-direction: row;
+  flex-direction: row; /* Öğeleri yan yana dizer */
   align-items: center;
   gap: clamp(10px, 4vw, 50px);
   width: 90vw;
-  max-width: 1200px;
+  max-width: 1200px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
   justify-content: center;
 }
 
 .icon-btn {
   width: clamp(50px, 11vw, 150px);
-  height: clamp(50px, 11vw, 150px);
-  border: 0.5vh solid white;
-  border-radius: 2vh;
-  background-color: #000c42 !important;
-  cursor: pointer;
+  height: clamp(50px, 11vw, 150px); /* Yüksekliği ekran boyutuna göre dinamik olarak sınırlar */
+  border: 0.5vh solid white; /* Beyaz çerçeve ekler */
+  border-radius: 2vh; /* Köşeleri dinamik olarak yuvarlatır */
+  background-color: #000c42 !important; /* Arka plan rengini zorunlu (!important) koyu lacivert yapar */
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline dönüştürür */
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  transition: all 0.2s;
-  flex-shrink: 0;
+  position: relative; /* İçindeki absolute konumlu öğeler için referans noktası oluşturur */
+  transition: all 0.2s; /* Durum değişikliklerindeki (hover/focus) animasyonu yumuşatır */
+  flex-shrink: 0; /* Dar alanlarda öğenin esneyip küçülmesini engeller */
 }
 
 .icon-content {
-  font-size: clamp(2rem, 5vw, 6rem);
-  transition: opacity 0.2s;
+  font-size: clamp(2rem, 5vw, 6rem); /* Yazı boyutunu ekran büyüklüğüne göre dinamik ayarlar */
+  transition: opacity 0.2s; /* Sadece şeffaflık (opacity) değişimlerinde animasyon uygular */
 }
 
 .icon-btn.muted .icon-content {
-  opacity: 0.3;
+  opacity: 0.3; /* Öğeyi %30 görünür (yarı saydam) hale getirerek soluklaştırır */
 }
 
 .neon-slider {
-  -webkit-appearance: none;
-  appearance: none;
+  -webkit-appearance: none; /* iOS/Safari gibi tarayıcılardaki varsayılan kaydırma çubuğu stilini sıfırlar */
+  appearance: none; /* Standart tarayıcılardaki varsayılan stili sıfırlar */
   width: clamp(120px, 50vw, 1045px);
-  background: transparent;
-  outline: none;
+  background: transparent; /* Arka planı tamamen şeffaf yapar */
+  outline: none; /* Tıklanınca çıkan varsayılan odaklanma çerçevesini kaldırır */
 }
 
 .neon-slider::-webkit-slider-runnable-track {
+  /* Chrome/Safari'de kaydırma çubuğunun arka plandaki çizgi (iz) kısmını şekillendirir */
   width: 100%;
   height: 5px;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 5px;
-  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.5); /* Kutuya içe doğru (inset) parlama/gölge efekti verir */
 }
 
 .neon-slider::-webkit-slider-thumb {
+  /* Chrome/Safari'de kaydırma çubuğunun tutulup sürüklenen yuvarlak parçasını şekillendirir */
   -webkit-appearance: none;
   height: 30px;
   width: 30px;
-  border-radius: 50%;
-  background: #fff;
+  border-radius: 50%; /* Öğeyi tam yuvarlak (daire) yapar */
+  background: #fff; /* Renk kodunu kısaltılmış haliyle (white) atar */
   cursor: pointer;
-  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.8);
-  margin-top: -12.5px;
+  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.8); /* Dışa doğru katmanlı neon parlama efekti oluşturur */
+  margin-top: -12.5px; /* Sürükleme parçasını çizginin tam ortasına dikey hizalamak için yukarı çeker */
 }
 
 .neon-slider::-moz-range-track {
+  /* Firefox tarayıcısında arka plan çizgisini (izini) şekillendirir */
   width: 100%;
   height: 5px;
   background: rgba(255, 255, 255, 0.2);
@@ -79,22 +82,23 @@
 }
 
 .neon-slider::-moz-range-thumb {
+  /* Firefox tarayıcısında tutulup sürüklenen yuvarlak parçayı şekillendirir */
   height: 30px;
   width: 30px;
   border-radius: 50%;
   background: #fff;
   cursor: pointer;
   box-shadow: 0 0 10px #fff, 0 0 20px rgba(255, 255, 255, 0.8);
-  border: none;
+  border: none; /* Firefox'ta varsayılan olarak gelen tutamaç kenarlığını kaldırır */
 }
 
 .neon-svg {
   width: clamp(30px, 6vw, 80px);
   height: clamp(30px, 6vw, 80px);
-  filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
+  filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 15px rgba(255, 255, 255, 0.8)); /* SVG ikonlarına doğrudan gölge ve parlama efekti uygular */
 }
 
 .back-button {
   width: clamp(280px, 60vw, 1113px) !important;
-  margin-top: 5vh;
+  margin-top: 5vh; /* Öğenin üstünden ekranın %5'i kadar dış boşluk bırakır */
 }

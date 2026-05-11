@@ -1,21 +1,21 @@
 .login-page-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: clamp(15px, 4vh, 40px);
-  width: 100%;
-  min-height: 100%;
-  padding: clamp(80px, 10vh, 120px) 3vw 5vh 3vw;
+  display: flex; /* Esnek hizalama (flexbox) modelini açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: flex-start; /* İçerikleri ekranın en üstünden başlatır */
+  gap: clamp(15px, 4vh, 40px); /* Flex içindeki öğeler arasına dinamik (min, ideal, max) bir boşluk koyar */
+  width: 100%; /* Bulunduğu alanın tüm genişliğini kaplar */
+  min-height: 100%; /* Bulunduğu alanın en az tamamı kadar uzamasını sağlar */
+  padding: clamp(80px, 10vh, 120px) 3vw 5vh 3vw; /* Üst, sağ, alt, sol iç boşlukları sırasıyla ayarlar */
 }
 
 .login-form-row {
-  display: grid;
-  grid-template-columns: 37% 61.5%;
-  justify-content: space-between;
+  display: grid; /* Öğeleri tablo (ızgara) düzeninde hizalamak için Grid modelini açar */
+  grid-template-columns: 37% 61.5%; /* Sütunları bölüştürür (Sol sütun %37, sağ sütun %61.5 genişliğinde) */
+  justify-content: space-between; /* İki sütun arasındaki boşluğu (kalan %1.5'u) araya dağıtır */
   width: 94vw;
-  max-width: 1808px;
-  align-items: center;
+  max-width: 1808px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
+  align-items: center; /* Grid içindeki öğeleri dikeyde ortalar */
 }
 
 .login-label {
@@ -23,56 +23,56 @@
   height: clamp(70px, 14.5vh, 210px);
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: transparent !important;
-  border: 0.5vh solid white;
-  border-radius: 2vh;
-  box-shadow:
-    0 0 15px rgba(255, 255, 255, 0.5),
-    inset 0 0 10px rgba(255, 255, 255, 0.3);
-  box-sizing: border-box !important;
+  justify-content: center; /* İçeriği kendi kutusu içinde dikey ve yatayda tam ortaya hizalar */
+  background-color: transparent !important; /* Arka plan rengini zorunlu (!important) şeffaf yapar */
+  border: 0.5vh solid white; /* Beyaz çerçeve ekler */
+  border-radius: 2vh; /* Köşeleri dinamik olarak yuvarlatır */
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.5), /* Dışa doğru saydam beyaz parlama/gölge efekti */
+    inset 0 0 10px rgba(255, 255, 255, 0.3); /* İçe doğru (inset) parlama efekti */
+  box-sizing: border-box !important; /* Zorunlu olarak padding ve border değerlerini toplam boyuta dahil eder */
 }
 
 .login-label span {
-  font-size: clamp(1.5rem, 6vw, 6.25rem);
-  color: white !important;
-  white-space: nowrap;
+  font-size: clamp(1.5rem, 6vw, 6.25rem); /* Yazı boyutunu ekran büyüklüğüne göre dinamik ayarlar */
+  color: white !important; /* Yazı rengini zorunlu beyaz yapar */
+  white-space: nowrap; /* Metnin alt satıra geçmesini engeller, tek satırda tutar */
 }
 
 .login-input {
   width: 100%;
   height: clamp(70px, 14.5vh, 210px);
-  background-color: #000c42 !important;
+  background-color: #000c42 !important; /* Arka planı koyu lacivert yapar */
   border: 0.5vh solid white;
   border-radius: 2vh;
-  box-shadow:
+  box-shadow: 
     0 0 15px rgba(255, 255, 255, 0.5),
     inset 0 0 10px rgba(255, 255, 255, 0.3);
   color: white;
   font-size: clamp(1.5rem, 6vw, 6.25rem);
-  padding: 0 clamp(15px, 3vw, 40px);
-  outline: none;
-  transition: all 0.2s;
+  padding: 0 clamp(15px, 3vw, 40px); /* Üst/Alt padding'i 0, Sağ/Sol padding'i dinamik ayarlar */
+  outline: none; /* Tıklanınca çıkan varsayılan odaklanma (focus) çerçevesini kaldırır */
+  transition: all 0.2s; /* Hover, focus gibi durumlardaki animasyonları 0.2s sürede yumuşatır */
   box-sizing: border-box !important;
-  -webkit-appearance: none;
-  appearance: none;
-  overflow: hidden;
-  text-overflow: clip;
+  -webkit-appearance: none; /* iOS/Safari gibi tarayıcılardaki varsayılan form stillerini sıfırlar */
+  appearance: none; /* Standart varsayılan form stillerini sıfırlar */
+  overflow: hidden; /* Taşan içerikleri gizler */
+  text-overflow: clip; /* Metin taşarsa üç nokta (...) koymadan direkt keser */
 }
 
 .login-input:focus {
-  box-shadow:
-    0 0 25px rgba(255, 255, 255, 0.9),
+  box-shadow: 
+    0 0 25px rgba(255, 255, 255, 0.9), /* Odaklanınca parlama efektini güçlendirir */
     inset 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 .login-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-  text-shadow: none;
+  color: rgba(255, 255, 255, 0.3); /* Placeholder (ipucu) metninin rengini yarı saydam beyaz yapar */
+  text-shadow: none; /* Varsa metin gölgesini kaldırır */
 }
 
 .login-submit-button {
-  margin-top: 5vh;
+  margin-top: 5vh; /* Öğenin üstünden dış boşluk bırakır */
   width: clamp(280px, 60vw, 1113px) !important;
   height: clamp(70px, 14.5vh, 210px) !important;
   background-color: #000c42 !important;
@@ -81,7 +81,7 @@
   justify-content: center;
   border: 0.5vh solid white;
   border-radius: 2vh;
-  cursor: pointer;
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline dönüştürür */
   transition: transform 0.1s;
 }
 
@@ -91,48 +91,50 @@
 }
 
 .login-submit-button:active {
-  transform: scale(0.95);
-  filter: brightness(1.2);
+  transform: scale(0.95); /* Butona tıklandığı an boyutunu hafifçe küçültür */
+  filter: brightness(1.2); /* Tıklanma anında butonun rengini parlatır */
   box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
 }
 
 .login-error-box {
   margin-top: 3vh;
   width: clamp(280px, 60vw, 1113px);
-  min-height: clamp(80px, 15vh, 200px);
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  min-height: clamp(80px, 15vh, 200px); /* Yüksekliğin düşebileceği minimum sınırı dinamik ayarlar */
+  background-color: rgba(255, 255, 255, 0.1) !important; /* Yarı saydam hafif beyaz bir zemin verir */
   border: 0.3vh solid rgba(255, 255, 255, 0.5);
   padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: blinkError 2s infinite ease-in-out;
+  animation: blinkError 2s infinite ease-in-out; /* 'blinkError' animasyonunu sürekli (infinite) ve yumuşak geçişle çalıştırır */
 }
 
 .error-text {
-  color: #fff;
+  color: #fff; /* Renk kodunu kısaltılmış haliyle (white) atar */
   font-size: clamp(0.9rem, 2.5vw, 2rem);
-  text-align: center;
-  line-height: 1.4;
-  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-  white-space: normal;
-  word-wrap: break-word;
+  text-align: center; /* Metni kendi satırında yatay olarak ortalar */
+  line-height: 1.4; /* Satırlar arası yüksekliği ayarlar */
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Yazıya hafif bir gölge/parlama ekler */
+  white-space: normal; /* Metnin kendi sınırına geldiğinde alt satıra geçmesine izin verir */
+  word-wrap: break-word; /* Çok uzun kelimelerin kutudan taşmaması için bölünmesini sağlar */
 }
 
 @keyframes blinkError {
-  0% { opacity: 0.3; transform: scale(0.98); }
-  50% { opacity: 0.8; transform: scale(1); }
-  100% { opacity: 0.3; transform: scale(0.98); }
+  /* Hata kutusu için yanıp sönme (nefes alma) animasyonu keyframe'leri */
+  0% { opacity: 0.3; transform: scale(0.98); } /* Başlangıçta soluk ve hafif küçük */
+  50% { opacity: 0.8; transform: scale(1); } /* Ortasında daha belirgin ve normal boyutta */
+  100% { opacity: 0.3; transform: scale(0.98); } /* Sonunda tekrar başlangıç haline döner */
 }
 
 @media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil cihazlar) ve altındayken uygulanacak kurallar */
   .login-form-row {
-    grid-template-columns: 100%;
-    gap: 10px;
+    grid-template-columns: 100%; /* İki sütunu iptal edip tek tam sütun yapar (etiket ve input alt alta geçer) */
+    gap: 10px; /* Alt alta geçen öğeler arasına boşluk ekler */
   }
   .login-label,
   .login-input {
-    height: clamp(50px, 10vh, 80px);
+    height: clamp(50px, 10vh, 80px); /* Etiket ve input'un mobildeki yüksekliğini yeniden ayarlar */
   }
   .login-submit-button {
     height: clamp(60px, 12vh, 90px) !important;
@@ -142,6 +144,6 @@
     width: 90vw;
     margin-top: 15px;
     padding: 10px;
-    min-height: auto;
+    min-height: auto; /* Minimum yüksekliği otomatik bırakır, sadece içeriği kadar yer kaplar */
   }
 }
