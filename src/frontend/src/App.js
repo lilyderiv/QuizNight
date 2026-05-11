@@ -358,7 +358,8 @@ function App() {
     <div className="app-container" onClick={handleFirstInteraction}>
 
       {/* Arka plan müziği oynatıcısı (görünmez, otomatik döngüde çalar) */}
-      <audio ref={audioRef} src="/background-music.mp3" autoPlay loop />
+      <audio ref={audioRef} src="/background-music.mp3" autoPlay loop 
+      playClick={playClick} />
 
       {/* Her sayfada ortak: Geri butonu (oyun ekranı ve ana menüde gizlenir) */}
       <BackButton currentView={currentView} setCurrentView={setCurrentView} />
@@ -412,6 +413,7 @@ function App() {
           setCurrentView={setCurrentView}
           setCurrentPin={setCurrentPin}
           generateRandomPin={generateRandomPin}
+          playClick={playClick}
         />
       )}
 
@@ -456,12 +458,13 @@ function App() {
           handleNextPlayQuestion={handleNextPlayQuestion}
           finishAndGoToLeaderboard={finishAndGoToLeaderboard}
           setCurrentView={setCurrentView}
+          playClick={playClick}
         />
       )}
 
       {/* Sıralama Ekranı: Quiz sonuçları */}
       {currentView === "leaderboard" && (
-        <Leaderboard leaderboardData={leaderboardData} />
+        <Leaderboard leaderboardData={leaderboardData} playClick={playClick} />
       )}
 
       {/* Ayarlar Ekranı: Ses ve müzik kontrolleri */}
@@ -503,6 +506,7 @@ function App() {
           removeAnswer={removeAnswer}
           addNewPage={addNewPage}
           finishQuiz={finishQuiz}
+          playClick={playClick}
         />
       )}
     </div>

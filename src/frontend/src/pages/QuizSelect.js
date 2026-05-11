@@ -13,6 +13,7 @@ export default function QuizSelect({
   setCurrentView,
   setCurrentPin,
   generateRandomPin,
+  playClick,
 }) {
   // Sıralama dropdown'ının açık/kapalı durumu
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -61,7 +62,7 @@ export default function QuizSelect({
         <button
           className="settings-button"
           style={{ position: "relative", top: "0", left: "0", margin: "0" }}
-          onClick={() => setIsSortOpen(!isSortOpen)}
+          onClick={() => { playClick(); setIsSortOpen(!isSortOpen); }}
         >
           <svg className="nav-icon-svg" viewBox="0 0 24 24">
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
@@ -83,6 +84,7 @@ export default function QuizSelect({
                 key={option}
                 className="sort-option-btn neon-text"
                 onClick={() => {
+                  playClick();
                   setSortOption(option);
                   setIsSortOpen(false);
                 }}
@@ -123,6 +125,7 @@ export default function QuizSelect({
               key={quiz.id}
               className="quiz-item-button neon-box"
               onClick={() => {
+                playClick();
                 // Quize tıklanınca rastgele pin üretilir ve pin detay sayfasına gidilir
                 setCurrentPin(generateRandomPin());
                 setCurrentView("quizPinDetails");
