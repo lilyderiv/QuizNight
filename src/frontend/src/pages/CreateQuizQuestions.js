@@ -15,18 +15,21 @@ export default function CreateQuizQuestions({
   removeAnswer,          // Şık silme fonksiyonu
   addNewPage,            // Yeni soru sayfası ekleme fonksiyonu
   finishQuiz,            // Quizi tamamlayıp dashboard'a dönme fonksiyonu
+  playClick,
 }) {
   // Şu an düzenlenen soruyu kolayca erişmek için değişkene atadık
   const currentQ = questions[currentQIndex];
 
   // Resim silme: onay aldıktan sonra imagePreview'ı temizler
   const removeImage = () => {
+    playClick();
     if (window.confirm("Resmi silmek istediğinize emin misiniz?"))
       updateCurrentQuestion({ imagePreview: null });
   };
 
   // Soru metnini silme: onay aldıktan sonra text'i temizler
   const removeText = () => {
+    playClick();
     if (window.confirm("Soruyu silmek istediğinize emin misiniz?"))
       updateCurrentQuestion({ text: "" });
   };
@@ -61,7 +64,7 @@ export default function CreateQuizQuestions({
         {!currentQ.imagePreview && !currentQ.text && !currentQ.isSelectingType && (
           <button
             className="qq-giant-plus"
-            onClick={() => updateCurrentQuestion({ isSelectingType: true })}
+            onClick={() => { playClick(); updateCurrentQuestion({ isSelectingType: true }); }}
           >
             <svg viewBox="0 0 24 24">
               <path d="M12 5v14M5 12h14" />
@@ -73,7 +76,7 @@ export default function CreateQuizQuestions({
         {currentQ.isSelectingType && !currentQ.imagePreview && !currentQ.text && (
           <div className="qq-selection-options">
             {/* Resim seçeneği: gizli input ile dosya yüklenir */}
-            <label className="qq-select-btn neon-box neon-text">
+            <label className="qq-select-btn neon-box neon-text" onClick={() => playClick()}>
               Resim
               <input
                 type="file"
@@ -85,13 +88,14 @@ export default function CreateQuizQuestions({
             {/* Yazı seçeneği: metin editörünü açar */}
             <button
               className="qq-select-btn neon-box neon-text"
-              onClick={() =>
-                updateCurrentQuestion({
-                  isSelectingType: false,
-                  text: " ",
-                  isEditingText: true,
-                })
-              }
+              onClick={() => {
+              playClick();
+              updateCurrentQuestion({
+                isSelectingType: false,
+                text: " ",
+                isEditingText: true,
+              });
+            }}
             >
               Soruyu Yaz
             </button>
@@ -131,7 +135,7 @@ export default function CreateQuizQuestions({
                     {/* OK butonu: düzenleme modunu kapatır */}
                     <button
                       className="qq-ok-btn neon-text"
-                      onClick={() => updateCurrentQuestion({ isEditingText: false })}
+                      onClick={() => { playClick(); updateCurrentQuestion({ isEditingText: false }); }}
                     >
                       OK
                     </button>
@@ -145,7 +149,7 @@ export default function CreateQuizQuestions({
                         display: "flex", alignItems: "center",
                         justifyContent: "center", cursor: "pointer",
                       }}
-                      onClick={() => updateCurrentQuestion({ isEditingText: true })}
+                      onClick={() => { playClick(); updateCurrentQuestion({ isEditingText: true }); }}
                       title="Yazıyı düzenlemek için tıklayın"
                     >
                       <span className="neon-text qq-ans-text">{currentQ.text}</span>
@@ -165,14 +169,14 @@ export default function CreateQuizQuestions({
             {!(currentQ.imagePreview && currentQ.text) && !currentQ.isEditingText && (
               <div className="qq-add-more-overlay">
                 {!currentQ.imagePreview ? (
-                  <label className="qq-overlay-btn neon-box neon-text">
+                  <label className="qq-overlay-btn neon-box neon-text"  onClick={() => playClick()}>
                     + Resim Ekle
                     <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleImageUpload} />
                   </label>
                 ) : (
                   <button
                     className="qq-overlay-btn neon-box neon-text"
-                    onClick={() => updateCurrentQuestion({ text: " ", isEditingText: true })}
+                    onClick={() => { playClick(); updateCurrentQuestion({ text: " ", isEditingText: true }); }}
                   >
                     + Yazı Ekle
                   </button>
@@ -189,7 +193,7 @@ export default function CreateQuizQuestions({
         {/* Sol ok: önceki soruya git (ilk soruda gizlenir) */}
         <button
           className="qq-side-arrow neon-box"
-          onClick={() => setCurrentQIndex(currentQIndex - 1)}
+          onClick={() => { playClick(); setCurrentQIndex(currentQIndex - 1); }}
           style={{ visibility: currentQIndex > 0 ? "visible" : "hidden" }}
         >
           <svg className="nav-icon-svg" viewBox="0 0 24 24">
@@ -206,7 +210,7 @@ export default function CreateQuizQuestions({
               {!ans.text && !ans.isEditing && (
                 <button
                   className="qq-giant-plus"
-                  onClick={() => toggleAnswerEdit(ans.id, true)}
+                  onClick={() => { playClick(); toggleAnswerEdit(ans.id, true); }}
                 >
                   <svg viewBox="0 0 24 24">
                     <path d="M12 5v14M5 12h14" />
@@ -225,7 +229,7 @@ export default function CreateQuizQuestions({
                   />
                   <button
                     className="qq-ok-btn neon-text"
-                    onClick={() => toggleAnswerEdit(ans.id, false)}
+                    onClick={() => { playClick(); toggleAnswerEdit(ans.id, false); }}
                   >
                     OK
                   </button>
@@ -243,7 +247,7 @@ export default function CreateQuizQuestions({
                   )}
 
                   {/* Şık silme butonu (sol alt köşe) */}
-                  <button className="qq-trash-btn" onClick={() => removeAnswer(ans.id)}>
+                  <button className="qq-trash-btn" onClick={() => { playClick(); removeAnswer(ans.id); }}>
                     <svg viewBox="0 0 24 24">
                       <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                     </svg>
@@ -252,7 +256,7 @@ export default function CreateQuizQuestions({
                   {/* Hover'da çıkan "Doğru Cevap Olarak Ayarla" overlay'i */}
                   <div
                     className="qq-correct-overlay"
-                    onClick={() => updateCurrentQuestion({ correctAnswerId: ans.id })}
+                    onClick={() => { playClick(); updateCurrentQuestion({ correctAnswerId: ans.id }); }}
                   >
                     <span className="neon-text" style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
                       Doğru Cevap Olarak Ayarla
@@ -267,7 +271,7 @@ export default function CreateQuizQuestions({
         {/* Sağ ok: sonraki soruya git (son soruda gizlenir) */}
         <button
           className="qq-side-arrow neon-box"
-          onClick={() => setCurrentQIndex(currentQIndex + 1)}
+          onClick={() => { playClick(); setCurrentQIndex(currentQIndex + 1); }}
           style={{ visibility: currentQIndex < questions.length - 1 ? "visible" : "hidden" }}
         >
           <svg className="nav-icon-svg" viewBox="0 0 24 24">
@@ -279,13 +283,13 @@ export default function CreateQuizQuestions({
       {/* === ALT BUTONLAR === */}
       <div className="qq-bottom-buttons">
         {/* Quizi tamamla: dashboard'a döner ve quizi listeye ekler */}
-        <button className="qq-bottom-btn neon-box" onClick={finishQuiz}>
+        <button className="qq-bottom-btn neon-box" onClick={() => { playClick(); finishQuiz(); }}>
           <span className="neon-text">Quizi Tamamla</span>
         </button>
         {/* Yeni sayfa: listeye yeni boş bir soru ekler */}
-        <button className="qq-bottom-btn neon-box" onClick={addNewPage}>
+        <button className="qq-bottom-btn neon-box" onClick={() => { playClick(); addNewPage(); }}>
           <span className="neon-text" style={{ textDecoration: "underline" }}>
-            Yeni Sayfa
+            Yeni Sayfa                         
           </span>
         </button>
       </div>

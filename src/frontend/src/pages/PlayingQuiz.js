@@ -14,6 +14,7 @@ export default function PlayingQuiz({
   handleNextPlayQuestion,
   finishAndGoToLeaderboard,
   setCurrentView,
+  playClick,
 }) {
   // Geçerli soru yoksa hiçbir şey render etme
   if (!activeQuizQs[playQIndex]) return null;
@@ -35,6 +36,7 @@ export default function PlayingQuiz({
             style={{ position: "relative", top: 0, left: 0 }}
             onClick={(e) => {
               e.stopPropagation(); // Üst div'in onClick'ini tetiklemesin
+              playClick();
               setIsOptionsMenuOpen(!isOptionsMenuOpen);
             }}
           >
@@ -55,7 +57,7 @@ export default function PlayingQuiz({
               className="play-options-dropdown neon-box"
               onClick={(e) => e.stopPropagation()}
             >
-              <button onClick={() => setCurrentView("mainMenu")}>
+              <button onClick={() => { playClick(); setCurrentView("mainMenu"); }}>
                 <span className="neon-text">Quizden Çık</span>
               </button>
             </div>
@@ -106,7 +108,7 @@ export default function PlayingQuiz({
         {playQIndex < activeQuizQs.length - 1 && (
           <button
             className="play-next-arrow neon-box"
-            onClick={handleNextPlayQuestion}
+            onClick={() => { playClick(); handleNextPlayQuestion(); }}
           >
             <svg
               viewBox="0 0 24 24"
@@ -125,7 +127,7 @@ export default function PlayingQuiz({
       {/* Quizi erken bitirme butonu: direkt sıralama ekranına gider */}
       <button
         className="play-end-quiz-btn neon-box"
-        onClick={finishAndGoToLeaderboard}
+        onClick={() => { playClick(); finishAndGoToLeaderboard(); }}
       >
         <span className="neon-text">Quizi Bitir</span>
       </button>
