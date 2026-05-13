@@ -1,5 +1,4 @@
 import "./Dashboard.css";
-import { mockUser } from "../mockData";
 import React, { useRef, useEffect, useState } from "react";
 
 // Dashboard sayfası. Kullanıcının oluşturduğu quizleri ve profil menüsünü gösterir.
@@ -75,8 +74,8 @@ export default function Dashboard({ quizzes, openCreateQuiz, setCurrentView, pla
 
       {/* Kullanıcı adı göstergesi (mockData'dan gelir, database bağlanınca değişecek) */}
       <div className="dash-username neon-box">
-        <span className="neon-text" title={mockUser.fullName}>
-          {mockUser.fullName}
+        <span className="neon-text" title={user?.display_name || "Kullanıcı"}>
+          {user?.display_name || "Kullanıcı"}
         </span>
       </div>
 

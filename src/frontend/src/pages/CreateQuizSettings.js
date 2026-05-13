@@ -1,5 +1,4 @@
 import "./CreateQuizSettings.css";
-import { mockUser } from "../mockData";
 import React from "react";
 
 // Quiz oluşturma — Ayarlar adımı.
@@ -9,8 +8,8 @@ export default function CreateQuizSettings({ quizForm, setQuizForm, setCurrentVi
     <div className="cq-container">
       {/* Kullanıcı adı göstergesi (mockData'dan gelir) */}
       <div className="cq-username neon-box">
-        <span className="neon-text" title={mockUser.fullName}>
-          {mockUser.fullName}
+        <span className="neon-text" title={user?.display_name || "Kullanıcı"}>
+          {user?.display_name || "Kullanıcı"}
         </span>
       </div>
 

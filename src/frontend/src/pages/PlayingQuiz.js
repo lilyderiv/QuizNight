@@ -8,8 +8,6 @@ export default function PlayingQuiz({
   playQIndex,
   timeLeft,
   feedbackStatus,
-  isOptionsMenuOpen,
-  setIsOptionsMenuOpen,
   handleAnswerClick,
   handleNextPlayQuestion,
   finishAndGoToLeaderboard,
@@ -69,22 +67,18 @@ export default function PlayingQuiz({
       <div className="play-info-row">
         {/* Kaçıncı soruda olduğumuzu gösterir (örn: 1/2) */}
         <div className="play-counter-box neon-box">
-          <span className="neon-text">
-            {playQIndex + 1}/{activeQuizQs.length}
-          </span>
+          <span className="neon-text">{playQIndex + 1}/{activeQuizQs.length}</span>
         </div>
 
         {/* Geri sayım sayacı. Süre bitince otomatik yanlış sayılır */}
         <div className="play-timer-box neon-box">
-          <span className="neon-text">
-            00.{timeLeft < 10 ? `0${timeLeft}` : timeLeft}
-          </span>
+          <span className="neon-text">00.{timeLeft < 10 ? `0${timeLeft}` : timeLeft}</span>
         </div>
       </div>
 
       {/* Soru metni kutusu */}
       <div className="play-question-box neon-box">
-        <span className="neon-text">{activeQuizQs[playQIndex].text}</span>
+        <span className="neon-text">{currentQ.text}</span>
       </div>
 
       {/* Cevap şıkları ve ileri ok */}
@@ -135,7 +129,7 @@ export default function PlayingQuiz({
       {/* Doğru/Yanlış geri bildirim overlay'i.
           Cevap seçilince 0.5 saniye ekranı kaplar, sonra kaybolur. */}
       {feedbackStatus && (
-        <div className="feedback-overlay">
+        <div className={`feedback-overlay ${feedbackStatus}`}>
           <div className="feedback-circle neon-box">
             {/* Doğruysa tik ikonu, yanlışsa çarpı ikonu */}
             {feedbackStatus === "correct" ? (

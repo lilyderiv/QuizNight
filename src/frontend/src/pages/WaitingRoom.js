@@ -14,11 +14,7 @@ export default function WaitingRoom({ startQuiz, playClick }) {
       {/* Büyük bekleme mesajı kutusu */}
       <div className="waiting-message-box neon-box">
         <span className="neon-text">
-          HERKES TOPLANANA
-          <br />
-          KADAR
-          <br />
-          BEKLEMEDESİN :)
+          OYUNCULAR TOPLANIYOR...
         </span>
       </div>
 

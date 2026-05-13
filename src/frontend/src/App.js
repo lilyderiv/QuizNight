@@ -6,6 +6,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./App.css";
 import "./styles/components.css";
+import { io } from "socket.io-client";
+import axios from "axios";
 
 // Sahte (mock) veriler — database bağlanınca bu import kaldırılacak
 import {

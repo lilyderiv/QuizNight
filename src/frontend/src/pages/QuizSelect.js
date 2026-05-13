@@ -6,10 +6,6 @@ import React, { useRef, useEffect, useState } from "react";
 // Arama ve sıralama özellikleri de bu sayfada bulunur.
 export default function QuizSelect({
   quizList,
-  searchTerm,
-  setSearchTerm,
-  sortOption,
-  setSortOption,
   setCurrentView,
   setCurrentPin,
   generateRandomPin,

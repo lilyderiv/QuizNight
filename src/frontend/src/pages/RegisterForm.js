@@ -1,5 +1,5 @@
 import "./RegisterForm.css";
-import React from "react";
+import React, { useState } from "react";
 
 // Kayıt olma formu. Ad Soyad, e-posta ve şifre alanlarından oluşur.
 export default function RegisterForm({ onRegister, playClick }) {
@@ -23,15 +23,8 @@ export default function RegisterForm({ onRegister, playClick }) {
 
       {/* Şifre alanı */}
       <div className="form-row">
-        <div className="form-label neon-box">
-          <span className="neon-text">şifre</span>
-        </div>
-        <input
-          type="password"
-          placeholder="**********"
-          className="neon-input neon-text"
-          autoComplete="new-password"
-        />
+        <div className="form-label neon-box"><span className="neon-text">şifre</span></div>
+        <input type="password" className="neon-input neon-text" value={password} onChange={(e) => setPassword(e.target.value)} />
       </div>
 
       {/* Kaydı onaylama butonu. App.js'deki handleRegisterClick fonksiyonunu tetikler */}

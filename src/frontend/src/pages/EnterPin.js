@@ -54,13 +54,19 @@ export default function EnterPin({
           if (playerNickname.trim() === "") {
             alert("Lütfen oyuna girmeden önce bir isim belirle!");
           } else if (enteredPin.length !== 6) {
-            alert("Lütfen 6 haneli oyun pinini eksiksiz gir.");
+            alert("Pin 6 haneli olmalıdır!");
           } else {
+            // 1. Backend'e "Ben geldim" mesajı gönderiyoruz
+            onJoinServer(enteredPin, playerNickname);
+            
+            // 2. Ekranı "Bekleme Odası"na çeviriyoruz
+            // (Backend'den 'player_joined' mesajı gelince de otomatik değişecek ama 
+            // kullanıcı tepkiyi anında görsün diye buraya da koyduk)
             setCurrentView("waitingRoom");
           }
         }}
       >
-        <span className="neon-text">Pini onayla</span>
+        ONAYLA
       </button>
     </div>
   );
