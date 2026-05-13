@@ -1,0 +1,35 @@
+{
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.22.3",
+    "socket.io": "^4.8.3",
+    "uuid": "^14.0.0"
+  },
+  "name": "quiznight",
+  "version": "1.0.0",
+  "description": "Kullanıcıların fiziksel mekanlardaki \"Quiz Night\" (Bilgi Yarışması Gecesi) deneyimini dijital ortama taşıyarak, belirli temalar (diziler, filmler, genel kültür vb.) etrafında topluluklar oluşturmasını ve gerçek zamanlı rekabet etmesini sağlamaktır. Proje, sadece bir test çözme platformu değil, aynı zamanda senkronize bir sosyal etkileşim alanı yaratmayı hedefler.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lilyderiv/QuizNight.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lilyderiv/QuizNight/issues"
+  },
+  "homepage": "https://github.com/lilyderiv/QuizNight#readme"
+}

@@ -1,8 +1,7 @@
 import "./Dashboard.css";
-import { mockUser } from "../mockData";
 import React, { useRef, useEffect, useState } from "react";
 
-export default function Dashboard({ quizzes, openCreateQuiz, setCurrentView }) {
+export default function Dashboard({ user, quizzes = [], openCreateQuiz, setCurrentView, onQuizClick }) {
   const carouselRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
@@ -60,8 +59,8 @@ export default function Dashboard({ quizzes, openCreateQuiz, setCurrentView }) {
       </div>
 
       <div className="dash-username neon-box">
-        <span className="neon-text" title={mockUser.fullName}>
-          {mockUser.fullName}
+        <span className="neon-text" title={user?.display_name || "Kullanıcı"}>
+          {user?.display_name || "Kullanıcı"}
         </span>
       </div>
 
@@ -98,6 +97,7 @@ export default function Dashboard({ quizzes, openCreateQuiz, setCurrentView }) {
                   key={q.id}
                   className="dash-quiz-card neon-box"
                   title={q.name}
+                  onClick={() => onQuizClick(q.id)} // Tıklama özelliği eklendi
                 >
                   <span className="neon-text">{q.name}</span>
                 </button>

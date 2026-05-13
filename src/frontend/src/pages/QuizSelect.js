@@ -3,14 +3,11 @@ import React, { useRef, useEffect, useState } from "react";
 
 export default function QuizSelect({
   quizList,
-  searchTerm,
-  setSearchTerm,
-  sortOption,
-  setSortOption,
   setCurrentView,
-  setCurrentPin,
-  generateRandomPin,
+  onCreateRoom, // App.js'den gelen fonksiyon
 }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("Son eklenenler");
   const [isSortOpen, setIsSortOpen] = useState(false);
   const sortMenuRef = useRef(null);
 
@@ -30,21 +27,8 @@ export default function QuizSelect({
     q.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (sortOption === "İsme Göre Azalan")
-    filteredQuizzes.sort((a, b) => b.name.localeCompare(a.name));
-  else if (sortOption === "İsme Göre Artan")
-    filteredQuizzes.sort((a, b) => a.name.localeCompare(b.name));
-  else if (sortOption === "Zordan Kolaya")
-    filteredQuizzes.sort((a, b) => b.difficulty - a.difficulty);
-  else if (sortOption === "Kolaydan Zora")
-    filteredQuizzes.sort((a, b) => a.difficulty - b.difficulty);
-  else if (sortOption === "İlk Eklenenler Başta")
-    filteredQuizzes.sort((a, b) => a.date - b.date);
-  else filteredQuizzes.sort((a, b) => b.date - a.date);
-
   return (
     <>
-      {/* Sıralama Butonu */}
       <div
         ref={sortMenuRef}
         style={{ position: "absolute", top: "15px", left: "135px", zIndex: 50 }}
@@ -87,7 +71,6 @@ export default function QuizSelect({
         )}
       </div>
 
-      {/* Arama Kutusu */}
       <div className="search-box-container neon-box">
         <svg className="search-icon-svg" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="8"></circle>
@@ -102,7 +85,6 @@ export default function QuizSelect({
         />
       </div>
 
-      {/* Quiz Listesi */}
       <div className="quiz-select-page">
         <div className="current-sort-label neon-box">
           <span className="neon-text">{sortOption}</span>
@@ -113,10 +95,7 @@ export default function QuizSelect({
             <button
               key={quiz.id}
               className="quiz-item-button neon-box"
-              onClick={() => {
-                setCurrentPin(generateRandomPin());
-                setCurrentView("quizPinDetails");
-              }}
+              onClick={() => onCreateRoom(quiz.id)} // Backend PIN üretme çağrısı
             >
               <span className="neon-text">{quiz.name}</span>
             </button>

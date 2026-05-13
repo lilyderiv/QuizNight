@@ -1,8 +1,8 @@
 import "./CreateQuizSettings.css";
-import { mockUser } from "../mockData";
 import React from "react";
 
 export default function CreateQuizSettings({
+  user,
   quizForm,
   setQuizForm,
   setCurrentView,
@@ -10,8 +10,8 @@ export default function CreateQuizSettings({
   return (
     <div className="cq-container">
       <div className="cq-username neon-box">
-        <span className="neon-text" title={mockUser.fullName}>
-          {mockUser.fullName}
+        <span className="neon-text" title={user?.display_name || "Kullanıcı"}>
+          {user?.display_name || "Kullanıcı"}
         </span>
       </div>
       <div className="cq-form-area">
@@ -51,7 +51,7 @@ export default function CreateQuizSettings({
                 className="cq-select neon-text"
                 value={quizForm.min}
                 onChange={(e) =>
-                  setQuizForm({ ...quizForm, min: e.target.value })
+                  setQuizForm({ ...quizForm, min: parseInt(e.target.value) })
                 }
               >
                 <option value="" disabled hidden></option>
@@ -68,7 +68,7 @@ export default function CreateQuizSettings({
                 className="cq-select neon-text"
                 value={quizForm.sec}
                 onChange={(e) =>
-                  setQuizForm({ ...quizForm, sec: e.target.value })
+                  setQuizForm({ ...quizForm, sec: parseInt(e.target.value) })
                 }
               >
                 <option value="" disabled hidden></option>
