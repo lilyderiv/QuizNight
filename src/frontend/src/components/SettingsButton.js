@@ -1,19 +1,34 @@
 import React from "react";
 
+// SettingsButton Bileşeni: Uygulamanın köşesinde duran ve tıklandığında ayarları açan butondur.
+// currentView: Kullanıcının o an bulunduğu aktif ekranı belirtir.
+// openSettings: Butona tıklandığında ayarlar menüsünü açacak olan fonksiyondur.
 export default function SettingsButton({ currentView, openSettings }) {
+  
+  // 1. GİZLEME KONTROLÜ
+  // Eğer kullanıcı zaten "settings" (Ayarlar) ekranındaysa, bu butonu ekranda göstermeye gerek yoktur.
   if (currentView === "settings") return null;
 
+  // 2. DİNAMİK KONUMLANDIRMA (Yerleşim Ayarı)
+  // Ekranın durumuna göre butonun sol taraftan (left) ne kadar boşluk bırakacağını belirliyoruz.
+  // - Eğer "mainMenu" (Ana Menü) veya "dashboard" ekranındaysak, yan tarafta "Geri" butonu olmadığı için 
+  //   bu butonu köşeye daha yakın (15px) yerleştiriyoruz.
+  // - Diğer ekranlarda muhtemelen bir "Geri" butonu (BackButton) olacağı için, butonların üst üste binmemesi 
+  //   adına ayarlar butonunu biraz daha sağa (75px) kaydırıyoruz.
   const leftPos =
     currentView === "mainMenu" || currentView === "dashboard"
       ? "15px"
       : "75px";
 
+  // 3. EKRANA ÇİZİM (RENDER)
+  // Hesaplanan konuma ve tıklanma özelliğine sahip Ayarlar butonunu oluşturuyoruz.
   return (
     <button
       className="settings-button"
       onClick={openSettings}
       style={{ left: leftPos }}
     >
+      {/* Çark/Dişli ikonu (Ayarları temsil eden SVG çizimi) */}
       <svg
         className="nav-icon-svg"
         viewBox="0 0 24 24"

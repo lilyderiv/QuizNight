@@ -1,40 +1,41 @@
 .waiting-room-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100vw;
-  height: 100dvh;
-  padding-bottom: 8dvh;
-  box-sizing: border-box;
-  overflow: hidden;
+  display: flex; /* Esnek hizalama (flexbox) modelini açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: flex-end; /* İçerikleri ekranın en altına yaslar */
+  width: 100vw; /* Ekranın tam genişliğini kaplar */
+  height: 100dvh; /* Mobil tarayıcı barlarına uyumlu dinamik ekran yüksekliğini kullanır */
+  padding-bottom: 8dvh; /* Alttan dinamik iç boşluk bırakır */
+  box-sizing: border-box; /* Padding ve border değerlerini toplam genişlik/yüksekliğe dahil eder */
+  overflow: hidden; /* Taşan içerikleri gizleyip sayfanın kaymasını engeller */
 }
 
 .waiting-message-box {
-  background-color: transparent !important;
-  border: min(0.6dvh, 6px) solid white;
-  border-radius: min(3dvh, 30px);
+  background-color: transparent !important; /* Arka planı zorunlu olarak şeffaf yapar */
+  border: min(0.6dvh, 6px) solid white; /* Ekran boyutuna göre değişen ama sınırı olan (min) beyaz çerçeve */
+  border-radius: min(3dvh, 30px); /* Köşeleri dinamik olarak yuvarlatır */
   width: 90vw;
-  max-width: 1724px;
-  height: 51dvh;
-  max-height: 741px;
+  max-width: 1724px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
+  height: 51dvh; /* Yüksekliği ekranın %51'i yapar */
+  max-height: 741px; /* Yüksekliğin alabileceği maksimum sınırı belirler */
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
-  padding: 20px;
+  justify-content: center; /* İçeriği dikey ve yatayda tam ortaya hizalar */
+  text-align: center; /* Metni kendi satırı içinde ortalar */
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.2); /* Kutuya hafif saydam beyaz parlama/gölge efekti verir */
+  padding: 20px; /* İçeriden her yöne 20px boşluk bırakır */
 }
 
 .waiting-message-box span {
-  font-size: min(8vw, 9dvh, 160px);
-  line-height: 1.2;
-  font-weight: bold;
-  text-transform: uppercase;
-  word-wrap: break-word;
+  font-size: min(8vw, 9dvh, 160px); /* Yazı boyutunu 3 değerden en küçüğü olacak şekilde sınırlar */
+  line-height: 1.2; /* Satır aralığını belirleyerek metnin okunurluğunu ayarlar */
+  font-weight: bold; /* Yazıyı kalın (bold) yapar */
+  text-transform: uppercase; /* Metindeki tüm harfleri büyük harfe çevirir */
+  word-wrap: break-word; /* Çok uzun kelimelerin kutudan taşmaması için bölünmesini sağlar */
 }
 
 @media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil cihazlar) ve altındayken uygulanacak kurallar */
   .waiting-message-box span {
     font-size: min(7vw, 6dvh);
   }

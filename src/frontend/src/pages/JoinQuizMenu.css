@@ -1,16 +1,17 @@
 .join-quiz-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100vw;
-  height: 100vh;
-  padding-bottom: clamp(40px, 8vh, 100px);
-  gap: clamp(60px, 15vh, 250px);
-  box-sizing: border-box;
+  display: flex; /* Esnek hizalama modelini (flexbox) açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: flex-end; /* İçerikleri ekranın en altına yaslar */
+  width: 100vw; /* Ekranın tam genişliğini kaplar */
+  height: 100vh; /* Ekranın tam yüksekliğini kaplar */
+  padding-bottom: clamp(40px, 8vh, 100px); /* Alt kısımdan dinamik (min, ideal, max) bir iç boşluk bırakır */
+  gap: clamp(60px, 15vh, 250px); /* Flex içindeki öğeler arasına dinamik boşluk koyar */
+  box-sizing: border-box; /* Padding ve border değerlerini toplam genişlik/yüksekliğe dahil eder */
 }
 
 @media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil cihazlar) ve altındayken uygulanacak kurallar */
   .join-quiz-container {
     justify-content: flex-end;
     padding-bottom: 8vh;

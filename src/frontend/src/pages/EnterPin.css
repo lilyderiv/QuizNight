@@ -1,26 +1,26 @@
 .enter-pin-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100vw;
-  height: 100dvh;
-  gap: 5dvh;
-  box-sizing: border-box;
-  overflow: hidden;
-  padding-top: 5dvh;
+  display: flex; /* Esnek hizalama modelini (flexbox) açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: center; /* İçerikleri dikey eksende ortalar */
+  width: 100vw; /* Ekranın tam genişliğini kaplar */
+  height: 100dvh; /* Dinamik ekran yüksekliğini (mobil tarayıcı barlarına uyumlu) alır */
+  gap: 5dvh; /* Öğeler arasına ekran yüksekliğinin %5'i kadar boşluk koyar */
+  box-sizing: border-box; /* Padding ve border değerlerini genişliğe/yüksekliğe dahil eder */
+  overflow: hidden; /* Taşan içerikleri gizleyerek kaydırma çubuğu çıkmasını engeller */
+  padding-top: 5dvh; /* İçeriden üst boşluk bırakır */
 }
 
 .enter-pin-name-label {
-  background-color: transparent !important;
-  border: min(0.4dvh, 4px) solid white;
-  border-radius: min(2dvh, 20px);
+  background-color: transparent !important; /* Arka planı şeffaf yapar ve diğer kuralları ezer */
+  border: min(0.4dvh, 4px) solid white; /* Ekran boyutuna göre değişen kalınlıkta beyaz çerçeve ekler */
+  border-radius: min(2dvh, 20px); /* Köşeleri dinamik bir değerle yuvarlatır */
   width: 90vw;
-  max-width: 1754px;
-  height: clamp(50px, 10vh, 140px);
-  min-height: 50px;
-  flex-shrink: 0;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  max-width: 1754px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
+  height: clamp(50px, 10vh, 140px); /* Minimum, ideal ve maksimum yükseklik sınırlarını belirler */
+  min-height: 50px; /* Yüksekliğin belirtilen değerin altına düşmesini engeller */
+  flex-shrink: 0; /* Dar alanlarda öğenin küçülüp şeklinin bozulmasını önler */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); /* Kutuya hafif saydam beyaz bir parlama/gölge efekti verir */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,12 +28,12 @@
 }
 
 .enter-pin-name-label span {
-  font-size: clamp(1.5rem, 4vw, 55px);
-  white-space: nowrap;
+  font-size: clamp(1.5rem, 4vw, 55px); /* Yazı boyutunu ekran büyüklüğüne göre dinamik ayarlar */
+  white-space: nowrap; /* Metnin alt satıra geçmesini engelleyerek tek satırda tutar */
 }
 
 .enter-pin-name-input {
-  background-color: #000c42 !important;
+  background-color: #000c42 !important; /* Arka planı koyu lacivert yapar */
   border: min(0.4dvh, 4px) solid white;
   border-radius: min(2dvh, 20px);
   width: 90vw;
@@ -45,11 +45,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  color: white;
-  font-family: inherit;
+  text-align: center; /* Yazılan metni kutunun tam ortasına hizalar */
+  color: white; /* Yazı rengini beyaz yapar */
+  font-family: inherit; /* Yazı tipini ana projeden (bir üst elementten) miras alır */
   font-size: clamp(2rem, 5vw, 70px);
-  outline: none;
+  outline: none; /* İnputa tıklandığında çıkan varsayılan odaklanma çerçevesini kaldırır */
   padding: 0 20px;
   box-sizing: border-box;
 }
@@ -61,7 +61,7 @@
   width: 90vw;
   max-width: 1724px;
   height: 18dvh;
-  max-height: 250px;
+  max-height: 250px; /* Kutunun alabileceği maksimum yüksekliği belirler */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -89,13 +89,13 @@
   color: white;
   font-family: inherit;
   font-size: min(11vw, 11dvh);
-  letter-spacing: min(3vw, 20px);
+  letter-spacing: min(3vw, 20px); /* Girilen karakterler (PIN rakamları) arasına boşluk ekler */
   outline: none;
 }
 
 .enter-pin-input::placeholder,
 .enter-pin-name-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.3); /* Arka planda duran ipucu (placeholder) metnini yarı saydam yapar */
 }
 
 .pin-confirm-button {
@@ -104,32 +104,33 @@
   border-radius: min(2dvh, 20px);
   height: clamp(60px, 10dvh, 100px);
   padding: 0 60px;
-  width: fit-content;
+  width: fit-content; /* Genişliği sadece içindeki yazı sığacak kadar ayarlar */
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  margin-top: 4dvh;
-  transition: transform 0.1s, box-shadow 0.2s;
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline dönüştürür */
+  margin-top: 4dvh; /* Üstteki öğe ile arasına dış boşluk koyar */
+  transition: transform 0.1s, box-shadow 0.2s; /* Hover/Active durumları için animasyon geçiş süresi ekler */
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
 }
 
 .pin-confirm-button span {
   font-size: min(4.5vw, 3.5dvh, 32px);
   white-space: nowrap;
-  font-weight: bold;
-  text-transform: uppercase;
+  font-weight: bold; /* Metni kalın (bold) yapar */
+  text-transform: uppercase; /* Metindeki tüm harfleri büyük harfe çevirir */
 }
 
 .pin-confirm-button:active {
-  transform: scale(0.96);
-  filter: brightness(1.3);
+  transform: scale(0.96); /* Butona tıklandığında boyutunu hafifçe küçültür */
+  filter: brightness(1.3); /* Tıklanma anında butonun rengini parlatır */
 }
 
 @media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil) ve altındayken uygulanacak kurallar */
   .pin-confirm-button {
     width: 60vw;
     margin-top: 5vh;
-    margin-bottom: 5vh;
+    margin-bottom: 5vh; /* Alttan dış boşluk bırakır */
   }
 }
