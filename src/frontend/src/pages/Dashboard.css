@@ -138,18 +138,75 @@
 
 .dash-quiz-card:active {
   transform: scale(0.95);
-  filter: brightness(1.2); /* Tıklanma anında öğenin rengini parlatır */
+  filter: brightness(1.2);
+}
+
+.dash-quiz-card--selected {
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.9),
+    inset 0 0 18px rgba(255, 255, 255, 0.5) !important;
+  border-color: #7df9ff !important;
 }
 
 .dash-quiz-card span {
   font-size: 60px;
   text-align: center;
-  white-space: normal; /* Gerektiğinde metnin alt satıra inmesine izin verir */
-  display: -webkit-box; /* Satır kısıtlaması yapmak için eski webkit kutu modelini açar */
-  -webkit-line-clamp: 3; /* Metnin en fazla kaç satır görünmesine izin verileceğini seçer */
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
   line-clamp: 3;
-  -webkit-box-orient: vertical; /* Kutu modelinin dikey çalışmasını sağlar */
-  overflow: hidden; /* Belirtilen satırdan sonrasını keser ve gizler (... ekler) */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dash-quiz-card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+.dash-quiz-card-name-small {
+  font-size: 28px !important;
+  text-align: center;
+  white-space: normal;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.dash-start-btn {
+  width: 80%;
+  padding: 10px 0;
+  background-color: #000c42 !important;
+  border: 2px solid #7df9ff;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, filter 0.1s;
+  box-shadow: 0 0 12px rgba(125, 249, 255, 0.6);
+}
+
+.dash-start-btn:active {
+  transform: scale(0.95);
+  filter: brightness(1.3);
+}
+
+.dash-start-btn span {
+  font-size: 28px !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  overflow: visible !important;
+  display: block !important;
+  white-space: nowrap;
 }
 
 .dash-arrow {
