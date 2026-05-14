@@ -174,49 +174,69 @@ class ScoringOperations {
    * @returns {number} serverTime (ms) — istemcilere referans
    */
   static async startQuestion(pin, questionId, questionIdx) {
-    const serverTime = Date.now();
-    const pipe = redis.pipeline();
+    // Zaten bu soruda isek tekrar sıfırlama — idempotent
+    const currentId = await redis.hget(`room:${pin}`, "currentQuestionId");
+    if (currentId === String(questionId)) return;
 
-    pipe.hset(`room:${pin}`, {
+    const serverTime = Date.now();
+    await redis.hset(`room:${pin}`, {
       status: "playing",
       currentQuestionId: String(questionId),
       currentQuestionIdx: String(questionIdx),
       questionStartTime: String(serverTime),
     });
-    pipe.del(`room:${pin}:answers`); // önceki sorunun cevap kümesini temizle
-
-    await pipe.exec();
     return serverTime;
   }
 
   /**
    * Oyuncu cevabını işler ve puan hesaplar.
    *
-   * Race-condition güvenliği:
-   *   SADD ile oyuncu bu soruda yalnızca 1 kez cevap verebilir.
-   *   ZINCRBY atomik → eş zamanlı puanlar güvenle birleşir.
+   * - Her soru için ayrı cevap kümesi (room:{pin}:q{questionId}:answers)
+   *   kullanılır; bu sayede sorular arası "alreadyAnswered" hatası olmaz.
+   * - İstemciden gelen timeElapsedMs öncelikli kullanılır (doğru zamanlama).
+   *   Yoksa sunucu-taraflı questionStartTime ile hesaplanır.
    *
-   * Puan formülü:
-   *   Doğru cevap + süre bonusu: 1000 → 10 arası (doğrusal azalma)
-   *   Yanlış veya süre doldu: 0 puan
+   * Puan formülü: max(10, 1000 − floor(elapsed/limit × 1000))
    *
    * @param {string}  pin
    * @param {string}  playerId
    * @param {boolean} isCorrect
-   * @param {number}  timeLimitMs
+   * @param {number}  timeLimitMs    - Soru başına toplam süre (ms)
+   * @param {number|null} questionId - Soru ID'si (per-question key için)
+   * @param {number|null} timeElapsedMs - İstemcinin geçen süre ölçümü (ms)
    * @returns {{ points: number, alreadyAnswered: boolean }}
    */
-  static async submitAnswer(pin, playerId, isCorrect, timeLimitMs = 30000) {
-    const isNew = await redis.sadd(`room:${pin}:answers`, playerId);
+  static async submitAnswer(
+    pin,
+    playerId,
+    isCorrect,
+    timeLimitMs = 30000,
+    questionId = null,
+    timeElapsedMs = null,
+  ) {
+    // Her soru için bağımsız cevap kümesi — sorular arası karışma olmaz
+    const answersKey = questionId
+      ? `room:${pin}:q${questionId}:answers`
+      : `room:${pin}:answers`;
+
+    const isNew = await redis.sadd(answersKey, playerId);
+    if (isNew) await redis.expire(answersKey, ROOM_TTL_S);
+
     if (!isNew) return { points: 0, alreadyAnswered: true };
     if (!isCorrect) return { points: 0, alreadyAnswered: false };
 
-    const roomData = await redis.hgetall(`room:${pin}`);
-    if (!roomData || roomData.status !== "playing") {
-      return { points: 0, alreadyAnswered: false };
+    // Geçen süreyi belirle: istemci ölçümü > sunucu hesabı
+    let timeTaken;
+    if (timeElapsedMs !== null && timeElapsedMs >= 0) {
+      timeTaken = Math.min(timeElapsedMs, timeLimitMs);
+    } else {
+      const roomData = await redis.hgetall(`room:${pin}`);
+      if (!roomData || roomData.status !== "playing") {
+        return { points: 0, alreadyAnswered: false };
+      }
+      timeTaken = Date.now() - parseInt(roomData.questionStartTime || 0, 10);
     }
 
-    const timeTaken = Date.now() - parseInt(roomData.questionStartTime, 10);
     const points = Math.max(
       10,
       1000 - Math.floor((timeTaken / timeLimitMs) * 1000),

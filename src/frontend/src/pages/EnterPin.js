@@ -2,23 +2,21 @@ import "./EnterPin.css";
 import React from "react";
 
 // Oyuncu pin giriş ekranı.
-// Oyuncu önce kendine bir isim verir, sonra 6 haneli oyun pinini girer.
 export default function EnterPin({
   playerNickname,
   setPlayerNickname,
   enteredPin,
   setEnteredPin,
   setCurrentView,
+  onJoinRoom, // App.js'den socket join fonksiyonu prop olarak alınıyor
   playClick,
 }) {
   return (
     <div className="enter-pin-container">
-      {/* İsim belirleme başlığı */}
       <div className="enter-pin-name-label neon-box">
         <span className="neon-text">Kendine Bir isim Ver</span>
       </div>
 
-      {/* İsim yazma alanı (max 15 karakter) */}
       <input
         type="text"
         className="enter-pin-name-input neon-box neon-text"
@@ -30,12 +28,10 @@ export default function EnterPin({
         spellCheck="false"
       />
 
-      {/* Pin girme başlığı */}
       <div className="enter-pin-label neon-box">
         <span className="neon-text">Pini Gir</span>
       </div>
 
-      {/* 6 haneli pin giriş alanı (otomatik büyük harfe çevirir) */}
       <input
         type="text"
         className="enter-pin-input neon-box neon-text"
@@ -46,7 +42,6 @@ export default function EnterPin({
         spellCheck="false"
       />
 
-      {/* Onay butonu: isim ve pin doğrulanır, bekleme odasına geçilir */}
       <button
         className="pin-confirm-button neon-box"
         onClick={() => {
@@ -56,12 +51,10 @@ export default function EnterPin({
           } else if (enteredPin.length !== 6) {
             alert("Pin 6 haneli olmalıdır!");
           } else {
-            // 1. Backend'e "Ben geldim" mesajı gönderiyoruz
-            onJoinServer(enteredPin, playerNickname);
-            
-            // 2. Ekranı "Bekleme Odası"na çeviriyoruz
-            // (Backend'den 'player_joined' mesajı gelince de otomatik değişecek ama 
-            // kullanıcı tepkiyi anında görsün diye buraya da koyduk)
+            // Backend'e join_room socket event'i gönder (App.js üzerinden)
+            if (onJoinRoom) {
+              onJoinRoom(enteredPin, playerNickname);
+            }
             setCurrentView("waitingRoom");
           }
         }}
