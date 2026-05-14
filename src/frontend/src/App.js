@@ -15,25 +15,25 @@ import {
   mockActiveQuizQs,
 } from "./mockData";
 
-import BackButton from "./BackButton";
-import SettingsButton from "./SettingsButton";
-import useSounds from "./useSounds";
+import BackButton from "./components/BackButton";
+import SettingsButton from "./components/SettingsButton";
+import useSounds from "./hooks/useSounds";
 
-import MainMenu from "./MainMenu";
-import AuthMenu from "./AuthMenu";
-import LoginForm from "./LoginForm";
-import RegisterForm from "./RegisterForm";
-import Dashboard from "./Dashboard";
-import JoinQuizMenu from "./JoinQuizMenu";
-import QuizSelect from "./QuizSelect";
-import EnterPin from "./EnterPin";
-import QuizPinDetails from "./QuizPinDetails";
-import WaitingRoom from "./WaitingRoom";
-import PlayingQuiz from "./PlayingQuiz";
-import Leaderboard from "./Leaderboard";
-import Settings from "./Settings";
-import CreateQuizSettings from "./CreateQuizSettings";
-import CreateQuizQuestions from "./CreateQuizQuestions";
+import MainMenu from "./pages/MainMenu";
+import AuthMenu from "./pages/AuthMenu";
+import LoginForm from "./pages/LoginForm";
+import RegisterForm from "./pages/RegisterForm";
+import Dashboard from "./pages/Dashboard";
+import JoinQuizMenu from "./pages/JoinQuizMenu";
+import QuizSelect from "./pages/QuizSelect";
+import EnterPin from "./pages/EnterPin";
+import QuizPinDetails from "./pages/QuizPinDetails";
+import WaitingRoom from "./pages/WaitingRoom";
+import PlayingQuiz from "./pages/PlayingQuiz";
+import Leaderboard from "./pages/Leaderboard";
+import Settings from "./pages/Settings";
+import CreateQuizSettings from "./pages/CreateQuizSettings";
+import CreateQuizQuestions from "./pages/CreateQuizQuestions";
 
 // DEV_MODE = false → gerçek backend bağlantısı aktif
 // DEV_MODE = true  → mock verilerle bağımsız test
@@ -127,11 +127,21 @@ function App() {
   const questionStartTimeRef = useRef(null);
 
   // Ref'leri state ile senkronize tut
-  useEffect(() => { playQIndexRef.current = playQIndex; }, [playQIndex]);
-  useEffect(() => { activeQuizQsRef.current = activeQuizQs; }, [activeQuizQs]);
-  useEffect(() => { currentPinRef.current = currentPin; }, [currentPin]);
-  useEffect(() => { enteredPinRef.current = enteredPin; }, [enteredPin]);
-  useEffect(() => { isHostRef.current = isHost; }, [isHost]);
+  useEffect(() => {
+    playQIndexRef.current = playQIndex;
+  }, [playQIndex]);
+  useEffect(() => {
+    activeQuizQsRef.current = activeQuizQs;
+  }, [activeQuizQs]);
+  useEffect(() => {
+    currentPinRef.current = currentPin;
+  }, [currentPin]);
+  useEffect(() => {
+    enteredPinRef.current = enteredPin;
+  }, [enteredPin]);
+  useEffect(() => {
+    isHostRef.current = isHost;
+  }, [isHost]);
 
   // =====================================================================
   // UYGULAMA BAŞLANGIÇ — localStorage'dan oturum yükle
@@ -163,7 +173,7 @@ function App() {
       localStorage.removeItem("quiznight_token");
       localStorage.removeItem("quiznight_user");
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // QuizSelect ekranına girilince gerçek listeyi çek
   useEffect(() => {
@@ -193,7 +203,10 @@ function App() {
   };
 
   // --- SES ---
-  const { playClick, playTrue, playFalse } = useSounds(soundVolume, isSoundMuted);
+  const { playClick, playTrue, playFalse } = useSounds(
+    soundVolume,
+    isSoundMuted,
+  );
 
   // =====================================================================
   // SOCKET.IO EVENT DİNLEYİCİLERİ
@@ -275,9 +288,7 @@ function App() {
         id: p.rank,
         name: p.nickname,
         score: p.score,
-        total: timeLimitMsRef.current
-          ? activeQuizQsRef.current.length
-          : 10,
+        total: timeLimitMsRef.current ? activeQuizQsRef.current.length : 10,
       }));
       setLeaderboardData(formatted);
     });
@@ -307,7 +318,7 @@ function App() {
       socket.off("game_finished");
       socket.off("error_msg");
     };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // =====================================================================
   // AUTH FONKSİYONLARI
@@ -589,7 +600,8 @@ function App() {
   const generateRandomPin = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let pin = "";
-    for (let i = 0; i < 6; i++) pin += chars.charAt(Math.floor(Math.random() * chars.length));
+    for (let i = 0; i < 6; i++)
+      pin += chars.charAt(Math.floor(Math.random() * chars.length));
     return pin;
   };
 
@@ -646,7 +658,10 @@ function App() {
     const file = e.target.files[0];
     if (file) {
       const previewUrl = URL.createObjectURL(file);
-      updateCurrentQuestion({ imagePreview: previewUrl, isSelectingType: false });
+      updateCurrentQuestion({
+        imagePreview: previewUrl,
+        isSelectingType: false,
+      });
     }
   };
 
@@ -708,7 +723,7 @@ function App() {
     if (currentView === "playingQuiz" && timeLeft === 0 && !feedbackStatus) {
       handleAnswerClick(null); // Süre doldu → cevapsız gönder
     }
-  }, [currentView, timeLeft, feedbackStatus]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentView, timeLeft, feedbackStatus]);
 
   // =====================================================================
   // RENDER
@@ -744,6 +759,7 @@ function App() {
         <Dashboard
           quizzes={quizzes}
           openCreateQuiz={openCreateQuiz}
+          onQuizSelect={handleQuizSelect}
           setCurrentView={setCurrentView}
           playClick={playClick}
           user={user}
@@ -790,10 +806,7 @@ function App() {
       )}
 
       {currentView === "waitingRoom" && (
-        <WaitingRoom
-          players={players}
-          playClick={playClick}
-        />
+        <WaitingRoom players={players} playClick={playClick} />
       )}
 
       {currentView === "playingQuiz" && (

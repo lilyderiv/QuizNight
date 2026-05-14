@@ -5,6 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 export default function Dashboard({
   quizzes,
   openCreateQuiz,
+  onQuizSelect,
   setCurrentView,
   playClick,
   user,
@@ -14,6 +15,7 @@ export default function Dashboard({
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [selectedQuizId, setSelectedQuizId] = useState(null);
 
   const checkArrows = () => {
     if (carouselRef.current) {
@@ -113,13 +115,34 @@ export default function Dashboard({
               onScroll={checkArrows}
             >
               {quizzes.map((q) => (
-                <button
+                <div
                   key={q.id}
-                  className="dash-quiz-card neon-box"
+                  className={`dash-quiz-card neon-box${selectedQuizId === q.id ? " dash-quiz-card--selected" : ""}`}
                   title={q.name}
+                  onClick={() => {
+                    playClick();
+                    setSelectedQuizId(selectedQuizId === q.id ? null : q.id);
+                  }}
                 >
-                  <span className="neon-text">{q.name}</span>
-                </button>
+                  {selectedQuizId === q.id ? (
+                    <div className="dash-quiz-card-actions">
+                      <span className="neon-text dash-quiz-card-name-small">{q.name}</span>
+                      <button
+                        className="dash-start-btn neon-box"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          playClick();
+                          setSelectedQuizId(null);
+                          onQuizSelect(q.id);
+                        }}
+                      >
+                        <span className="neon-text">▶ Başlat</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="neon-text">{q.name}</span>
+                  )}
+                </div>
               ))}
             </div>
 
