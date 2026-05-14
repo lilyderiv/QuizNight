@@ -1,6 +1,5 @@
 "use strict";
 
-// Redis operasyonlarının içe aktarılması
 const {
   RoomOperations,
   ReadyOperations,
@@ -9,19 +8,23 @@ const {
   CleanupOperations,
 } = require("./redisOperations");
 
-// MySQL operasyonlarının içe aktarılması
 const {
   QuizOperations,
   QuestionOperations,
   GameSessionOperations,
 } = require("./mysqlOperations");
 
-// Hızlı cevap kontrolü için sunucu taraflı cache
+// ─────────────────────────────────────────────────────────────
+//  SUNUCU BELLEK CACHE
+//  pin → Map<questionId, { correctAnswerId, timeLimitMs }>
+//  Oyun başlar → dolar | Oyun biter → temizlenir
+// ─────────────────────────────────────────────────────────────
 const questionCache = new Map();
 
-/**
- * 6 haneli benzersiz bir oda PIN kodu üretir.
- */
+// ─────────────────────────────────────────────────────────────
+//  PIN ÜRETİCİ — BENZERSİZ PIN KONTROLÜ İLE
+// ─────────────────────────────────────────────────────────────
+
 function generatePin() {
   const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let pin = "";
@@ -32,21 +35,52 @@ function generatePin() {
 }
 
 /**
- * Yeni bir yarışma odası oluşturur ve MySQL tarafında oturumu başlatır.
+ * Çakışma olmayan benzersiz PIN üretir.
+ * Redis'te mevcut odayı kontrol eder; varsa yeniden dener.
+ */
+async function generateUniquePin() {
+  let pin;
+  let tries = 0;
+  do {
+    pin = generatePin();
+    tries++;
+    if (tries > 20)
+      throw new Error("Benzersiz PIN üretilemedi. Lütfen tekrar deneyin.");
+  } while (await RoomOperations.getRoom(pin));
+  return pin;
+}
+
+// ─────────────────────────────────────────────────────────────
+//  ODA KURULUMU  (REST API: POST /api/rooms)
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Host quizi başlattığında:
+ *  1. Quiz varlığı + HOST SAHİPLİĞİ doğrulanır.
+ *  2. BENZERSİZ PIN üretilir (çakışma kontrolü ile).
+ *  3. MySQL'de game_session oluşturulur.
+ *  4. Redis'te oda kurulur.
+ *
+ * @param {string} hostId  - JWT'den gelen kullanıcı UUID
+ * @param {number} quizId
+ * @returns {{ pin, sessionId, quiz, totalQuestions }}
  */
 async function createRoom(hostId, quizId) {
-  // Quiz bilgilerini MySQL'den çek
   const quiz = await QuizOperations.getQuizById(quizId);
   if (!quiz) throw new Error("Quiz bulunamadı.");
 
-  // Soruları ve cevapları çek
+  // [KRİTİK] Host yetki kontrolü — başkasının quizini başlatmayı engelle
+  if (quiz.owner_id !== hostId) {
+    throw new Error("Bu quizi başlatma yetkiniz yok.");
+  }
+
   const questions = await QuestionOperations.getQuestionsWithAnswers(quizId);
   const totalQuestions = questions.length;
   if (totalQuestions === 0) throw new Error("Bu quizde henüz soru yok.");
 
-  const pin = generatePin();
-  
-  // MySQL'de game_sessions kaydı oluştur
+  // [KRİTİK] Benzersiz PIN — çakışma kontrolü ile
+  const pin = await generateUniquePin();
+
   const sessionId = await GameSessionOperations.createSession(
     quizId,
     hostId,
@@ -54,7 +88,6 @@ async function createRoom(hostId, quizId) {
     totalQuestions,
   );
 
-  // Redis'te odayı tanımla
   await RoomOperations.createRoom(
     pin,
     hostId,
@@ -66,28 +99,42 @@ async function createRoom(hostId, quizId) {
   return { pin, sessionId, quiz, totalQuestions };
 }
 
+// ─────────────────────────────────────────────────────────────
+//  ODAYA KATILIM  (Socket.io: join_room)
+// ─────────────────────────────────────────────────────────────
+
 /**
- * Bir oyuncuyu odaya ekler ve oyuncu listesini döndürür.
+ * @returns {{ success, roomData?, players?, assignedPlayerId?, error? }}
+ *   assignedPlayerId: misafir için backend'in atadığı ID döner
  */
 async function joinRoom(pin, playerId, nickname, socketId, isGuest = false) {
   const roomData = await RoomOperations.getRoom(pin);
-  if (!roomData) return { success: false, error: "Geçersiz PIN kodu." };
-  
-  // Sadece bekleme aşamasındaki odalara girilebilir
-  if (roomData.status !== "waiting") {
-    return { success: false, error: "Yarışma çoktan başladı." };
-  }
 
-  // Oyuncuyu Redis'e kaydet
+  if (!roomData)
+    return { success: false, error: "Geçersiz PIN veya oda bulunamadı." };
+  if (roomData.status !== "waiting")
+    return { success: false, error: "Oyun zaten başladı." };
+
   await RoomOperations.joinRoom(pin, playerId, nickname, socketId, isGuest);
-  
-  // Güncel oyuncu listesini ve skorları getir
   const players = await RoomOperations.getPlayersWithScores(pin);
-  return { success: true, roomData, players };
+
+  return { success: true, roomData, players, assignedPlayerId: playerId };
 }
 
 /**
- * Yarışmayı başlatır, soruları hazırlar ve frontend'e uygun hale getirir.
+ * Bekleme odasından ayrılma.
+ */
+async function leaveRoom(pin, playerId, socketId) {
+  await RoomOperations.leaveRoom(pin, playerId, socketId);
+}
+
+// ─────────────────────────────────────────────────────────────
+//  OYUN BAŞLAT  (Socket.io: start_game — yalnızca host)
+// ─────────────────────────────────────────────────────────────
+
+/**
+ * Soruları yükler, sunucu cache'ine alır ve sanitize eder.
+ * istemcilere is_correct GÖNDERİLMEZ.
  */
 async function startGame(pin) {
   const roomData = await RoomOperations.getRoom(pin);
@@ -95,12 +142,12 @@ async function startGame(pin) {
 
   const quizId = parseInt(roomData.quizId, 10);
   const questions = await QuestionOperations.getQuestionsWithAnswers(quizId);
-  
-  // Quiz başına veya soru başına belirlenen süreyi çek
-  const quizInfo = await QuizOperations.getQuizById(quizId);
-  const timeLimitMs = (quizInfo.time_per_q_s * 1000) || 30000;
+  if (questions.length === 0) throw new Error("Bu quizde soru yok.");
 
-  // Doğru cevapları sunucu tarafında cache'e al (Güvenlik ve hız için)
+  const quizInfo = await QuizOperations.getQuizById(quizId);
+  const timeLimitMs = quizInfo.time_per_q_s * 1000 || 30000;
+
+  // Sunucu cache: questionId → { correctAnswerId, timeLimitMs }
   const qMap = new Map();
   for (const q of questions) {
     const correctAnswer = q.answers.find((a) => a.is_correct);
@@ -111,40 +158,56 @@ async function startGame(pin) {
   }
   questionCache.set(pin, qMap);
 
-  // Oda durumunu Redis'te "playing" olarak güncelle
   await RoomOperations.setRoomStatus(pin, "playing");
 
-  // Frontend'e gidecek soruları temizle (Doğru şık bilgisini gizle)
+  // İstemciye güvenli format (is_correct ve cevap ID'leri çıkartıldı)
   const sanitizedQuestions = questions.map((q) => ({
     id: q.id,
     text: q.text,
     imageUrl: q.image_url,
     time: timeLimitMs / 1000,
-    // Sadece cevap metinlerini ve ID'lerini gönder
     answers: q.answers.map((a) => ({ id: a.id, text: a.text })),
   }));
 
   return { sanitizedQuestions, timeLimitMs };
 }
 
+// ─────────────────────────────────────────────────────────────
+//  CEVAP İŞLE  (Socket.io: submit_answer)
+// ─────────────────────────────────────────────────────────────
+
 /**
- * Oyuncunun verdiği cevabı değerlendirir ve puanı hesaplar.
- * timeElapsedMs: istemcinin bu soru için harcadığı süre (doğru zamanlama).
+ * @param {string} pin
+ * @param {string} playerId
+ * @param {number} selectedAnswerId
+ * @param {number} questionId
+ * @param {number} timeLimitMs
+ * @param {number|null} timeElapsedMs - istemci ölçümü
+ * @returns {{ points, isCorrect, alreadyAnswered, leaderboard }}
  */
-async function submitAnswer(pin, playerId, selectedAnswerId, questionId, timeLimitMs = 30000, timeElapsedMs = null) {
+async function submitAnswer(
+  pin,
+  playerId,
+  selectedAnswerId,
+  questionId,
+  timeLimitMs = 30000,
+  timeElapsedMs = null,
+) {
   let isCorrect = false;
   const qMap = questionCache.get(pin);
 
-  // Cache'den hızlıca kontrol et
   if (qMap && qMap.has(questionId)) {
     const cached = qMap.get(questionId);
     isCorrect = cached.correctAnswerId === selectedAnswerId;
+    timeLimitMs = cached.timeLimitMs || timeLimitMs;
   } else {
-    // Cache yoksa MySQL'den doğrula
-    isCorrect = await QuestionOperations.checkAnswer(selectedAnswerId, questionId);
+    // Fallback: MySQL (cache ısınmamışsa veya sunucu restart sonrası)
+    isCorrect = await QuestionOperations.checkAnswer(
+      selectedAnswerId,
+      questionId,
+    );
   }
 
-  // Puan hesaplama — questionId ve timeElapsedMs geçiriliyor
   const { points, alreadyAnswered } = await ScoringOperations.submitAnswer(
     pin,
     playerId,
@@ -154,14 +217,23 @@ async function submitAnswer(pin, playerId, selectedAnswerId, questionId, timeLim
     timeElapsedMs,
   );
 
-  // Güncel liderlik tablosunu çek
   const leaderboard = await ScoringOperations.getLeaderboard(pin);
-  
   return { points, isCorrect, alreadyAnswered, leaderboard };
 }
 
+// ─────────────────────────────────────────────────────────────
+//  OYUN BİTİŞİ
+// ─────────────────────────────────────────────────────────────
+
 /**
- * Yarışmayı bitirir, sonuçları MySQL'e kaydeder ve odayı Redis'ten siler.
+ * Akış:
+ *  1. Redis leaderboard okunur (correct/wrong dahil).
+ *  2. game_sessions güncellenir (ended_at, player_count, total_questions).
+ *  3. Her oyuncu için player_results INSERT (correct_count, wrong_count ile).
+ *  4. Redis temizlenir.
+ *  5. Bellek cache'i temizlenir.
+ *
+ * @returns {Array} finalLeaderboard — Leaderboard.js payload'ı
  */
 async function finalizeAndDestroy(pin) {
   const roomData = await RoomOperations.getRoom(pin);
@@ -169,39 +241,49 @@ async function finalizeAndDestroy(pin) {
 
   const sessionId = parseInt(roomData.sessionId, 10);
   const totalQuestions = parseInt(roomData.totalQuestions, 10) || 0;
-  
-  // Final skorlarını Redis'ten al
+
+  // correct ve wrong alanları artık leaderboard içinde geliyor
   const leaderboard = await ScoringOperations.getLeaderboard(pin);
 
-  // MySQL'de player_results tablosuna sonuçları yaz
-  await GameSessionOperations.finalizeSession(sessionId, leaderboard, totalQuestions);
-  
-  // Redis üzerindeki tüm oda verilerini temizle
+  await GameSessionOperations.finalizeSession(
+    sessionId,
+    leaderboard,
+    totalQuestions,
+  );
   await CleanupOperations.destroyRoom(pin);
   questionCache.delete(pin);
 
-  // Leaderboard.js için uygun veri formatına dönüştür
+  // Frontend Leaderboard.js payload'ı
   return leaderboard.map((p) => ({
-    rank: p.rank,
+    id: p.rank,
     name: p.nickname,
     score: p.score,
+    correct: p.correct,
+    wrong: p.wrong,
     total: totalQuestions,
   }));
 }
 
-/**
- * Bir oyuncunun bağlantısı koptuğunda durumu yönetir.
- */
+// ─────────────────────────────────────────────────────────────
+//  BAĞLANTI KESİLME / YENİDEN BAĞLANMA
+// ─────────────────────────────────────────────────────────────
+
 async function handleDisconnect(socketId) {
-  // SessionOperations üzerinden ayrılan oyuncunun verilerini yönet
   return SessionOperations.handleDisconnect(socketId);
 }
 
+async function handleReconnect(newSocketId, playerId, pin, isGuest = false) {
+  return SessionOperations.refreshSession(newSocketId, playerId, pin, isGuest);
+}
+
 module.exports = {
+  generateUniquePin,
   createRoom,
   joinRoom,
+  leaveRoom,
   startGame,
-  submitAnswer,   // (pin, playerId, selectedAnswerId, questionId, timeLimitMs, timeElapsedMs)
+  submitAnswer,
   finalizeAndDestroy,
   handleDisconnect,
+  handleReconnect,
 };

@@ -2,7 +2,9 @@ import "./QuizSelect.css";
 import React, { useRef, useEffect, useState } from "react";
 
 // Quiz seçim sayfası.
-// onQuizSelect(quizId): App.js'de backend'e POST /api/rooms atar ve oda oluşturur.
+// [DÜZELTME] Sıralama ve arama artık backend'de yapılıyor.
+// sortOption ve searchTerm değiştiğinde App.js API'ye yeni istek atar.
+// Bu bileşen yalnızca gelen listeyi render eder — yerel sort yok.
 export default function QuizSelect({
   quizList,
   searchTerm,
@@ -24,23 +26,6 @@ export default function QuizSelect({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  let filteredQuizzes = quizList.filter((q) =>
-    q.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  if (sortOption === "İsme Göre Azalan")
-    filteredQuizzes.sort((a, b) => b.name.localeCompare(a.name));
-  else if (sortOption === "İsme Göre Artan")
-    filteredQuizzes.sort((a, b) => a.name.localeCompare(b.name));
-  else if (sortOption === "Zordan Kolaya")
-    filteredQuizzes.sort((a, b) => b.difficulty - a.difficulty);
-  else if (sortOption === "Kolaydan Zora")
-    filteredQuizzes.sort((a, b) => a.difficulty - b.difficulty);
-  else if (sortOption === "İlk Eklenenler Başta")
-    filteredQuizzes.sort((a, b) => new Date(a.date) - new Date(b.date));
-  else
-    filteredQuizzes.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
     <>
@@ -111,13 +96,16 @@ export default function QuizSelect({
           <span className="neon-text">{sortOption}</span>
         </div>
 
-        {filteredQuizzes.length === 0 ? (
-          <div className="neon-box" style={{ padding: "20px", marginTop: "20px" }}>
+        {quizList.length === 0 ? (
+          <div
+            className="neon-box"
+            style={{ padding: "20px", marginTop: "20px" }}
+          >
             <span className="neon-text">Quiz bulunamadı.</span>
           </div>
         ) : (
           <div className="quiz-grid-container">
-            {filteredQuizzes.map((quiz) => (
+            {quizList.map((quiz) => (
               <button
                 key={quiz.id}
                 className="quiz-item-button neon-box"

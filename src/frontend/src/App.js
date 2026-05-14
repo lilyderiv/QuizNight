@@ -40,9 +40,6 @@ import CreateQuizQuestions from "./pages/CreateQuizQuestions";
 const DEV_MODE = false;
 const API_URL = "http://localhost:3000";
 
-// Socket bağlantısı — modül düzeyinde bir kez oluşturulur
-const socket = io(API_URL, { autoConnect: true });
-
 function App() {
   // --- SAYFA YÖNETİMİ ---
   const [currentView, setCurrentView] = useState("mainMenu");
@@ -103,21 +100,31 @@ function App() {
   const [activeQuizQs, setActiveQuizQs] = useState(
     DEV_MODE ? mockActiveQuizQs : [],
   );
-  const [players, setPlayers] = useState([]); // Odadaki oyuncular listesi
+  const [players, setPlayers] = useState([]);
 
   // --- OYUN STATE ---
   const [playQIndex, setPlayQIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState(false);
   const [feedbackStatus, setFeedbackStatus] = useState(null);
-  const [isHost, setIsHost] = useState(false); // Bu client host mu?
+  const [isHost, setIsHost] = useState(false);
 
   // --- MÜZİK ---
   const audioRef = useRef(null);
 
+  // ─────────────────────────────────────────────────────────────
+  // [DÜZELTME] Socket useRef ile yönetilir — modül seviyesinde değil.
+  // Bu sayede hot reload'da bağlantı sızıntısı olmaz.
+  // ─────────────────────────────────────────────────────────────
+  const socketRef = useRef(null);
+
+  // ─────────────────────────────────────────────────────────────
+  // [DÜZELTME] assignedPlayerId: backend'in atadığı gerçek oyuncu ID'si.
+  // Misafir için backend UUID üretir; bunu saklayıp submit_answer'da kullanırız.
+  // ─────────────────────────────────────────────────────────────
+  const [myPlayerId, setMyPlayerId] = useState(null);
+
   // --- SOCKET HANDLER REF'LERİ (stale closure'dan korumak için) ---
-  // Socket event handler'ları useEffect ile bir kez kurulur;
-  // state'e doğrudan erişemezler — ref'ler her render'da güncellenir.
   const playQIndexRef = useRef(0);
   const activeQuizQsRef = useRef([]);
   const currentPinRef = useRef("");
@@ -125,8 +132,8 @@ function App() {
   const isHostRef = useRef(false);
   const timeLimitMsRef = useRef(30000);
   const questionStartTimeRef = useRef(null);
+  const feedbackStatusRef = useRef(null);
 
-  // Ref'leri state ile senkronize tut
   useEffect(() => {
     playQIndexRef.current = playQIndex;
   }, [playQIndex]);
@@ -142,10 +149,116 @@ function App() {
   useEffect(() => {
     isHostRef.current = isHost;
   }, [isHost]);
+  useEffect(() => {
+    feedbackStatusRef.current = feedbackStatus;
+  }, [feedbackStatus]);
 
-  // =====================================================================
-  // UYGULAMA BAŞLANGIÇ — localStorage'dan oturum yükle
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
+  // SOCKET BAĞLANTISI — bir kez oluşturulur, unmount'ta temizlenir
+  // ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (DEV_MODE) return;
+
+    socketRef.current = io(API_URL, { autoConnect: true });
+    const socket = socketRef.current;
+
+    // Odaya katılım başarılı — backend'den playerId alınır
+    socket.on(
+      "join_success",
+      ({ assignedPlayerId, players: serverPlayers }) => {
+        setMyPlayerId(assignedPlayerId);
+        setPlayers(serverPlayers || []);
+      },
+    );
+
+    // Oyuncu listesi güncellendi (yeni katılım veya ayrılma)
+    socket.on("player_joined", ({ players: serverPlayers }) => {
+      setPlayers(serverPlayers || []);
+    });
+
+    // Oyun başladı — sunucudan sorular geldi
+    socket.on("game_started", ({ questions: serverQs, timeLimitMs }) => {
+      const formattedQs = serverQs.map((q) => ({
+        id: q.id,
+        text: q.text,
+        imageUrl: q.imageUrl || null,
+        time: timeLimitMs / 1000,
+        answers: q.answers,
+        correct: null,
+      }));
+
+      timeLimitMsRef.current = timeLimitMs;
+      questionStartTimeRef.current = Date.now();
+
+      setActiveQuizQs(formattedQs);
+      setPlayQIndex(0);
+      setTimeLeft(timeLimitMs / 1000);
+      setCurrentView("playingQuiz");
+    });
+
+    // [DÜZELTME] Soru değişimi — host "next_question" emit eder,
+    // sunucu tüm odaya "question_changed" yayar.
+    // TÜM oyuncular aynı anda senkronize ilerler (FR-2).
+    socket.on("question_changed", ({ questionIdx, serverTime }) => {
+      const qs = activeQuizQsRef.current;
+      if (questionIdx >= 0 && questionIdx < qs.length) {
+        questionStartTimeRef.current = serverTime || Date.now();
+        setPlayQIndex(questionIdx);
+        setTimeLeft(qs[questionIdx].time);
+        setFeedbackStatus(null);
+      }
+    });
+
+    // Cevap geri bildirimi
+    socket.on("answer_feedback", ({ isCorrect, points, alreadyAnswered }) => {
+      if (alreadyAnswered) return;
+
+      if (isCorrect) playTrue();
+      else playFalse();
+
+      setFeedbackStatus(isCorrect ? "correct" : "incorrect");
+    });
+
+    // Liderlik tablosu güncellemesi
+    socket.on("leaderboard_update", ({ leaderboard }) => {
+      const qs = activeQuizQsRef.current;
+      const formatted = leaderboard.map((p) => ({
+        id: p.rank,
+        name: p.nickname,
+        score: p.score,
+        correct: p.correct,
+        total: qs.length,
+      }));
+      setLeaderboardData(formatted);
+    });
+
+    // Oyun bitti
+    socket.on("game_finished", ({ leaderboard }) => {
+      const formatted = leaderboard.map((p) => ({
+        id: p.rank || p.id,
+        name: p.name || p.nickname,
+        score: p.score,
+        correct: p.correct,
+        total: p.total,
+      }));
+      setLeaderboardData(formatted);
+      setCurrentView("leaderboard");
+    });
+
+    // Sunucu hata mesajı
+    socket.on("error_msg", ({ message }) => {
+      alert(message);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────
+  // UYGULAMA BAŞLANGICI — localStorage'dan oturum yükle
+  // ─────────────────────────────────────────────────────────────
   useEffect(() => {
     if (DEV_MODE) return;
     const savedToken = localStorage.getItem("quiznight_token");
@@ -156,14 +269,12 @@ function App() {
       const parsedUser = JSON.parse(savedUser);
       setToken(savedToken);
       setUser(parsedUser);
-      // Kullanıcının quizlerini yükle
       axios
         .get(`${API_URL}/api/quizzes/my`, {
           headers: { Authorization: `Bearer ${savedToken}` },
         })
         .then((res) => setQuizzes(res.data.quizzes || []))
         .catch(() => {
-          // Token geçersiz — oturumu temizle
           localStorage.removeItem("quiznight_token");
           localStorage.removeItem("quiznight_user");
           setToken(null);
@@ -175,14 +286,40 @@ function App() {
     }
   }, []);
 
-  // QuizSelect ekranına girilince gerçek listeyi çek
+  // QuizSelect ekranına girilince listeyi çek
   useEffect(() => {
     if (DEV_MODE || currentView !== "quizSelect") return;
-    axios
-      .get(`${API_URL}/api/quizzes`)
-      .then((res) => setQuizList(res.data.quizzes || []))
-      .catch(() => {});
+    fetchQuizList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentView]);
+
+  const fetchQuizList = useCallback(async (opts = {}) => {
+    const { search = "", sortBy = "newest" } = opts;
+    try {
+      const res = await axios.get(`${API_URL}/api/quizzes`, {
+        params: { search, sortBy },
+      });
+      setQuizList(res.data.quizzes || []);
+    } catch {}
+  }, []);
+
+  // Sıralama veya arama değişince API'ye tekrar istek at
+  useEffect(() => {
+    if (DEV_MODE || currentView !== "quizSelect") return;
+    const SORT_MAP = {
+      "Son eklenenler": "newest",
+      "İlk Eklenenler Başta": "oldest",
+      "İsme Göre Artan": "name_asc",
+      "İsme Göre Azalan": "name_desc",
+      "Kolaydan Zora": "easy_first",
+      "Zordan Kolaya": "hard_first",
+    };
+    fetchQuizList({
+      search: searchTerm,
+      sortBy: SORT_MAP[sortOption] || "newest",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortOption, searchTerm, currentView]);
 
   // --- MÜZİK ---
   useEffect(() => {
@@ -208,121 +345,9 @@ function App() {
     isSoundMuted,
   );
 
-  // =====================================================================
-  // SOCKET.IO EVENT DİNLEYİCİLERİ
-  // Ref'ler kullanılır — stale closure sorunu olmaz.
-  // =====================================================================
-  useEffect(() => {
-    // Oyuncu odaya katıldığında listeyi güncelle
-    socket.on("player_joined", ({ players: serverPlayers }) => {
-      setPlayers(serverPlayers || []);
-    });
-
-    // Oyun başladığında — sunucudan sorular gelir
-    socket.on("game_started", ({ questions: serverQs, timeLimitMs }) => {
-      const formattedQs = serverQs.map((q) => ({
-        id: q.id,
-        text: q.text,
-        imageUrl: q.imageUrl || null,
-        time: timeLimitMs / 1000,
-        // Cevapları {id, text} olarak koru — id sunucuya gönderilir
-        answers: q.answers,
-        correct: null,
-      }));
-
-      timeLimitMsRef.current = timeLimitMs;
-      questionStartTimeRef.current = Date.now();
-
-      setActiveQuizQs(formattedQs);
-      setPlayQIndex(0);
-      setTimeLeft(timeLimitMs / 1000);
-      setCurrentView("playingQuiz");
-    });
-
-    // Cevap geri bildirimi — sunucu sonucu bildiriyor
-    socket.on("answer_feedback", ({ isCorrect, points, alreadyAnswered }) => {
-      if (alreadyAnswered) return;
-
-      if (isCorrect) playTrue();
-      else playFalse();
-
-      setFeedbackStatus(isCorrect ? "correct" : "incorrect");
-
-      setTimeout(() => {
-        setFeedbackStatus(null);
-
-        // Ref'lerle güncel state'e eriş
-        const idx = playQIndexRef.current;
-        const qs = activeQuizQsRef.current;
-        const pin = currentPinRef.current || enteredPinRef.current;
-
-        if (idx < qs.length - 1) {
-          const nextIdx = idx + 1;
-          setPlayQIndex(nextIdx);
-          setTimeLeft(qs[nextIdx].time);
-          questionStartTimeRef.current = Date.now();
-
-          // Sunucuya soru geçişini bildir (zamanlayıcı sıfırlama için)
-          if (!DEV_MODE) {
-            socket.emit("advance_question", {
-              pin,
-              questionId: qs[nextIdx].id,
-              questionIdx: nextIdx,
-            });
-          }
-        } else {
-          // Son soru bitti — oyunu sonlandır
-          if (!DEV_MODE) {
-            socket.emit("finalize_game", { pin });
-            // game_finished event'i gelince leaderboard'a yönlendirilir
-          } else {
-            setCurrentView("leaderboard");
-          }
-        }
-      }, 500);
-    });
-
-    // Liderlik tablosu güncellemesi (cevap sonrası tüm odaya)
-    socket.on("leaderboard_update", ({ leaderboard }) => {
-      const formatted = leaderboard.map((p) => ({
-        id: p.rank,
-        name: p.nickname,
-        score: p.score,
-        total: timeLimitMsRef.current ? activeQuizQsRef.current.length : 10,
-      }));
-      setLeaderboardData(formatted);
-    });
-
-    // Oyun bitti — sunucu nihai sıralamayı gönderdi
-    socket.on("game_finished", ({ leaderboard }) => {
-      const formatted = leaderboard.map((p) => ({
-        id: p.rank,
-        name: p.name,
-        score: p.score,
-        total: p.total,
-      }));
-      setLeaderboardData(formatted);
-      setCurrentView("leaderboard");
-    });
-
-    // Sunucu hata mesajı
-    socket.on("error_msg", ({ message }) => {
-      alert(message);
-    });
-
-    return () => {
-      socket.off("player_joined");
-      socket.off("game_started");
-      socket.off("answer_feedback");
-      socket.off("leaderboard_update");
-      socket.off("game_finished");
-      socket.off("error_msg");
-    };
-  }, []);
-
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
   // AUTH FONKSİYONLARI
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
 
   const handleRegisterClick = async (displayName, email, password) => {
     if (DEV_MODE) {
@@ -385,18 +410,20 @@ function App() {
     setQuizzes([]);
     setPlayers([]);
     setIsHost(false);
+    setMyPlayerId(null);
     localStorage.removeItem("quiznight_token");
     localStorage.removeItem("quiznight_user");
     setCurrentView("mainMenu");
   };
 
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
   // ODA / SOCKET FONKSİYONLARI
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
 
-  // Oyuncu pin girerek odaya katılır
   const handleJoinRoom = (pin, nickname) => {
-    socket.emit("join_room", {
+    if (!socketRef.current) return;
+    // playerId null → backend UUID atar → join_success'te myPlayerId set edilir
+    socketRef.current.emit("join_room", {
       pin,
       nickname,
       playerId: user?.id || null,
@@ -404,7 +431,14 @@ function App() {
     });
   };
 
-  // Public quizlerden seçim: backend'de oda oluşturur
+  const handleLeaveRoom = (pin) => {
+    if (!socketRef.current || !pin) return;
+    const pid = myPlayerId || user?.id;
+    if (!pid) return;
+    socketRef.current.emit("leave_room", { pin, playerId: pid });
+    setMyPlayerId(null);
+  };
+
   const handleQuizSelect = async (quizId) => {
     if (DEV_MODE) {
       setCurrentPin(generateRandomPin());
@@ -432,16 +466,13 @@ function App() {
     }
   };
 
-  // Host oyunu başlatır
   const startQuiz = () => {
     setIsOptionsMenuOpen(false);
     setFeedbackStatus(null);
 
-    if (!DEV_MODE) {
+    if (!DEV_MODE && socketRef.current) {
       const pin = currentPin || enteredPin;
-      // start_game: sunucu host'u odaya ekler ve oyunu başlatır
-      socket.emit("start_game", { pin, nickname: hostNickname });
-      // Ekran değişimi game_started event'iyle gerçekleşir
+      socketRef.current.emit("start_game", { pin, nickname: hostNickname });
     } else {
       setPlayQIndex(0);
       setTimeLeft(activeQuizQs[0]?.time || 30);
@@ -450,43 +481,95 @@ function App() {
     }
   };
 
-  // Cevap gönder
-  const handleAnswerClick = (ans) => {
-    if (feedbackStatus) return;
+  // ─────────────────────────────────────────────────────────────
+  // CEVAP GÖNDER
+  // ─────────────────────────────────────────────────────────────
 
-    if (DEV_MODE) {
-      const isCorrect = ans === activeQuizQs[playQIndex].correct;
-      if (isCorrect) playTrue();
-      else playFalse();
-      setFeedbackStatus(isCorrect ? "correct" : "incorrect");
-      setTimeout(() => {
-        setFeedbackStatus(null);
-        handleNextOrEnd();
-      }, 500);
-    } else {
-      const currentQ = activeQuizQs[playQIndex];
+  // useCallback ile sarmalanmış — useEffect bağımlılığında güvenle kullanılabilir
+  const handleAnswerClick = useCallback(
+    (ans) => {
+      if (feedbackStatusRef.current) return;
+
+      if (DEV_MODE) {
+        const currentQ = activeQuizQsRef.current[playQIndexRef.current];
+        const isCorrect = ans === currentQ?.correct;
+        if (isCorrect) playTrue();
+        else playFalse();
+        setFeedbackStatus(isCorrect ? "correct" : "incorrect");
+        setTimeout(() => {
+          setFeedbackStatus(null);
+          handleNextOrEndDev();
+        }, 500);
+        return;
+      }
+
+      if (!socketRef.current) return;
+
+      const currentQ = activeQuizQsRef.current[playQIndexRef.current];
+      if (!currentQ) return;
+
       const timeElapsedMs = questionStartTimeRef.current
         ? Date.now() - questionStartTimeRef.current
         : timeLimitMsRef.current;
 
-      socket.emit("submit_answer", {
-        pin: currentPin || enteredPin,
-        playerId: user?.id || `guest:${socket.id}`,
-        selectedAnswerId: ans?.id ?? null, // null = süre doldu
+      // [DÜZELTME] myPlayerId kullanılıyor — backend'in atadığı gerçek ID
+      const pid = myPlayerId || user?.id || null;
+
+      socketRef.current.emit("submit_answer", {
+        pin: currentPinRef.current || enteredPinRef.current,
+        playerId: pid,
+        selectedAnswerId: ans?.id ?? null,
         questionId: currentQ.id,
         timeLimitMs: timeLimitMsRef.current,
         timeElapsedMs,
       });
 
-      // Optimistik ses — gerçek sonuç answer_feedback'te
       if (ans) playTrue();
       else playFalse();
-    }
-  };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [myPlayerId, user],
+  );
 
-  // =====================================================================
+  // Host sonraki soruya geçer → sunucu tüm odaya yayar (senkronize)
+  const handleNextQuestion = useCallback(() => {
+    if (!socketRef.current) return;
+    const qs = activeQuizQsRef.current;
+    const idx = playQIndexRef.current;
+
+    if (idx < qs.length - 1) {
+      const nextIdx = idx + 1;
+      socketRef.current.emit("next_question", {
+        pin: currentPinRef.current || enteredPinRef.current,
+        questionId: qs[nextIdx].id,
+        questionIdx: nextIdx,
+      });
+    } else {
+      // Son soru — oyunu bitir
+      socketRef.current.emit("finalize_game", {
+        pin: currentPinRef.current || enteredPinRef.current,
+      });
+    }
+  }, []);
+
+  // ─────────────────────────────────────────────────────────────
+  // [DÜZELTME] Zamanlayıcı useEffect — handleAnswerClick useCallback'te,
+  // bağımlılık dizisine doğru eklendi; stale closure riski yok.
+  // ─────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (currentView !== "playingQuiz") return;
+    if (feedbackStatus !== null) return;
+    if (timeLeft <= 0) {
+      handleAnswerClick(null); // Süre doldu → cevapsız
+      return;
+    }
+    const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearTimeout(id);
+  }, [currentView, timeLeft, feedbackStatus, handleAnswerClick]);
+
+  // ─────────────────────────────────────────────────────────────
   // QUİZ OLUŞTURMA
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
 
   const openCreateQuiz = () => {
     setQuizForm({ name: "", category: "", min: "0", sec: "30", level: "" });
@@ -509,7 +592,6 @@ function App() {
     setCurrentView("createQuizSettings");
   };
 
-  // Quiz tamamlandığında backend'e kaydeder ve oda oluşturur
   const finishQuiz = async () => {
     if (DEV_MODE) {
       setQuizzes([
@@ -552,12 +634,11 @@ function App() {
 
       const questionsData = validQs.map((q) => ({
         text: q.text?.trim() || null,
-        imageUrl: null, // resim yükleme ileriki sürümde
+        imageUrl: null,
         answers: q.answers,
         correctAnswerId: q.correctAnswerId,
       }));
 
-      // 1. Quizi kaydet
       const quizRes = await axios.post(
         `${API_URL}/api/quizzes`,
         { quizData, questionsData },
@@ -566,7 +647,6 @@ function App() {
       if (!quizRes.data.success) throw new Error("Quiz kaydedilemedi.");
       const quizId = quizRes.data.quizId;
 
-      // 2. Oda oluştur
       const roomRes = await axios.post(
         `${API_URL}/api/rooms`,
         { quizId },
@@ -577,12 +657,10 @@ function App() {
       setCurrentPin(roomRes.data.pin);
       setIsHost(true);
 
-      // Dashboard quiz listesini güncelle
       const myRes = await axios.get(`${API_URL}/api/quizzes/my`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setQuizzes(myRes.data.quizzes || []);
-
       setCurrentView("quizPinDetails");
     } catch (err) {
       alert(
@@ -593,9 +671,9 @@ function App() {
     }
   };
 
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
   // YARDIMCI FONKSİYONLAR
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
 
   const generateRandomPin = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -612,25 +690,40 @@ function App() {
     }
   };
 
+  // [DÜZELTME] Quiz taslağı varken geri tuşunda confirm dialog
   const goBack = () => {
     if (
       currentView === "createQuizSettings" ||
       currentView === "createQuizQuestions"
     ) {
+      const hasDraft = questions.some(
+        (q) => (q.text && q.text.trim()) || q.imagePreview,
+      );
+      if (hasDraft) {
+        if (!window.confirm("Quiz taslağınız kaybolacak. Emin misiniz?"))
+          return;
+      }
       setCurrentView("dashboard");
     } else if (currentView === "enterPin") {
       setCurrentView("joinQuizMenu");
+    } else if (currentView === "waitingRoom") {
+      // Bekleme odasından çıkarken socket'i temizle
+      const pin = enteredPin || currentPin;
+      handleLeaveRoom(pin);
+      setCurrentView("mainMenu");
     } else {
       setCurrentView(previousView);
     }
   };
 
-  // DEV_MODE için yerel soru geçişi (gerçek modda socket üzerinden)
-  const handleNextOrEnd = () => {
-    if (playQIndex < activeQuizQs.length - 1) {
-      const nextIdx = playQIndex + 1;
+  // DEV_MODE için yerel soru geçişi
+  const handleNextOrEndDev = () => {
+    const idx = playQIndexRef.current;
+    const qs = activeQuizQsRef.current;
+    if (idx < qs.length - 1) {
+      const nextIdx = idx + 1;
       setPlayQIndex(nextIdx);
-      setTimeLeft(activeQuizQs[nextIdx].time);
+      setTimeLeft(qs[nextIdx].time);
       questionStartTimeRef.current = Date.now();
     } else {
       setCurrentView("leaderboard");
@@ -639,11 +732,25 @@ function App() {
 
   const handleNextPlayQuestion = () => {
     if (feedbackStatus) return;
-    handleNextOrEnd();
+    if (DEV_MODE) {
+      handleNextOrEndDev();
+    } else {
+      // Sadece host "next_question" emit eder
+      if (isHostRef.current) {
+        handleNextQuestion();
+      }
+      // Oyuncular "question_changed" event'ini bekler (sunucu yayar)
+    }
   };
 
   const finishAndGoToLeaderboard = () => {
-    setCurrentView("leaderboard");
+    if (!DEV_MODE && socketRef.current) {
+      socketRef.current.emit("finalize_game", {
+        pin: currentPin || enteredPin,
+      });
+    } else {
+      setCurrentView("leaderboard");
+    }
   };
 
   // --- SORU EDİTÖRÜ YARDIMCILARI ---
@@ -714,25 +821,14 @@ function App() {
     setCurrentQIndex(questions.length);
   };
 
-  // --- ZAMANLAYICI ---
-  useEffect(() => {
-    if (currentView === "playingQuiz" && timeLeft > 0 && !feedbackStatus) {
-      const id = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
-      return () => clearTimeout(id);
-    }
-    if (currentView === "playingQuiz" && timeLeft === 0 && !feedbackStatus) {
-      handleAnswerClick(null); // Süre doldu → cevapsız gönder
-    }
-  }, [currentView, timeLeft, feedbackStatus]);
-
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
   // RENDER
-  // =====================================================================
+  // ─────────────────────────────────────────────────────────────
   return (
     <div className="app-container" onClick={handleFirstInteraction}>
       <audio ref={audioRef} src="/background-music.mp3" autoPlay loop />
 
-      <BackButton currentView={currentView} setCurrentView={setCurrentView} />
+      <BackButton currentView={currentView} goBack={goBack} />
       <SettingsButton currentView={currentView} openSettings={openSettings} />
 
       {currentView === "mainMenu" && (
@@ -822,6 +918,7 @@ function App() {
           finishAndGoToLeaderboard={finishAndGoToLeaderboard}
           setCurrentView={setCurrentView}
           playClick={playClick}
+          isHost={isHost}
         />
       )}
 
