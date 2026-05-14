@@ -8,6 +8,7 @@ export default function Dashboard({
   setCurrentView,
   playClick,
   user,
+  handleLogout,
 }) {
   const carouselRef = useRef(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
@@ -63,7 +64,9 @@ export default function Dashboard({
               onClick={() => {
                 playClick();
                 setIsProfileMenuOpen(false);
-                setCurrentView("mainMenu");
+                handleLogout
+                  ? handleLogout()
+                  : setCurrentView("mainMenu");
               }}
             >
               Çıkış Yap

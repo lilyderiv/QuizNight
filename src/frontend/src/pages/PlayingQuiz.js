@@ -91,11 +91,14 @@ export default function PlayingQuiz({
         <div className="play-answers-grid">
           {currentQ.answers.map((ans, i) => (
             <button
-              key={i}
+              key={ans?.id ?? i}
               className="play-answer-btn neon-box"
               onClick={() => handleAnswerClick(ans)}
             >
-              <span className="neon-text">{ans}</span>
+              {/* Gerçek modda ans = {id, text}, DEV modda ans = string */}
+              <span className="neon-text">
+                {typeof ans === "object" && ans !== null ? ans.text : ans}
+              </span>
             </button>
           ))}
         </div>

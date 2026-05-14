@@ -9,6 +9,7 @@ const { v4: uuidv4 } = require("uuid");
 
 const roomManager = require("./roomManager");
 const { UserOperations, QuizOperations } = require("./mysqlOperations");
+const { ScoringOperations, RoomOperations } = require("./redisOperations");
 
 const app = express();
 const server = http.createServer(app);
@@ -39,7 +40,7 @@ function authenticateToken(req, res, next) {
         .status(403)
         .json({ success: false, message: "Geçersiz token." });
     }
-    req.userId = decoded.id; // Sonraki handler'larda kullanılabilir
+    req.userId = decoded.id;
     next();
   });
 }
@@ -59,7 +60,6 @@ app.post("/api/auth/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await UserOperations.createUser(name, email, hashedPassword);
 
-    // Kayıt sonrası otomatik token ver
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "24h" });
     res.status(201).json({ success: true, token, user });
   } catch (err) {
@@ -111,7 +111,7 @@ app.post("/api/auth/login", async (req, res) => {
 //  QUİZ ROTALARI
 // ─────────────────────────────────────────────────────────────
 
-// Herkese açık quizleri listele (giriş gerekmez)
+// Herkese açık quizleri listele
 app.get("/api/quizzes", async (req, res) => {
   try {
     const quizzes = await QuizOperations.getPublicQuizzes();
@@ -135,7 +135,6 @@ app.get("/api/quizzes/my", authenticateToken, async (req, res) => {
 app.post("/api/quizzes", authenticateToken, async (req, res) => {
   try {
     const { quizData, questionsData } = req.body;
-    // DÜZELTME: ownerId token'dan alınıyor, client'tan değil
     quizData.ownerId = req.userId;
     const quizId = await QuizOperations.createQuiz(quizData, questionsData);
     res.status(201).json({ success: true, quizId });
@@ -151,9 +150,8 @@ app.post("/api/quizzes", authenticateToken, async (req, res) => {
 app.post("/api/rooms", authenticateToken, async (req, res) => {
   try {
     const { quizId } = req.body;
-    // DÜZELTME: hostId token'dan alınıyor
     const result = await roomManager.createRoom(req.userId, quizId);
-    res.json({ success: true, ...result });
+    res.json({ success: true, pin: result.pin, sessionId: result.sessionId });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
@@ -166,6 +164,7 @@ app.post("/api/rooms", authenticateToken, async (req, res) => {
 io.on("connection", (socket) => {
   console.log("✅ Yeni bağlantı:", socket.id);
 
+  // Oyuncu odaya katılır
   socket.on("join_room", async (data) => {
     try {
       let { pin, playerId, nickname, isGuest } = data;
@@ -197,11 +196,36 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Host oyunu başlatır — nickname alarak host'u odaya ekler
   socket.on("start_game", async (data) => {
     try {
-      const { pin } = data;
+      const { pin, nickname } = data;
+
+      const roomData = await RoomOperations.getRoom(pin);
+      if (!roomData) throw new Error("Oda bulunamadı.");
+
+      // Host socket.io odasına katılır (game_started event'ini alabilmek için)
+      socket.join(pin);
+
+      // Host Redis leaderboard'a eklenir (puanlanabilmesi için)
+      if (nickname) {
+        await RoomOperations.joinRoom(
+          pin,
+          roomData.hostId,
+          nickname,
+          socket.id,
+          false,
+        );
+      }
+
       const { sanitizedQuestions, timeLimitMs } =
         await roomManager.startGame(pin);
+
+      // İlk soru için zamanlayıcıyı başlat
+      if (sanitizedQuestions.length > 0) {
+        await ScoringOperations.startQuestion(pin, sanitizedQuestions[0].id, 0);
+      }
+
       io.to(pin).emit("game_started", {
         questions: sanitizedQuestions,
         timeLimitMs,
@@ -211,15 +235,27 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Soru geçişinde sunucu tarafı zamanlayıcıyı sıfırlar
+  socket.on("advance_question", async (data) => {
+    try {
+      const { pin, questionId, questionIdx } = data;
+      await ScoringOperations.startQuestion(pin, questionId, questionIdx);
+    } catch (err) {
+      console.error("advance_question hatası:", err);
+    }
+  });
+
+  // Cevap gönderme — timeElapsedMs ile doğru puanlama
   socket.on("submit_answer", async (data) => {
     try {
-      const { pin, playerId, selectedAnswerId, questionId, timeLimitMs } = data;
+      const { pin, playerId, selectedAnswerId, questionId, timeLimitMs, timeElapsedMs } = data;
       const result = await roomManager.submitAnswer(
         pin,
         playerId,
         selectedAnswerId,
         questionId,
         timeLimitMs,
+        timeElapsedMs,
       );
 
       socket.emit("answer_feedback", {
@@ -236,6 +272,7 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Oyunu sonlandır
   socket.on("finalize_game", async (data) => {
     try {
       const { pin } = data;
@@ -250,7 +287,7 @@ io.on("connection", (socket) => {
     const session = await roomManager.handleDisconnect(socket.id);
     if (session) {
       console.log(
-        `!Oyuncu ayrıldı: ${session.playerId} (Oda: ${session.roomPin})`,
+        `⚠ Oyuncu ayrıldı: ${session.playerId} (Oda: ${session.roomPin})`,
       );
     }
   });
@@ -258,5 +295,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Sunucu ${PORT} portunda başlatıldı!`);
+  console.log(`✅ Sunucu ${PORT} portunda başlatıldı!`);
 });

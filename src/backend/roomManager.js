@@ -129,8 +129,9 @@ async function startGame(pin) {
 
 /**
  * Oyuncunun verdiği cevabı değerlendirir ve puanı hesaplar.
+ * timeElapsedMs: istemcinin bu soru için harcadığı süre (doğru zamanlama).
  */
-async function submitAnswer(pin, playerId, selectedAnswerId, questionId, timeLimitMs = 30000) {
+async function submitAnswer(pin, playerId, selectedAnswerId, questionId, timeLimitMs = 30000, timeElapsedMs = null) {
   let isCorrect = false;
   const qMap = questionCache.get(pin);
 
@@ -143,12 +144,14 @@ async function submitAnswer(pin, playerId, selectedAnswerId, questionId, timeLim
     isCorrect = await QuestionOperations.checkAnswer(selectedAnswerId, questionId);
   }
 
-  // Puan hesaplama ve Redis'e kaydetme
+  // Puan hesaplama — questionId ve timeElapsedMs geçiriliyor
   const { points, alreadyAnswered } = await ScoringOperations.submitAnswer(
-    pin, 
-    playerId, 
-    isCorrect, 
-    timeLimitMs
+    pin,
+    playerId,
+    isCorrect,
+    timeLimitMs,
+    questionId,
+    timeElapsedMs,
   );
 
   // Güncel liderlik tablosunu çek
@@ -198,7 +201,7 @@ module.exports = {
   createRoom,
   joinRoom,
   startGame,
-  submitAnswer,
+  submitAnswer,   // (pin, playerId, selectedAnswerId, questionId, timeLimitMs, timeElapsedMs)
   finalizeAndDestroy,
-  handleDisconnect
+  handleDisconnect,
 };

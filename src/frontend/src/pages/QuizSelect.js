@@ -2,15 +2,14 @@ import "./QuizSelect.css";
 import React, { useRef, useEffect, useState } from "react";
 
 // Quiz seçim sayfası.
+// onQuizSelect(quizId): App.js'de backend'e POST /api/rooms atar ve oda oluşturur.
 export default function QuizSelect({
   quizList,
-  searchTerm, // App.js'den prop olarak alınıyor
-  setSearchTerm, // App.js'den prop olarak alınıyor
-  sortOption, // App.js'den prop olarak alınıyor
-  setSortOption, // App.js'den prop olarak alınıyor
-  setCurrentView,
-  setCurrentPin,
-  generateRandomPin,
+  searchTerm,
+  setSearchTerm,
+  sortOption,
+  setSortOption,
+  onQuizSelect,
   playClick,
 }) {
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -39,8 +38,9 @@ export default function QuizSelect({
   else if (sortOption === "Kolaydan Zora")
     filteredQuizzes.sort((a, b) => a.difficulty - b.difficulty);
   else if (sortOption === "İlk Eklenenler Başta")
-    filteredQuizzes.sort((a, b) => a.date - b.date);
-  else filteredQuizzes.sort((a, b) => b.date - a.date);
+    filteredQuizzes.sort((a, b) => new Date(a.date) - new Date(b.date));
+  else
+    filteredQuizzes.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   return (
     <>
@@ -58,7 +58,7 @@ export default function QuizSelect({
           }}
         >
           <svg className="nav-icon-svg" viewBox="0 0 24 24">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
         </button>
 
@@ -94,8 +94,8 @@ export default function QuizSelect({
       {/* Arama kutusu */}
       <div className="search-box-container neon-box">
         <svg className="search-icon-svg" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
         <input
           type="text"
@@ -111,21 +111,26 @@ export default function QuizSelect({
           <span className="neon-text">{sortOption}</span>
         </div>
 
-        <div className="quiz-grid-container">
-          {filteredQuizzes.map((quiz) => (
-            <button
-              key={quiz.id}
-              className="quiz-item-button neon-box"
-              onClick={() => {
-                playClick();
-                setCurrentPin(generateRandomPin());
-                setCurrentView("quizPinDetails");
-              }}
-            >
-              <span className="neon-text">{quiz.name}</span>
-            </button>
-          ))}
-        </div>
+        {filteredQuizzes.length === 0 ? (
+          <div className="neon-box" style={{ padding: "20px", marginTop: "20px" }}>
+            <span className="neon-text">Quiz bulunamadı.</span>
+          </div>
+        ) : (
+          <div className="quiz-grid-container">
+            {filteredQuizzes.map((quiz) => (
+              <button
+                key={quiz.id}
+                className="quiz-item-button neon-box"
+                onClick={() => {
+                  playClick();
+                  onQuizSelect(quiz.id);
+                }}
+              >
+                <span className="neon-text">{quiz.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
