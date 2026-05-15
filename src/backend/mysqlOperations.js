@@ -418,8 +418,3 @@ module.exports = {
   GameSessionOperations,
   closePool,
 };
-const RoomOperations = require("./roomManager");
-const ScoringOperations = require("./scoringManager");
-const SessionOperations = require("./sessionManager");
-const CleanupOperations = require("./cleanupManager");
-const questionCache = require("./questionCache");
