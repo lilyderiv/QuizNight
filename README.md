@@ -3,11 +3,34 @@
 
 QuizNight, gerçek zamanlı çok oyunculu bir web tabanlı quiz platformudur. Kullanıcılar quiz oluşturabilir, 6 haneli PIN kodu ile arkadaşlarını davet edebilir ve anlık sıralama sistemiyle rekabetçi bir quiz deneyimi yaşayabilir. Kullanıcıların fiziksel mekanlardaki "Quiz Night" (Bilgi Yarışması Gecesi) deneyimini dijital ortama taşıyarak, belirli temalar (diziler, filmler, genel kültür vb.) etrafında topluluklar oluşturmasını ve gerçek zamanlı rekabet etmesini sağlamaktır. Proje, sadece bir test çözme platformu değil, aynı zamanda senkronize bir sosyal etkileşim alanı yaratmayı hedefler.
 
-##  Ekran Görüntüleri
+##  Projeye Atit Bazı Ekran Görüntüleri
 
-> Projenin ekran görüntüleri  
-> Ana Menü, Quiz Oynama, Sıralama (Leaderboard)  
-> Örnek: `![Ana Menü](./screenshots/main-menu.png)`
+- Giriş Ekranı:
+<img width="693" height="315" alt="resim" src="https://github.com/user-attachments/assets/75f11b3f-e519-45fe-9553-81e7d7eeb8cf" />
+
+- Ayarlar Ekranı:
+<img width="713" height="322" alt="resim" src="https://github.com/user-attachments/assets/eb0cb7cc-4528-46a9-b3cf-ae87ee5cf150" />
+
+- Kayıt veya Giriş Yönlendirme Ekranı:
+<img width="694" height="315" alt="resim" src="https://github.com/user-attachments/assets/bc69158c-f173-4ad3-93ec-f74f4e0cd0b3" />
+
+- Kişiye Ait Profilde Quiz Oluşturma ve Başlatma Ekranı:
+<img width="662" height="300" alt="resim" src="https://github.com/user-attachments/assets/77d1a487-038d-4a1c-a0d2-b5ab5fb76e82" />
+
+- Host Olarak Quiz Seçildikten Sonra Gelen Özel Pin Ekranı:
+<img width="706" height="320" alt="resim" src="https://github.com/user-attachments/assets/756f478b-231d-4bef-b4f2-92098212447d" />
+
+- Misafir yuncu Pin Giriş Ekranı:
+<img width="708" height="322" alt="resim" src="https://github.com/user-attachments/assets/5ae382b4-93d1-4ac4-8de1-67da21c0fc46" />
+
+- Doğru Yanıt Ekranı:
+<img width="713" height="323" alt="resim" src="https://github.com/user-attachments/assets/1afad4fb-3bf4-4156-b37f-98f91f80467a" />
+
+- Yanlış Yanıt Ekranı:
+<img width="713" height="324" alt="resim" src="https://github.com/user-attachments/assets/15abb682-5e0f-4299-aa91-fcee978597ec" />
+
+- Sıralama Ekranı:
+<img width="714" height="324" alt="resim" src="https://github.com/user-attachments/assets/70cb09a3-2787-49ef-a6bb-1aa86469dc91" />
 
 ---
 
@@ -279,9 +302,9 @@ public/background-music.mp3        → Arka plan müziği
 
 ##  Geliştirici
 
-**Efe Can Özdemir**
-**Kübra Dereli**
-**Hilal Çakıroğlu**
+- **Efe Can Özdemir**
+- **Kübra Dereli**
+- **Hilal Çakıroğlu**
 
 ---
 
