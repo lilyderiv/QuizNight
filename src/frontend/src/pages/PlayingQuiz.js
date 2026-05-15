@@ -2,22 +2,32 @@ import "./PlayingQuiz.css";
 import React from "react";
 
 // Quiz oynama ekranı.
+// isHost: sadece host "İleri" okuna basabilir (senkronize soru geçişi için).
 export default function PlayingQuiz({
   activeQuizQs,
   playQIndex,
   timeLeft,
   feedbackStatus,
-  isOptionsMenuOpen, // App.js'den prop olarak alınıyor
-  setIsOptionsMenuOpen, // App.js'den prop olarak alınıyor
+  isOptionsMenuOpen,
+  setIsOptionsMenuOpen,
   handleAnswerClick,
   handleNextPlayQuestion,
   finishAndGoToLeaderboard,
   setCurrentView,
   playClick,
+  isHost,
 }) {
-  const currentQ = activeQuizQs[playQIndex]; // Şu anki soru prop'lardan türetiliyor
+  const currentQ = activeQuizQs[playQIndex];
 
   if (!currentQ) return null;
+
+  // [DÜZELTME] Zamanlayıcı formatı: mm:ss
+  // 30s → "00:30", 90s → "01:30", 300s → "05:00"
+  const mins = Math.floor(timeLeft / 60)
+    .toString()
+    .padStart(2, "0");
+  const secs = (timeLeft % 60).toString().padStart(2, "0");
+  const timerDisplay = `${mins}:${secs}`;
 
   return (
     <div
@@ -75,9 +85,7 @@ export default function PlayingQuiz({
           </span>
         </div>
         <div className="play-timer-box neon-box">
-          <span className="neon-text">
-            00.{timeLeft < 10 ? `0${timeLeft}` : timeLeft}
-          </span>
+          <span className="neon-text">{timerDisplay}</span>
         </div>
       </div>
 
@@ -94,8 +102,8 @@ export default function PlayingQuiz({
               key={ans?.id ?? i}
               className="play-answer-btn neon-box"
               onClick={() => handleAnswerClick(ans)}
+              disabled={!!feedbackStatus}
             >
-              {/* Gerçek modda ans = {id, text}, DEV modda ans = string */}
               <span className="neon-text">
                 {typeof ans === "object" && ans !== null ? ans.text : ans}
               </span>
@@ -103,7 +111,10 @@ export default function PlayingQuiz({
           ))}
         </div>
 
-        {playQIndex < activeQuizQs.length - 1 && (
+        {/* [DÜZELTME] Sadece host "İleri" okuna basabilir.
+            Bu buton soru geçişini tetikler; sunucu tüm odaya yayar.
+            Oyuncular "question_changed" event'ini bekler. */}
+        {isHost && playQIndex < activeQuizQs.length - 1 && (
           <button
             className="play-next-arrow neon-box"
             onClick={() => {

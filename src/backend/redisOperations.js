@@ -4,17 +4,13 @@ const redis = require("./redisClient");
 
 const ROOM_TTL_S = 7200; // 2 saat
 
+// ─────────────────────────────────────────────────────────────
+//  ODA İŞLEMLERİ
+// ─────────────────────────────────────────────────────────────
+
 class RoomOperations {
   /**
-   * Yeni oda oluşturur (Host quizi başlattığında, REST endpoint'ten).
-   *
-   * [ADD-2] totalQuestions parametresi eklendi.
-   *
-   * @param {string} pin
-   * @param {string} hostId
-   * @param {number} quizId
-   * @param {number} sessionId
-   * @param {number} totalQuestions  - Leaderboard { total } için
+   * Yeni oda oluşturur.
    */
   static async createRoom(pin, hostId, quizId, sessionId, totalQuestions = 0) {
     const roomKey = `room:${pin}`;
@@ -25,7 +21,7 @@ class RoomOperations {
       hostId,
       quizId: String(quizId),
       sessionId: String(sessionId),
-      totalQuestions: String(totalQuestions), // [ADD-2]
+      totalQuestions: String(totalQuestions),
       currentQuestionIdx: "0",
       currentQuestionId: "null",
       questionStartTime: "0",
@@ -37,8 +33,6 @@ class RoomOperations {
 
   /**
    * Oda meta verisini getirir.
-   * @param {string} pin
-   * @returns {object|null}
    */
   static async getRoom(pin) {
     const data = await redis.hgetall(`room:${pin}`);
@@ -53,32 +47,24 @@ class RoomOperations {
   /**
    * Oyuncu odaya katılır.
    * Race-condition güvenli: SADD idempotent, ZADD NX yeniden sıfırlamaz.
-   *
-   * [FIX-3] isGuest parametresi eklendi.
-   *         Misafir bilgisi player_meta HASH'ine yazılır.
-   *
-   * @param {string}  pin
-   * @param {string}  playerId   - kayıtlı user UUID veya "guest:{uuid}"
-   * @param {string}  nickname
-   * @param {string}  socketId
-   * @param {boolean} isGuest
    */
   static async joinRoom(pin, playerId, nickname, socketId, isGuest = false) {
     const pipe = redis.pipeline();
 
-    // Oyuncu kümesi
     pipe.sadd(`room:${pin}:players`, playerId);
-
-    // Nickname HASH — [FIX-2] ayrı string key yerine HASH
     pipe.hset(`room:${pin}:player_names`, playerId, nickname);
-
-    // Misafir meta — [FIX-3]
     pipe.hset(`room:${pin}:player_meta`, playerId, JSON.stringify({ isGuest }));
 
     // Başlangıç skoru (NX: varsa dokunma)
     pipe.zadd(`leaderboard:${pin}`, "NX", 0, playerId);
 
-    // Socket session
+    // Doğru/yanlış sayacı — başlangıç
+    pipe.hsetnx(
+      `room:${pin}:player_stats`,
+      playerId,
+      JSON.stringify({ correct: 0, wrong: 0 }),
+    );
+
     if (socketId) {
       pipe.hset(`session:${socketId}`, {
         playerId,
@@ -88,13 +74,27 @@ class RoomOperations {
       pipe.expire(`session:${socketId}`, ROOM_TTL_S);
     }
 
-    // TTL yenile (katılımla oda aktif kalır)
     pipe.expire(`room:${pin}`, ROOM_TTL_S);
     pipe.expire(`room:${pin}:players`, ROOM_TTL_S);
     pipe.expire(`room:${pin}:player_names`, ROOM_TTL_S);
     pipe.expire(`room:${pin}:player_meta`, ROOM_TTL_S);
+    pipe.expire(`room:${pin}:player_stats`, ROOM_TTL_S);
     pipe.expire(`leaderboard:${pin}`, ROOM_TTL_S);
 
+    await pipe.exec();
+  }
+
+  /**
+   * Odadan oyuncuyu çıkar (bekleme odasından ayrılma).
+   */
+  static async leaveRoom(pin, playerId, socketId) {
+    const pipe = redis.pipeline();
+    pipe.srem(`room:${pin}:players`, playerId);
+    pipe.hdel(`room:${pin}:player_names`, playerId);
+    pipe.hdel(`room:${pin}:player_meta`, playerId);
+    pipe.hdel(`room:${pin}:player_stats`, playerId);
+    pipe.zrem(`leaderboard:${pin}`, playerId);
+    if (socketId) pipe.del(`session:${socketId}`);
     await pipe.exec();
   }
 
@@ -107,16 +107,8 @@ class RoomOperations {
 
   /**
    * Tüm oyuncuları anlık skorlarıyla döner.
-   * Leaderboard push, WaitingRoom listesi ve finalizeSession için.
-   *
-   * [FIX-1] N+1 giderildi: nickname'ler HGETALL ile tek çekim.
-   * [ADD-1] isGuest alanı eklendi.
-   *
-   * @param {string} pin
-   * @returns {Array} [{ playerId, nickname, score, rank, isGuest }]
    */
   static async getPlayersWithScores(pin) {
-    // Paralel: skor sıralaması + nickname haritası + meta haritası
     const [scoreData, nameMap, metaMap] = await Promise.all([
       redis.zrevrange(`leaderboard:${pin}`, 0, -1, "WITHSCORES"),
       redis.hgetall(`room:${pin}:player_names`),
@@ -138,12 +130,16 @@ class RoomOperations {
         playerId,
         nickname,
         score,
-        isGuest: meta.isGuest || false, // [ADD-1]
+        isGuest: meta.isGuest || false,
       });
     }
     return players;
   }
 }
+
+// ─────────────────────────────────────────────────────────────
+//  HAZIR KONTROLÜ
+// ─────────────────────────────────────────────────────────────
 
 class ReadyOperations {
   static async setPlayerReady(pin, playerId) {
@@ -163,20 +159,24 @@ class ReadyOperations {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+//  PUANLAMA İŞLEMLERİ
+// ─────────────────────────────────────────────────────────────
+
 class ScoringOperations {
   /**
-   * Yeni soruyu başlatır; sunucu saatini referans alır.
-   * Soru değiştiğinde cevap kümesi temizlenir.
-   *
-   * @param {string} pin
-   * @param {number} questionId
-   * @param {number} questionIdx
-   * @returns {number} serverTime (ms) — istemcilere referans
+   * Yeni soruyu başlatır.
+   * İDEMPOTENT: Aynı soru için tekrar çağrılırsa işlem yapmaz.
+   * Bu sayede ağ sorunlarından kaynaklanan çift tetiklemeler güvenlidir.
    */
   static async startQuestion(pin, questionId, questionIdx) {
-    // Zaten bu soruda isek tekrar sıfırlama — idempotent
+    // Zaten bu soruda isek tekrar sıfırlama
     const currentId = await redis.hget(`room:${pin}`, "currentQuestionId");
-    if (currentId === String(questionId)) return;
+    if (currentId === String(questionId)) {
+      // Mevcut sunucu zamanını döndür (istemci referansı için)
+      const existingTime = await redis.hget(`room:${pin}`, "questionStartTime");
+      return parseInt(existingTime || Date.now(), 10);
+    }
 
     const serverTime = Date.now();
     await redis.hset(`room:${pin}`, {
@@ -185,26 +185,26 @@ class ScoringOperations {
       currentQuestionIdx: String(questionIdx),
       questionStartTime: String(serverTime),
     });
+    // Per-question cevap seti — önceki sorularla karışmaz
+    // (Her soru kendi key'ini kullanıyor: room:{pin}:q{questionId}:answers)
     return serverTime;
   }
 
   /**
    * Oyuncu cevabını işler ve puan hesaplar.
    *
-   * - Her soru için ayrı cevap kümesi (room:{pin}:q{questionId}:answers)
-   *   kullanılır; bu sayede sorular arası "alreadyAnswered" hatası olmaz.
-   * - İstemciden gelen timeElapsedMs öncelikli kullanılır (doğru zamanlama).
-   *   Yoksa sunucu-taraflı questionStartTime ile hesaplanır.
-   *
-   * Puan formülü: max(10, 1000 − floor(elapsed/limit × 1000))
+   * - Her soru için ayrı cevap kümesi kullanılır (per-question key).
+   *   Bu sayede soru değişiminde geçmiş cevaplar temizlenmeden
+   *   yeni soruda "alreadyAnswered" hatası oluşmaz.
+   * - isCorrect ve doğru/yanlış sayacı güncellenir.
    *
    * @param {string}  pin
    * @param {string}  playerId
    * @param {boolean} isCorrect
-   * @param {number}  timeLimitMs    - Soru başına toplam süre (ms)
-   * @param {number|null} questionId - Soru ID'si (per-question key için)
-   * @param {number|null} timeElapsedMs - İstemcinin geçen süre ölçümü (ms)
-   * @returns {{ points: number, alreadyAnswered: boolean }}
+   * @param {number}  timeLimitMs
+   * @param {number}  questionId        - per-question key için
+   * @param {number|null} timeElapsedMs - istemci ölçümü
+   * @returns {{ points, alreadyAnswered }}
    */
   static async submitAnswer(
     pin,
@@ -214,7 +214,7 @@ class ScoringOperations {
     questionId = null,
     timeElapsedMs = null,
   ) {
-    // Her soru için bağımsız cevap kümesi — sorular arası karışma olmaz
+    // Per-question cevap kümesi
     const answersKey = questionId
       ? `room:${pin}:q${questionId}:answers`
       : `room:${pin}:answers`;
@@ -223,9 +223,25 @@ class ScoringOperations {
     if (isNew) await redis.expire(answersKey, ROOM_TTL_S);
 
     if (!isNew) return { points: 0, alreadyAnswered: true };
+
+    // Doğru/yanlış sayacını güncelle
+    const statsRaw = await redis.hget(`room:${pin}:player_stats`, playerId);
+    const stats = statsRaw ? JSON.parse(statsRaw) : { correct: 0, wrong: 0 };
+
+    if (isCorrect) {
+      stats.correct += 1;
+    } else {
+      stats.wrong += 1;
+    }
+    await redis.hset(
+      `room:${pin}:player_stats`,
+      playerId,
+      JSON.stringify(stats),
+    );
+
     if (!isCorrect) return { points: 0, alreadyAnswered: false };
 
-    // Geçen süreyi belirle: istemci ölçümü > sunucu hesabı
+    // Geçen süreyi belirle: istemci ölçümü öncelikli
     let timeTaken;
     if (timeElapsedMs !== null && timeElapsedMs >= 0) {
       timeTaken = Math.min(timeElapsedMs, timeLimitMs);
@@ -247,19 +263,14 @@ class ScoringOperations {
   }
 
   /**
-   * Anlık liderlik tablosu.
-   *
-   * [FIX-1] N+1 giderildi: HGETALL ile tüm nickname'ler tek komut.
-   *
-   * @param {string} pin
-   * @returns {Array} [{ rank, playerId, nickname, score, isGuest }]
+   * Anlık liderlik tablosu — doğru/yanlış sayılarıyla birlikte.
    */
   static async getLeaderboard(pin) {
-    // ZREVRANGE + player_names HGETALL + player_meta HGETALL paralel
-    const [scoreData, nameMap, metaMap] = await Promise.all([
+    const [scoreData, nameMap, metaMap, statsMap] = await Promise.all([
       redis.zrevrange(`leaderboard:${pin}`, 0, -1, "WITHSCORES"),
       redis.hgetall(`room:${pin}:player_names`),
       redis.hgetall(`room:${pin}:player_meta`),
+      redis.hgetall(`room:${pin}:player_stats`),
     ]);
 
     const leaderboard = [];
@@ -271,12 +282,18 @@ class ScoringOperations {
         metaMap && metaMap[playerId]
           ? JSON.parse(metaMap[playerId])
           : { isGuest: false };
+      const stats =
+        statsMap && statsMap[playerId]
+          ? JSON.parse(statsMap[playerId])
+          : { correct: 0, wrong: 0 };
 
       leaderboard.push({
         rank: leaderboard.length + 1,
         playerId,
         nickname,
         score,
+        correct: stats.correct,
+        wrong: stats.wrong,
         isGuest: meta.isGuest || false,
       });
     }
@@ -289,11 +306,6 @@ class ScoringOperations {
 // ─────────────────────────────────────────────────────────────
 
 class SessionOperations {
-  /**
-   * Socket ID'den oturum bilgisi getirir.
-   * @param {string} socketId
-   * @returns {{ playerId, roomPin, isGuest }|null}
-   */
   static async getSession(socketId) {
     const data = await redis.hgetall(`session:${socketId}`);
     if (!data || !data.playerId) return null;
@@ -304,23 +316,12 @@ class SessionOperations {
     };
   }
 
-  /**
-   * Bağlantı kesildiğinde çağrılır.
-   * Oyuncu odadan atılmaz (reconnect için 60s beklenir).
-   */
   static async handleDisconnect(socketId) {
     const session = await SessionOperations.getSession(socketId);
     if (session) await redis.del(`session:${socketId}`);
     return session;
   }
 
-  /**
-   * Yeniden bağlanma sonrası session yeniler.
-   * @param {string} newSocketId
-   * @param {string} playerId
-   * @param {string} pin
-   * @param {boolean} isGuest
-   */
   static async refreshSession(newSocketId, playerId, pin, isGuest = false) {
     await redis.hset(`session:${newSocketId}`, {
       playerId,
@@ -339,19 +340,16 @@ class CleanupOperations {
   /**
    * Oyun bitiminde tüm Redis key'lerini temizler.
    * MySQL'e yazma BU ÇAĞRIDAN ÖNCE tamamlanmış olmalıdır.
-   *
-   * [FIX-4] Dinamik nickname SCAN döngüsü kaldırıldı.
-   *         Tüm oyuncu adları room:{pin}:player_names HASH'inde;
-   *         tek DEL ile temizlenir.
-   *
-   * @param {string} pin
+   * Per-question cevap keyleri TTL ile otomatik silinir;
+   * burada yalnızca ana keyler temizlenir.
    */
   static async destroyRoom(pin) {
     await redis.del(
       `room:${pin}`,
       `room:${pin}:players`,
-      `room:${pin}:player_names`, // [FIX-4]
+      `room:${pin}:player_names`,
       `room:${pin}:player_meta`,
+      `room:${pin}:player_stats`,
       `room:${pin}:ready`,
       `room:${pin}:answers`,
       `leaderboard:${pin}`,
