@@ -1,0 +1,224 @@
+.play-quiz-container { 
+  display: flex; /* Esnek hizalama (flexbox) modelini açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: flex-start; /* İçerikleri ekranın en üstünden başlatır */
+  width: 100vw; /* Ekranın tam genişliğini kaplar */
+  height: 100dvh; /* Mobil tarayıcı adres çubuklarına uyumlu dinamik ekran yüksekliği (dvh) kullanır */
+  padding-top: 12dvh; /* Üstten dinamik iç boşluk bırakır */
+  padding-bottom: 3dvh; /* Alttan dinamik iç boşluk bırakır */
+  gap: 2.5dvh; /* Flex içindeki öğeler arasına boşluk koyar */
+  box-sizing: border-box; /* Padding ve border değerlerini toplam genişlik/yüksekliğe dahil eder */
+  overflow: hidden; /* Taşan içerikleri gizleyip sayfanın kaymasını engeller */
+} 
+
+.play-top-fixed-bar { 
+  position: absolute; /* Öğeyi ekrana veya en yakın kapsayıcıya göre serbest konumlandırır */
+  top: 15px; /* Üstten 15px aşağıya iter */
+  left: 15px; /* Soldan 15px içeri iter */
+  display: flex; 
+  gap: 15px; 
+  z-index: 100; /* Diğer tüm öğelerin üstünde (ön planda) görünmesini sağlar */
+} 
+
+.play-options-dropdown { 
+  position: absolute; 
+  top: 110%; /* Öğeyi kendi yüksekliğinden biraz daha fazla (%110) aşağı konumlandırır */
+  left: 0; 
+  background-color: #000c42 !important; /* Arka plan rengini zorunlu (!important) koyu lacivert yapar */
+  border: 2px solid white; /* 2px kalınlığında düz beyaz çerçeve ekler */
+  border-radius: 10px; /* Köşeleri 10px yuvarlatır */
+  padding: 5px; /* İçeriden her yöne 5px boşluk bırakır */
+  min-width: 150px; /* Kutunun genişliğinin 150px'in altına düşmesini engeller */
+} 
+
+.play-options-dropdown button { 
+  background: transparent; /* Arka planı şeffaf yapar */
+  border: none; /* Kenarlığı (çerçeveyi) kaldırır */
+  color: white; /* Yazı rengini beyaz yapar */
+  width: 100%; /* İçinde bulunduğu kabın tüm genişliğini alır */
+  padding: 10px; 
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline çevirir */
+  white-space: nowrap; /* Metnin alt satıra geçmesini engeller, tek satırda tutar */
+  font-size: 1.2rem; /* Yazı boyutunu kök boyuta (rem) göre ayarlar */
+} 
+
+.play-info-row { 
+  display: flex; 
+  justify-content: space-between; /* Öğeleri sağa ve sola yaslayıp aralarındaki boşluğu eşit açar */
+  width: 96vw; 
+  max-width: 1846px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
+} 
+
+.play-counter-box, 
+.play-timer-box { 
+  background-color: #000c42 !important; 
+  border: min(0.4dvh, 4px) solid white; /* Ekran boyutuna göre incelmeyen ama büyümesini sınırlayan (min) çerçeve */
+  border-radius: min(1.5dvh, 15px); /* Köşeleri ekran boyutuna orantılı olarak yuvarlatır */
+  width: 21vw; 
+  max-width: 415px; 
+  height: 13dvh; /* Yüksekliği ekranın %13'ü olarak ayarlar */
+  max-height: 193px; /* Yüksekliğin alabileceği maksimum sınırı belirler */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; /* İçeriği kendi kutusu içinde dikey ve yatayda tam ortaya hizalar */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); /* Kutuya hafif saydam beyaz parlama/gölge efekti verir */
+} 
+
+.play-counter-box span, 
+.play-timer-box span { 
+  font-size: min(6vw, 6dvh, 70px); /* Yazı boyutunu 3 değerden en küçüğü olacak şekilde sınırlar */
+  white-space: nowrap; 
+} 
+
+.play-question-box { 
+  background-color: transparent !important; 
+  border: min(0.4dvh, 4px) solid white; 
+  border-radius: min(2dvh, 20px); 
+  width: 96vw; 
+  max-width: 1846px; 
+  height: 14dvh; 
+  max-height: 203px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); 
+  padding: 0 2vw; /* Üst/alt padding'i 0, sağ/sol padding'i ekran genişliğinin %2'si yapar */
+} 
+
+.play-question-box span { 
+  font-size: min(5vw, 5dvh, 60px); 
+  text-align: center; /* Metni kendi kutusu içinde yatayda ortalar */
+} 
+
+.play-answers-wrapper { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 96vw; 
+  max-width: 1846px; 
+  gap: 2vw; 
+} 
+
+.play-answers-grid { 
+  display: grid; /* Öğeleri ızgara (grid) düzeninde konumlandırmayı açar */
+  grid-template-columns: 1fr 1fr; /* Mevcut alanı 2 eşit sütuna (1fr 1fr) böler */
+  gap: 2vw; 
+  flex-grow: 1; /* Öğenin kapsayıcı içindeki kalan tüm boşluğu dolduracak şekilde esnemesini sağlar */
+} 
+
+.play-answer-btn { 
+  background-color: #000c42 !important; 
+  border: min(0.4dvh, 4px) solid white; 
+  border-radius: min(2dvh, 20px); 
+  height: 19dvh; 
+  max-height: 285px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  cursor: pointer; 
+  transition: transform 0.1s; /* Durum değişikliklerindeki (hover/active) animasyonu 0.1s sürede yumuşatır */
+  padding: 0 10px; 
+} 
+
+.play-answer-btn span { 
+  font-size: min(4.5vw, 4dvh, 50px); 
+  text-align: center; 
+} 
+
+.play-answer-btn:active { 
+  transform: scale(0.97); /* Tıklanma anında (active) öğenin boyutunu hafifçe küçültür */
+  filter: brightness(1.2); /* Tıklanma anında öğenin parlaklığını artırır */
+} 
+
+.play-next-arrow { 
+  background-color: #000c42 !important; 
+  border: min(0.3dvh, 3px) solid white; 
+  border-radius: 50%; /* Öğeyi tam yuvarlak (daire) şekline getirir */
+  width: min(8vw, 90px); 
+  height: min(8vw, 90px); 
+  flex-shrink: 0; /* Dar alanlarda öğenin esneyip küçülmesini engeller */
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  transition: transform 0.1s; 
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); 
+} 
+
+.play-next-arrow:active { 
+  transform: scale(0.9); 
+} 
+
+.play-end-quiz-btn { 
+  background-color: #000c42 !important; 
+  border: min(0.4dvh, 4px) solid white; 
+  border-radius: min(2dvh, 20px); 
+  width: 39vw; 
+  max-width: 755px; 
+  height: 10dvh; 
+  max-height: 146px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  cursor: pointer; 
+  margin-top: auto; /* Öğeyi üstteki tüm boşluğu iterek en alta yapışmasını sağlar */
+} 
+
+.play-end-quiz-btn span { 
+  font-size: min(5vw, 5dvh, 55px); 
+  white-space: nowrap; 
+} 
+
+.feedback-overlay { 
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  width: 100vw; 
+  height: 100dvh; 
+  background-color: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(4px); /* Arka planda kalan öğelere bulanıklık (blur) efekti uygular */
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  z-index: 1000; 
+} 
+
+.feedback-circle { 
+  background-color: #000c42 !important; 
+  border: min(0.6dvh, 6px) solid white; 
+  border-radius: 50%; 
+  width: min(30vw, 30dvh, 300px); 
+  height: min(30vw, 30dvh, 300px); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.9), 
+    inset 0 0 20px rgba(255, 255, 255, 0.5); /* Dışa ve içe (inset) doğru güçlü beyaz parlama efekti verir */
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 'popIn' animasyonunu elastik/zıplama (cubic-bezier) efektiyle oynatır */
+} 
+
+.feedback-circle svg { 
+  width: 60%; 
+  height: 60%; 
+} 
+
+@keyframes popIn { 
+  /* Animasyon adımları */
+  0% { transform: scale(0.5); opacity: 0; } /* Animasyonun başlangıcında küçüktür ve görünmezdir (opacity: 0) */
+  100% { transform: scale(1); opacity: 1; } /* Animasyonun sonunda orijinal boyuta ulaşır ve tamamen görünür (opacity: 1) olur */
+} 
+
+@media (max-width: 768px) { 
+  /* Ekran genişliği 768px (mobil) ve altındayken uygulanacak kurallar */
+  .play-answers-grid { 
+    gap: 10px; 
+  } 
+  .play-answers-wrapper { 
+    gap: 10px; 
+  } 
+  .play-next-arrow { 
+    width: 45px; 
+    height: 45px; 
+  } 
+}

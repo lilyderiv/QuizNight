@@ -1,0 +1,253 @@
+.dash-container {
+  display: flex; /* Esnek hizalama modelini (flexbox) açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  width: 100vw; /* Ekranın tam genişliğini kaplar */
+  height: 100vh; /* Ekranın tam yüksekliğini kaplar */
+  padding-top: 120px; /* İçeriden üst boşluk bırakır (üstteki menüler için yer açar) */
+}
+
+.dash-profile-btn {
+  width: 50px;
+  height: 50px;
+  background-color: #000c42 !important; /* Arka plan rengini koyu lacivert yapar */
+  border: 2px solid white; /* Kenarlara beyaz çerçeve ekler */
+  border-radius: 10px; /* Köşeleri yuvarlatır */
+  display: flex;
+  align-items: center; /* İçeriği dikey eksende ortalar */
+  justify-content: center; /* İçeriği yatay eksende ortalar */
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline çevirir */
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* Kutuya dışarı doğru parlama/gölge efekti verir */
+  transition: transform 0.1s; /* Hover/Active durumları için animasyon geçiş süresi belirler */
+}
+
+.dash-profile-btn:active {
+  transform: scale(0.92); /* Butona tıklandığı an (active) boyutunu hafifçe küçültür */
+}
+
+.dash-dropdown {
+  position: absolute; /* Kapsayıcıya veya ekrana göre serbest konumlanmasını sağlar */
+  top: 60px; /* Yukarıdan 60px aşağıya iter */
+  left: 0; /* Sol tarafa yaslar */
+  background-color: #000c42 !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  padding: 10px 15px; /* İçeriden üst/alt ve sağ/sol boşluklarını ayarlar */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.dash-logout {
+  background: transparent; /* Arka planı tamamen şeffaf yapar */
+  border: none; /* Çerçeveyi kaldırır */
+  font-size: 1.5rem; /* Yazı boyutunu belirler */
+  color: white; /* Yazı rengini beyaz yapar */
+  cursor: pointer;
+}
+
+.dash-username {
+  position: absolute;
+  top: 15px;
+  left: 135px;
+  height: clamp(50px, 8vh, 104px); /* clamp() ile minimum, ideal ve maksimum boyutları dinamik ayarlar */
+  padding: 0 clamp(15px, 2vw, 40px);
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100vw - 150px); /* Ekrandan taşmayı önlemek için matematiksel hesap (calc) kullanır */
+}
+
+.dash-username span {
+  font-size: clamp(0.9rem, 2.5vw, 2.8rem);
+  white-space: nowrap; /* Metnin alt satıra geçmesini engelleyerek tek satırda tutar */
+}
+
+.dash-title {
+  align-self: flex-start; /* Sadece bu öğeyi (kendi başına) flex kutusunun başına/soluna hizalar */
+  margin-left: 15px; /* Dışarıdan sol boşluk bırakır */
+  height: clamp(50px, 8vh, 104px);
+  width: clamp(120px, 24vw, 465px);
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-title span {
+  font-size: clamp(1rem, 4.5vw, 4.5rem);
+}
+
+.dash-empty {
+  align-self: center; /* Sadece bu öğeyi yatay eksende tam ortaya hizalar */
+  width: 90vw;
+  max-width: 1571px;
+  height: clamp(60px, 14.5vh, 210px);
+  background-color: transparent !important;
+  margin-top: clamp(20px, 8vh, 150px); /* Dışarıdan üst boşluk bırakır */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dash-empty span {
+  font-size: clamp(1rem, 5vw, 5rem);
+  text-align: center; /* Metni kendi kutusu içinde ortalar */
+}
+
+.dash-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  width: 95vw;
+  margin-top: clamp(20px, 8vh, 100px);
+  gap: 15px; /* Flex içindeki öğeler (oklar ve kartlar) arasına boşluk koyar */
+  position: relative; /* İçindeki absolute öğeler için referans noktası olur */
+}
+
+.dash-scroll-area {
+  display: flex;
+  gap: 30px;
+  overflow-x: auto; /* İçerik yatayda sığmazsa kaydırma (scroll) çubuğu çıkarır */
+  scroll-behavior: smooth; /* Kaydırma işleminin yumuşak ve akıcı olmasını sağlar */
+  padding: 10px 5px;
+  scrollbar-width: none; /* Firefox tarayıcısında kaydırma çubuğunu gizler */
+}
+
+.dash-scroll-area::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge gibi tarayıcılarda kaydırma çubuğunu gizler */
+}
+
+.dash-quiz-card {
+  flex-shrink: 0; /* Öğenin dar alanlarda küçülüp şeklinin bozulmasını engeller */
+  width: 406px;
+  height: 240px;
+  background-color: #000c42 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box; /* Padding ve border değerlerini toplam genişliğe dahil eder */
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3); /* inset: Kutu içine doğru parlama/gölge verir */
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.dash-quiz-card:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+.dash-quiz-card--selected {
+  box-shadow:
+    0 0 25px rgba(255, 255, 255, 0.9),
+    inset 0 0 18px rgba(255, 255, 255, 0.5) !important;
+  border-color: #7df9ff !important;
+}
+
+.dash-quiz-card span {
+  font-size: 60px;
+  text-align: center;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.dash-quiz-card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+.dash-quiz-card-name-small {
+  font-size: 28px !important;
+  text-align: center;
+  white-space: normal;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.dash-start-btn {
+  width: 80%;
+  padding: 10px 0;
+  background-color: #000c42 !important;
+  border: 2px solid #7df9ff;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, filter 0.1s;
+  box-shadow: 0 0 12px rgba(125, 249, 255, 0.6);
+}
+
+.dash-start-btn:active {
+  transform: scale(0.95);
+  filter: brightness(1.3);
+}
+
+.dash-start-btn span {
+  font-size: 28px !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
+  overflow: visible !important;
+  display: block !important;
+  white-space: nowrap;
+}
+
+.dash-arrow {
+  flex-shrink: 0;
+  width: 85px;
+  height: 85px;
+  background-color: transparent !important;
+  border: 2px solid white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: transform 0.1s;
+}
+
+.dash-arrow:active {
+  transform: scale(0.9);
+}
+
+.dash-new-btn {
+  align-self: center;
+  width: clamp(280px, 60vw, 1113px);
+  height: clamp(60px, 14.5vh, 210px);
+  background-color: #000c42 !important;
+  margin-top: clamp(20px, 10vh, 150px);
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, filter 0.1s;
+}
+
+.dash-new-btn:active {
+  transform: scale(0.95);
+  filter: brightness(1.2);
+}
+
+.dash-new-btn span {
+  font-size: clamp(1.5rem, 6vw, 6.25rem);
+}

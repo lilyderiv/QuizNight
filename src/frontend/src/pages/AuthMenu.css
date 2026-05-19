@@ -1,0 +1,10 @@
+.auth-page-container {
+  display: flex;             /* Esnek hizalama (flexbox) modelini açar. */
+  flex-direction: column;    /* İçindeki öğeleri yukarıdan aşağıya (alt alta) dizer. */
+  justify-content: center;   /* Öğeleri dikey eksende merkeze hizalar. */
+  align-items: center;       /* Öğeleri yatay eksende tam ortaya hizalar. */
+  gap: 15vh;                 /* Öğeler arasına dinamik (ekranın %15'i kadar) boşluk ekler. */
+  height: 100%;              /* Tüm yüksekliği kaplar. */
+  width: 100%;               /* Tüm genişliği kaplar. */
+  padding-top: 10vh;         /* İçeriğin tepeye yapışmaması için üstten iç boşluk bırakır. */
+}

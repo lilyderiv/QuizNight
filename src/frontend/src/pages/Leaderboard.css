@@ -1,0 +1,156 @@
+.leaderboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* İçerikleri en üstten (baştan) başlatır */
+  width: 100vw;
+  height: 100dvh; /* Mobil tarayıcı adres çubuklarına uyumlu dinamik ekran yüksekliği (dvh) kullanır */
+  padding-top: clamp(140px, 15vh, 200px); /* Üst kısımdan dinamik iç boşluk bırakır */
+  padding-bottom: 5dvh;
+  gap: min(3dvh, 30px); /* Öğeler arasına verilen iki değerden küçük olanı kadar boşluk koyar */
+  box-sizing: border-box;
+  overflow: hidden; /* Taşan içerikleri gizleyip sayfanın kaymasını engeller */
+}
+
+.lb-title-box {
+  background-color: #000c42 !important; /* Arka plan rengini zorunlu (!important) koyu lacivert yapar */
+  border: min(0.4dvh, 4px) solid white; /* Ekran boyutuna göre incelmeyen ama büyümesini sınırlayan (min) beyaz çerçeve */
+  border-radius: min(2dvh, 20px); /* Köşeleri dinamik olarak yuvarlatır */
+  width: 62.3vw;
+  max-width: 1196px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
+  height: clamp(60px, 10.6vh, 154px);
+  display: flex;
+  align-items: center;
+  justify-content: center; /* İçeriği kendi kutusu içinde dikey/yatay eksende tam ortaya hizalar */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); /* Kutuya hafif saydam beyaz parlama/gölge efekti verir */
+  flex-shrink: 0; /* Dar alanlarda öğenin esneyip küçülmesini engeller */
+}
+
+.lb-title-box span {
+  font-size: min(4vw, 5dvh, 60px); /* Yazı boyutunu 3 değerden en küçüğü olacak şekilde sınırlar */
+  white-space: nowrap; /* Metnin alt satıra geçmesini engeller, tek satırda tutar */
+}
+
+.lb-first-place-box {
+  background-color: #000c42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 91.6vw;
+  max-width: 1759px;
+  height: clamp(80px, 16vh, 232px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* İçindeki absolute konumlu öğeler (puan kutusu vb.) için referans noktası oluşturur */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+  padding: 0 20px; /* Sadece sağ ve soldan iç boşluk bırakır */
+}
+
+.lb-first-name {
+  font-size: min(8vw, 9dvh, 100px);
+  white-space: nowrap;
+  overflow: hidden; /* Taşan uzun isimleri kutu içinde keser */
+  text-overflow: ellipsis; /* Kesilen metnin sonuna üç nokta (...) ekler */
+  max-width: 65%; /* İsim metninin genişliğini sınırlandırıp puan kutusuna yer ayırır */
+}
+
+.lb-first-score-box {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(1.5dvh, 15px);
+  width: clamp(80px, 14vw, 269px);
+  height: clamp(40px, 8vh, 117px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute; /* Referans alınan (.lb-first-place-box) kutunun içinde serbestçe konumlandırır */
+  right: clamp(10px, 2vw, 30px); /* Kutunun sağ kenarına dinamik bir mesafede yapıştırır */
+}
+
+.lb-first-score-box span {
+  font-size: min(3vw, 4dvh, 50px);
+}
+
+.lb-runners-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: min(2dvh, 25px);
+  overflow-y: auto; /* Sadece dikey eksende içerik taşarsa kaydırma (scroll) çubuğu çıkarır */
+  overflow-x: hidden; /* Yatay eksendeki taşmaları ise tamamen gizler */
+  flex-grow: 1; /* Liste alanının, kapsayıcıdaki kalan tüm boşluğu dolduracak şekilde esnemesini sağlar */
+  padding-bottom: 20px;
+  scrollbar-width: none; /* Firefox tarayıcısında kaydırma çubuğunu gizler */
+}
+
+.lb-runners-wrapper::-webkit-scrollbar {
+  display: none; /* Chrome, Safari ve Edge tarayıcılarında kaydırma çubuğunu gizler */
+}
+
+.lb-runner-row {
+  display: flex;
+  flex-direction: row; /* Flex içindeki öğeleri (sıra, isim, puan) yan yana dizer */
+  align-items: center;
+  justify-content: center;
+  gap: min(2vw, 30px);
+  width: 90vw;
+  max-width: 1414px;
+  flex-shrink: 0;
+}
+
+.lb-runner-rank {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 13.3%; /* Yüzdelik dilimle genişlik ayarlar */
+  max-width: 189px;
+  height: clamp(60px, 10.6vh, 154px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb-runner-rank span {
+  font-size: min(4vw, 5dvh, 60px);
+}
+
+.lb-runner-name-box {
+  background-color: #000c42 !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 84.5%;
+  max-width: 1195px;
+  height: clamp(60px, 10.6vh, 154px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0 15px;
+}
+
+.lb-runner-name {
+  font-size: min(5vw, 6dvh, 70px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
+}
+
+.lb-runner-score-box {
+  background-color: #000c42 !important;
+  border: min(0.3dvh, 3px) solid white;
+  border-radius: min(1.5dvh, 15px);
+  width: clamp(60px, 13vw, 191px);
+  height: clamp(30px, 7.4vh, 107px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: clamp(10px, 1.5vw, 20px);
+}
+
+.lb-runner-score-box span {
+  font-size: min(2.5vw, 3dvh, 40px);
+}

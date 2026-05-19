@@ -1,0 +1,154 @@
+.quiz-select-page {
+  display: flex; /* Esnek hizalama (flexbox) modelini açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  width: 100vw; /* Ekranın tam genişliğini kaplar */
+  height: 100vh; /* Ekranın tam yüksekliğini kaplar */
+  overflow-y: auto; /* İçerik dikeyde ekrana sığmazsa kaydırma (scroll) çubuğu ekler */
+  padding-top: clamp(150px, 28vh, 416px); /* Üstten dinamik (min, ideal, max) iç boşluk bırakır */
+  padding-bottom: 10vh; /* Alttan iç boşluk bırakır */
+  box-sizing: border-box; /* Padding ve border değerlerini toplam genişlik/yüksekliğe dahil eder */
+  align-items: flex-start; /* İçerikleri yatay eksende sola/başa hizalar */
+  padding-left: 5vw; /* Soldan dinamik iç boşluk bırakır */
+}
+
+.current-sort-label {
+  background-color: transparent !important; /* Arka planı zorunlu olarak şeffaf yapar */
+  border: 0.4vh solid white; /* Beyaz çerçeve ekler */
+  border-radius: 1.5vh; /* Köşeleri dinamik olarak yuvarlatır */
+  padding: 10px 25px; /* İçeriden üst/alt 10px, sağ/sol 25px boşluk bırakır */
+  margin-bottom: clamp(20px, 5vh, 60px); /* Altındaki öğeyle arasına dış boşluk koyar */
+  height: clamp(50px, 10vh, 149px);
+  display: inline-flex; /* Öğeyi metin gibi satır içi (inline) tutarken içini flex yapar */
+  align-items: center; /* İçeriği dikey eksende ortalar */
+  justify-content: center; /* İçeriği yatay eksende ortalar */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); /* Kutuya dışarı doğru hafif saydam beyaz parlama/gölge efekti verir */
+}
+
+.current-sort-label span {
+  font-size: clamp(1.2rem, 3vw, 2.5rem); /* Yazı boyutunu ekran büyüklüğüne göre dinamik ayarlar */
+  white-space: nowrap; /* Metnin alt satıra geçmesini engeller, tek satırda tutar */
+}
+
+.quiz-grid-container {
+  display: grid; /* Öğeleri ızgara (grid) düzeninde konumlandırmayı açar */
+  grid-template-columns: repeat(4, 1fr); /* Mevcut alanı eşit genişlikte 4 sütuna böler */
+  gap: clamp(20px, 2vw, 40px); /* Izgaradaki öğeler arasına dinamik boşluk ekler */
+  width: 90vw;
+  padding-bottom: 50px;
+}
+
+.quiz-item-button {
+  background-color: #000c42 !important; /* Arka plan rengini zorunlu (!important) koyu lacivert yapar */
+  border: 0.4vh solid white;
+  border-radius: 2vh;
+  height: clamp(120px, 20vh, 300px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline çevirir */
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+  transition: transform 0.1s, box-shadow 0.1s, filter 0.2s; /* Hover/Active durumlarındaki animasyon geçiş sürelerini belirler */
+  padding: 10px;
+}
+
+.quiz-item-button:active {
+  transform: scale(0.95) !important; /* Butona tıklandığı an boyutunu zorunlu olarak küçültür */
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+  filter: brightness(1.3); /* Tıklanma anında öğenin parlaklığını artırır */
+}
+
+.quiz-item-button span {
+  font-size: clamp(1rem, 2.5vw, 2.5rem);
+  text-align: center; /* Metni kendi kutusu içinde yatayda ortalar */
+  word-wrap: break-word; /* Çok uzun kelimelerin kutudan taşmaması için bölünmesini sağlar */
+}
+
+.search-box-container {
+  position: absolute; /* Kapsayıcıya veya ekrana göre serbest konumlandırır */
+  top: 15px; /* Üstten 15px aşağıya iter */
+  right: 15px; /* Sağ kenardan 15px içeri iter */
+  background-color: #000c42 !important;
+  border: 0.3vh solid white;
+  border-radius: 2vh;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  width: clamp(200px, 25vw, 400px);
+  height: clamp(40px, 7vh, 80px);
+  z-index: 10; /* Diğer tüm öğelerin üstünde (ön planda) görünmesini sağlar */
+}
+
+.search-icon-svg {
+  width: clamp(20px, 2.5vw, 35px);
+  height: clamp(20px, 2.5vw, 35px);
+  stroke: white; /* İkonun dış çizgi rengini beyaz yapar */
+  stroke-width: 2.5; /* İkonun dış çizgi kalınlığını belirler */
+  fill: none; /* İkonun içini boş/şeffaf yapar */
+  margin-right: 10px; /* Sağındaki öğe (input) ile arasına dış boşluk koyar */
+}
+
+.search-input {
+  background: transparent; /* Arka planı tamamen şeffaf yapar */
+  border: none; /* Kenarlığı kaldırır */
+  outline: none; /* Tıklanınca çıkan varsayılan odaklanma (focus) çerçevesini kaldırır */
+  color: white; /* Yazı rengini beyaz yapar */
+  font-size: clamp(1rem, 2vw, 1.8rem);
+  width: 100%; /* İçinde bulunduğu kabın tüm genişliğini alır */
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6); /* İnput içindeki ipucu (placeholder) metninin rengini yarı saydam beyaz yapar */
+}
+
+.sort-dropdown-menu {
+  position: absolute;
+  top: 115%; /* Öğeyi kendi yüksekliğinden biraz daha fazla (%115) aşağı konumlandırır */
+  left: 0; /* Sola yaslar */
+  background-color: #011059 !important; /* Açılır menü arka planını lacivert yapar */
+  border: 0.3vh solid white;
+  border-radius: 1.5vh;
+  display: flex;
+  flex-direction: column;
+  width: clamp(200px, 20vw, 350px);
+  padding: 10px;
+  gap: 8px; /* Öğeler arasına sabit 8px boşluk bırakır */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.sort-option-btn {
+  background-color: #000c42 !important;
+  border: 0.2vh solid white;
+  border-radius: 1vh;
+  padding: 10px;
+  text-align: center;
+  font-size: clamp(0.9rem, 1.5vw, 1.5rem);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.2s;
+}
+
+.sort-option-btn:hover {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transform: scale(0.98); /* Fare üzerine gelince (hover) boyutunu çok hafif küçültür */
+}
+
+@media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil cihazlar) ve altındayken uygulanacak kurallar */
+  .quiz-grid-container {
+    grid-template-columns: repeat(2, 1fr); /* Mobilde 4 sütun yerine eşit genişlikte 2 sütun yapar */
+    gap: 15px;
+    width: 90vw;
+  }
+  .quiz-select-page {
+    padding-left: 5vw;
+    padding-top: 15vh;
+  }
+  .search-box-container {
+    top: 80px;
+    right: 5vw;
+    width: 90vw;
+  }
+  .sort-dropdown-menu {
+    left: 15px;
+    width: 70vw;
+  }
+}

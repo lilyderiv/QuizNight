@@ -1,0 +1,83 @@
+@import url("https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap");
+
+/* Reset ve Font */
+* {
+  font-family: "Indie Flower", cursive !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  background-color: #011059;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 2vh 0 4vh 0;
+}
+
+/* Neon Stilleri */
+.neon-text {
+  color: white !important;
+  text-shadow:
+    0 0 4px #fff,
+    0 0 15px rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+
+.neon-box {
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent !important;
+}
+
+/* Ortak Buton Stilleri */
+.auth-button {
+  width: 85vw;
+  height: clamp(150px, 20vh, 300px);
+  background-color: #000c42 !important;
+  border: 0.5vh solid white;
+  border-radius: 2vh;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s;
+}
+
+.auth-button span {
+  font-size: clamp(2rem, 12vmin, 15vh);
+}
+
+.auth-button:active {
+  transform: scale(0.95) !important;
+  filter: brightness(1.2);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+/* Tarayıcı input temizleme */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none !important;
+}
+
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

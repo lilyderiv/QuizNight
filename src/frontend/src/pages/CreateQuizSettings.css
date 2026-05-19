@@ -1,0 +1,245 @@
+.cq-container {
+  display: flex; /* Esnek kutu modelini (flexbox) açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: flex-start; /* İçerikleri en üstten başlatır */
+  width: 100vw; /* Ekranın tüm genişliğini kaplar */
+  min-height: 100vh; /* En az ekranın tüm yüksekliği kadar uzar */
+  padding-top: 100px; /* Üstten iç boşluk bırakır */
+  padding-bottom: 5vh; /* Alttan ekranın %5'i kadar iç boşluk bırakır */
+  box-sizing: border-box; /* Padding ve border değerlerini toplam genişliğe dahil eder */
+}
+
+.cq-username {
+  position: absolute; /* Kutuya bağımsız, serbest bir konum verir */
+  top: 15px; /* Üstten 15px aşağıya konumlandırır */
+  left: 140px; /* Soldan 140px sağa konumlandırır */
+  height: 50px; /* Sabit yükseklik verir */
+  padding: 0 20px; /* Sağ ve soldan 20px iç boşluk bırakır */
+  background-color: transparent !important; /* Arka planı tamamen şeffaf yapar ve diğer kuralları ezer */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* İçeriği dikey/yatay eksende tam ortaya hizalar */
+  z-index: 100; /* Diğer tüm öğelerin üstünde (ön planda) görünmesini sağlar */
+}
+
+.cq-username span {
+  font-size: clamp(0.9rem, 2.5vw, 2.5rem); /* Ekran boyutuna göre dinamik yazı boyutu ayarlar */
+  color: white; /* Yazı rengini beyaz yapar */
+  white-space: nowrap; /* Metnin alt satıra geçmesini engeller, tek satırda tutar */
+}
+
+.cq-form-area {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  max-width: 1400px; /* Kutunun alabileceği maksimum genişlik sınırını belirler */
+  margin-top: 20px; /* Üstten dış boşluk bırakır */
+  gap: 3.5vh; /* Flex içindeki öğeler arasına boşluk koyar */
+  align-items: center;
+}
+
+.cq-row {
+  display: flex;
+  flex-direction: row; /* Öğeleri yan yana dizer */
+  justify-content: space-between; /* Öğeleri sağa ve sola yaslayıp aralarındaki boşluğu eşit açar */
+  align-items: center;
+  width: 100%; /* Bulunduğu kabın tüm genişliğini alır */
+}
+
+.cq-label {
+  width: 37%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.cq-label span {
+  font-size: clamp(1rem, 2.5vw, 3.5rem);
+  color: white !important;
+  text-align: center; /* Metni kendi kutusu içinde ortalar */
+  white-space: normal; /* Gerekirse metnin alt satıra geçmesine izin verir */
+  line-height: 1.1; /* Satır aralığını daraltır */
+  word-wrap: break-word; /* Uzun kelimeleri bölerek alt satıra atar */
+}
+
+.cq-input {
+  width: 61%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: #000c42 !important; /* Koyu lacivert arka plan yapar */
+  border: 0.5vh solid white; /* Beyaz çerçeve ekler */
+  border-radius: 1.6vh; /* Köşeleri yuvarlatır */
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.5), /* Dışa doğru parlama (neon) efekti */
+    inset 0 0 10px rgba(255, 255, 255, 0.3); /* İçe doğru parlama efekti */
+  color: white;
+  font-size: clamp(1.2rem, 3vw, 4rem);
+  padding: 0 30px;
+  outline: none; /* Tıklanınca çıkan varsayılan odaklanma (focus) çizgisini kaldırır */
+  box-sizing: border-box;
+  transition: all 0.2s; /* Durum değişikliklerindeki (hover/focus) animasyonu yumuşatır */
+}
+
+.cq-input:focus {
+  box-shadow: 
+    0 0 25px rgba(255, 255, 255, 0.9), /* Odaklanınca parlama efektini artırır */
+    inset 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+.cq-time-container {
+  width: 61%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cq-select-box {
+  width: 48%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: #000c42 !important;
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+  position: relative; /* İçindeki absolute öğeler için referans noktası oluşturur */
+}
+
+.cq-select {
+  width: 100%;
+  height: 100%; /* Bulunduğu kabın tüm yüksekliğini alır */
+  background: transparent;
+  border: none; /* Kenarlığı tamamen kaldırır */
+  color: white;
+  font-size: clamp(1.2rem, 3vw, 4rem);
+  text-align: center;
+  padding-right: 50px; /* Sağ taraftaki ek metin ("sn") için içeriden boşluk bırakır */
+  appearance: none; /* Tarayıcının varsayılan açılır ok işaretini gizler */
+  outline: none;
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline çevirir */
+}
+
+.cq-select option {
+  background-color: rgba(0, 12, 66, 0.9); /* Açılır menü şıklarının arka plan rengini ayarlar */
+  color: white;
+  font-size: 1.5rem;
+}
+
+.cq-suffix {
+  position: absolute;
+  right: 20px; /* Sağdan 20px içeride durur */
+  top: 50%; /* Yukarıdan %50 oranında aşağı iter */
+  transform: translateY(-50%); /* Öğeyi tam olarak dikeyde ortalamayı sağlar */
+  font-size: clamp(1.2rem, 3vw, 4rem);
+  pointer-events: none; /* Bu öğeye tıklanmasını engeller, altındaki input/select çalışır */
+}
+
+.cq-level-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 0; /* Üst dış boşluğu sıfırlar */
+  gap: 3.5vh;
+}
+
+.cq-level-title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 90vw;
+  max-width: 1400px;
+  position: relative;
+  gap: 15px;
+}
+
+.cq-level-title {
+  width: clamp(150px, 50vw, 600px) !important;
+  height: clamp(60px, 10vh, 120px);
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 1; /* Dar alanlarda öğenin esneyip küçülmesine izin verir */
+}
+
+.cq-level-title span {
+  font-size: clamp(1.2rem, 3vw, 4rem);
+}
+
+.cq-next-btn {
+  position: absolute;
+  right: 0; /* En sağa yapıştırır */
+  width: clamp(45px, 10vw, 80px);
+  height: clamp(45px, 10vw, 80px);
+  background-color: #000c42 !important;
+  border-radius: 50%; /* Öğeyi tam yuvarlak (daire) yapar */
+  border: 0.5vh solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: transform 0.1s;
+}
+
+.cq-next-btn:active {
+  transform: scale(0.9); /* Tıklanma anında (active) öğenin boyutunu küçültür */
+}
+
+.cq-level-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cq-level-btn {
+  width: 31%;
+  height: clamp(85px, 14vh, 180px) !important;
+  background-color: #000c42 !important;
+  border: 0.5vh solid white;
+  border-radius: 1.6vh;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 0 15px rgba(255, 255, 255, 0.5),
+    inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.cq-level-btn span {
+  font-size: clamp(1.2rem, 3.5vw, 4.5rem);
+}
+
+.cq-level-btn:active {
+  transform: scale(0.95);
+}
+
+.cq-level-btn.dimmed {
+  position: relative;
+}
+
+.cq-level-btn.dimmed::after {
+  content: ""; /* ::after ile CSS üzerinden boş bir sanal katman oluşturur */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* Dört taraftan 0 vererek tam kaplama sağlar */
+  background-color: rgba(255, 255, 255, 0.4); /* Yarı saydam beyaz örtü (soluklaştırma/karartma) efekti verir */
+  border-radius: 1vh;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil) ve altındayken uygulanacak kurallar */
+  .cq-level-title span {
+    font-size: 1.5rem !important;
+  }
+}

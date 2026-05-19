@@ -1,0 +1,157 @@
+.pin-screen-container {
+  display: flex; /* Esnek hizalama (flexbox) modelini açar */
+  flex-direction: column; /* İçerikleri yukarıdan aşağıya (alt alta) dizer */
+  align-items: center; /* İçerikleri yatay eksende ortalar */
+  justify-content: center; /* İçerikleri dikey eksende ortalar */
+  width: 100vw; /* Ekranın tam genişliğini kaplar */
+  height: 100dvh; /* Mobil tarayıcı adres çubuklarına uyumlu dinamik ekran yüksekliği (dvh) kullanır */
+  padding-top: 10dvh; /* Üstten dinamik iç boşluk bırakır */
+  padding-bottom: 2dvh; /* Alttan dinamik iç boşluk bırakır */
+  gap: 2.5dvh; /* Flex içindeki öğeler arasına dinamik boşluk koyar */
+  box-sizing: border-box; /* Padding ve border değerlerini toplam genişlik/yüksekliğe dahil eder */
+  overflow: hidden; /* Taşan içerikleri gizleyip sayfanın kaymasını engeller */
+}
+
+.pin-host-label {
+  background-color: transparent !important; /* Arka planı zorunlu olarak şeffaf yapar */
+  border: min(0.4dvh, 4px) solid white; /* Ekran boyutuna göre incelmeyen ama büyümesini sınırlayan (min) çerçeve */
+  border-radius: min(2dvh, 20px); /* Köşeleri dinamik olarak yuvarlatır */
+  width: 88.8vw; /* Genişliği ekranın %88.8'i yapar */
+  max-width: 1705px; /* Öğenin alabileceği maksimum genişlik sınırını belirler */
+  height: 11.7dvh; /* Yüksekliği ekranın %11.7'si yapar */
+  max-height: 169px; /* Öğenin alabileceği maksimum yüksekliği belirler */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); /* Kutuya dışarı doğru hafif saydam beyaz parlama/gölge efekti verir */
+  flex-shrink: 0; /* Dar alanlarda öğenin esneyip küçülmesini engeller */
+}
+
+.pin-host-label span {
+  font-size: min(4.5vw, 5dvh, 60px); /* Yazı boyutunu 3 değerden en küçüğü olacak şekilde sınırlar */
+  white-space: nowrap; /* Metnin alt satıra geçmesini engeller, tek satırda tutar */
+}
+
+.pin-host-input {
+  background-color: #000c42 !important; /* Arka plan rengini zorunlu (!important) koyu lacivert yapar */
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center; /* Metni kendi kutusu içinde yatayda ortalar */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  color: white; /* Yazı rengini beyaz yapar */
+  font-family: inherit; /* Yazı tipini üst kapsayıcıdan (miras) alır */
+  font-size: min(6vw, 7dvh, 80px);
+  outline: none; /* Tıklanınca çıkan varsayılan odaklanma (focus) çerçevesini kaldırır */
+  flex-shrink: 0;
+  padding: 0 20px; /* Üst/alt padding'i 0, sağ/sol padding'i 20px yapar */
+}
+
+.pin-label-box {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 41.5vw;
+  max-width: 797px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.pin-label-box span {
+  font-size: min(4.5vw, 5dvh, 60px);
+  white-space: nowrap;
+}
+
+.pin-code-box {
+  background-color: #000c42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.pin-code-box span {
+  font-size: min(7vw, 8dvh, 90px);
+  letter-spacing: min(2vw, 15px); /* Harfler/Rakamlar arasına dinamik boşluk ekler */
+  white-space: nowrap;
+}
+
+.pin-info-box {
+  background-color: transparent !important;
+  border: min(0.4dvh, 4px) solid white;
+  border-radius: min(2dvh, 20px);
+  width: 88.8vw;
+  max-width: 1705px;
+  height: 9.9dvh;
+  max-height: 143px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.pin-info-box span {
+  font-size: min(4vw, 4.5dvh, 55px);
+  white-space: nowrap;
+}
+
+.pin-start-button {
+  background-color: #000c42 !important;
+  border: min(0.5dvh, 5px) solid white;
+  border-radius: min(2.5dvh, 25px);
+  width: 90vw;
+  max-width: 1728px;
+  height: 11.7dvh;
+  max-height: 169px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer; /* Fare imlecini tıklanabilir el şekline çevirir */
+  transition: transform 0.1s, box-shadow 0.2s; /* Hover/Active gibi durum değişikliklerindeki animasyon sürelerini ayarlar */
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.pin-start-button span {
+  font-size: min(5vw, 5.5dvh, 65px);
+  white-space: nowrap;
+  text-transform: uppercase; /* Metindeki tüm harfleri büyük harfe çevirir */
+  font-weight: bold; /* Yazıyı kalın (bold) yapar */
+}
+
+.pin-start-button:active {
+  transform: scale(0.96); /* Butona tıklandığı an boyutunu hafifçe küçültür */
+  filter: brightness(1.2); /* Tıklanma anında butonun parlaklığını artırır */
+}
+
+@media (max-width: 768px) {
+  /* Ekran genişliği 768px (mobil) ve altındayken uygulanacak kurallar */
+  .pin-screen-container {
+    gap: 1.5dvh;
+    padding-top: 8dvh;
+  }
+  .pin-info-box span {
+    white-space: normal; /* Mobilde gerekirse metnin alt satıra geçmesine izin verir */
+    text-align: center;
+    line-height: 1.1; /* Satır aralığını daraltarak metnin kutusuna tam oturmasını sağlar */
+  }
+}

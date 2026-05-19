@@ -1,12 +1,311 @@
 # QuizNight
 ## Çok Oyunculu Real-Time Yarışma Sitesi
 
-Kullanıcıların fiziksel mekanlardaki "Quiz Night" (Bilgi Yarışması Gecesi) deneyimini dijital ortama taşıyarak, belirli temalar (diziler, filmler, genel kültür vb.) etrafında topluluklar oluşturmasını ve gerçek zamanlı rekabet etmesini sağlamaktır. Proje, sadece bir test çözme platformu değil, aynı zamanda senkronize bir sosyal etkileşim alanı yaratmayı hedefler.
+QuizNight, gerçek zamanlı çok oyunculu bir web tabanlı quiz platformudur. Kullanıcılar quiz oluşturabilir, 6 haneli PIN kodu ile arkadaşlarını davet edebilir ve anlık sıralama sistemiyle rekabetçi bir quiz deneyimi yaşayabilir. Kullanıcıların fiziksel mekanlardaki "Quiz Night" (Bilgi Yarışması Gecesi) deneyimini dijital ortama taşıyarak, belirli temalar (diziler, filmler, genel kültür vb.) etrafında topluluklar oluşturmasını ve gerçek zamanlı rekabet etmesini sağlamaktır. Proje, sadece bir test çözme platformu değil, aynı zamanda senkronize bir sosyal etkileşim alanı yaratmayı hedefler.
 
-### Projenin Amacı ve Kapsamı
-Projenin Kapsamı:
-♦	Web Tabanlı Arayüz: Kullanıcıların tarayıcı üzerinden erişebileceği, mobil uyumlu bir platform.
-♦	Oda Yönetimi: Kullanıcıların kendi özel odalarını kurabilmesi veya genel odalara dahil olabilmesi.
-♦	Canlı Veri Senkronizasyonu: Tüm oyuncuların aynı anda soruyu görmesi ve cevaplaması.
-♦	Puanlama Sistemi: Doğru cevap ve cevaplama hızına dayalı dinamik bir liderlik tablosu.
-♦	İçerik Yönetimi: Tematik soru paketlerinin sisteme entegrasyonu.
+##  Projeye Atit Bazı Ekran Görüntüleri
+
+- Giriş Ekranı:
+<img width="693" height="315" alt="resim" src="https://github.com/user-attachments/assets/75f11b3f-e519-45fe-9553-81e7d7eeb8cf" />
+
+- Ayarlar Ekranı:
+<img width="713" height="322" alt="resim" src="https://github.com/user-attachments/assets/eb0cb7cc-4528-46a9-b3cf-ae87ee5cf150" />
+
+- Kayıt veya Giriş Yönlendirme Ekranı:
+<img width="694" height="315" alt="resim" src="https://github.com/user-attachments/assets/bc69158c-f173-4ad3-93ec-f74f4e0cd0b3" />
+
+- Kişiye Ait Profilde Quiz Oluşturma ve Başlatma Ekranı:
+<img width="662" height="300" alt="resim" src="https://github.com/user-attachments/assets/77d1a487-038d-4a1c-a0d2-b5ab5fb76e82" />
+
+- Host Olarak Quiz Seçildikten Sonra Gelen Özel Pin Ekranı:
+<img width="706" height="320" alt="resim" src="https://github.com/user-attachments/assets/756f478b-231d-4bef-b4f2-92098212447d" />
+
+- Misafir yuncu Pin Giriş Ekranı:
+<img width="708" height="322" alt="resim" src="https://github.com/user-attachments/assets/5ae382b4-93d1-4ac4-8de1-67da21c0fc46" />
+
+- Doğru Yanıt Ekranı:
+<img width="713" height="323" alt="resim" src="https://github.com/user-attachments/assets/1afad4fb-3bf4-4156-b37f-98f91f80467a" />
+
+- Yanlış Yanıt Ekranı:
+<img width="713" height="324" alt="resim" src="https://github.com/user-attachments/assets/15abb682-5e0f-4299-aa91-fcee978597ec" />
+
+- Sıralama Ekranı:
+<img width="714" height="324" alt="resim" src="https://github.com/user-attachments/assets/70cb09a3-2787-49ef-a6bb-1aa86469dc91" />
+
+---
+
+##  Özellikler
+
+### Kullanıcı Sistemi
+- E-posta ve şifre ile kayıt ve giriş
+- JWT tabanlı kimlik doğrulama
+- Misafir (guest) oyuncu desteği — kayıt olmadan oyuna katılma
+
+### Quiz Oluşturma
+- Quiz ismi, kategori, zorluk seviyesi ve soru başına süre ayarı
+- Metin veya resim tabanlı sorular (ikisi birlikte de olabilir)
+- 4 şıklı çoktan seçmeli format, doğru cevap belirleme
+
+### Oyun Sistemi
+- 6 haneli PIN kodu ile oda oluşturma ve katılma
+- Socket.io ile gerçek zamanlı çok oyunculu oyun
+- Geri sayım sayacı ve süreye göre dinamik puan sistemi (1000 → 10 arası)
+- Doğru/yanlış anlık görsel ve sesli geri bildirim
+- Anlık sıralama (Leaderboard) güncellemeleri
+
+### Teknik
+- Aktif oda verisi Redis'te tutulur (hız için)
+- Biten oyunlar MySQL'e kalıcı olarak yazılır
+- Arama ve sıralama ile quiz kütüphanesi
+- Tam responsive tasarım (masaüstü ve mobil uyumlu)
+- Neon temalı özel arayüz, arka plan müziği ve ses efektleri
+
+---
+
+##  Teknoloji Yığını
+
+| Katman | Teknoloji |
+|--------|-----------|
+| **Frontend** | React 18, CSS Modules |
+| **Backend** | Node.js, Express.js |
+| **Gerçek Zamanlı** | Socket.io |
+| **Kalıcı Veritabanı** | MySQL 8 |
+| **Önbellek / Aktif Oyun** | Redis (ioredis) |
+| **Kimlik Doğrulama** | JWT, bcryptjs |
+| **Ses** | HTML5 Audio API |
+
+---
+
+##  Proje Yapısı
+
+```
+QuizNight/
+├── src/
+│   ├── backend/
+│   │   ├── mysqlOperations.js       # Kalıcı veri katmanı (Kullanıcı, Quiz, Soru, Oyun Oturumu)
+│   │   ├── quiznight_schema.sql     # MySQL veritabanı şeması (v3.0)
+│   │   ├── redisClient.js           # Paylaşılan Redis bağlantı instance'ı
+│   │   ├── redisOperations.js       # Aktif oda, skor, oturum işlemleri
+│   │   ├── roomManager.js           # MySQL ve Redis'i koordine eden üst seviye oyun yöneticisi
+│   │   ├── scoringManager.js        # Puan hesaplama yardımcısı
+│   │   └── server.js                # Express + Socket.io sunucusu, tüm API rotaları
+│   │
+│   ├── database/
+│   │   ├── mysqlOperations.js       # Kalıcı veri katmanı (Kullanıcı, Quiz, Soru, Oyun Oturumu)
+│   │   ├── quiznight_schema.sql     # MySQL veritabanı şeması (v3.0)
+│   │   ├── redisClient.js           # Paylaşılan Redis bağlantı instance'ı
+│   │   ├── redisOperations.js       # Aktif oda, skor, oturum işlemleri
+│   │   ├── roomManager.js           # MySQL ve Redis'i koordine eden üst seviye oyun yöneticisi
+│   │   └── scoringManager.js        # Puan hesaplama yardımcısı
+│   │
+│   └── frontend/
+│       ├── public/
+│       │   ├── sounds/
+│       │   │   ├── click.mp3            # Buton tıklama sesi
+│       │   │   ├── true1.mp3            # Doğru cevap sesi
+│       │   │   ├── false1.mp3           # Yanlış cevap sesi
+│       │   ├── background-music.mp3 # Arka plan müziği
+│       │   └── index.html
+│       │   
+│       └── src/
+│           ├── App.js                   # Ana uygulama — tüm state ve yönlendirme
+│           ├── App.css                  # Global CSS import dosyası
+│           ├── mockData.js              # Geçici test verileri (DB bağlanınca devre dışı)
+│           │
+│           ├── styles/ components.css       # Geri/Ayarlar buton stilleri
+│           │   ├── components.css       # Geri/Ayarlar buton stilleri
+│           │   └── global.css           # Tüm uygulamaya ait ortak stiller, neon tema
+│           │
+│           ├── components/
+│           │   ├── BackButton.js        # Evrensel geri dön butonu
+│           │   └── SettingsButton.js    # Evrensel ayarlar butonu
+│           │
+│           ├── hooks/
+│           │   └── useSounds.js         # Ses efektleri hook'u (click, doğru, yanlış)
+│           │
+│           └── pages/
+│               ├── AuthMenu.js/css              # Kayıt ol / Giriş yap seçim
+│               ├── CreateQuizQuestions.js/css   # Quiz oluşturma — soru editörü
+│               ├── CreateQuizSettings.js/css    # Quiz oluşturma — ayarlar adımı
+│               ├── Dashboard.js/css             # Kullanıcı paneli, quiz carousel
+│               ├── EnterPin.js/css              # PIN girişi (oyuncu)
+│               ├── JoinQuizMenu.js/css          # Quize katılma menüsü
+│               ├── Leaderboard.js/css           # Sıralama ekranı 
+│               ├── LoginForm.js/css             # Giriş formu
+│               ├── MainMenu.js/css              # Ana menü
+│               ├── PlayingQuiz.js/css           # Quiz oynama ekranı
+│               ├── QuizPinDetails.js/css        # PIN ekranı (host)
+│               ├── QuizSelect.js/css            # Quiz kütüphanesi (arama + sıralama)
+│               ├── RegisterForm.js/css          # Kayıt formu
+│               ├── Settings.js/css              # Ses ve müzik ayarları
+│               └── WaitingRoom.js/css           # Bekleme odası
+```
+
+---
+
+##  Veritabanı Şeması
+
+```
+users              → Kullanıcı hesapları (display_name, email, password_hash)
+categories         → Quiz kategorileri
+quizzes            → Quiz ana kayıtları (zorluk, süre, sahip)
+questions          → Sorular (metin ve/veya resim URL)
+answer_options     → Cevap şıkları (is_correct ile doğru cevap işaretlenir)
+game_sessions      → Tamamlanan oyun oturumları
+player_results     → Oyuncu sonuçları (misafirler için user_id NULL)
+```
+> Şema dosyası: `src/backend/quiznight_schema.sql`
+---
+
+##  Kurulum
+
+### Gereksinimler
+
+- Node.js (v18 veya üzeri)
+- MySQL 8
+- Redis
+
+### 1. Repoyu klonla
+
+```bash
+git clone https://github.com/kullanici-adin/QuizNight.git
+cd QuizNight
+```
+
+### 2. Veritabanını kur
+
+```bash
+mysql -u root -p < src/backend/quiznight_schema.sql
+```
+
+### 3. Backend bağımlılıklarını yükle
+
+```bash
+cd src/backend
+npm install
+```
+
+### 4. Ortam değişkenlerini ayarla
+
+`src/backend/` klasöründe `.env` dosyası oluşturulur:
+
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=sifren
+DB_NAME=quiznight
+
+REDIS_HOST=host_id
+REDIS_PORT=port_numarasi
+
+JWT_SECRET=güvenli_bir_anahtar
+PORT=port_numarasi
+```
+
+### 5. Backend'i başlat
+
+```bash
+node server.js
+```
+
+### 6. Frontend bağımlılıklarını yükle ve başlat
+
+```bash
+cd src/frontend
+npm install
+npm start
+```
+
+Tarayıcıda `http://localhost:3000` adresini aç.
+
+---
+
+##  Kullanım Rehberi
+
+### Quiz Oluşturmak
+
+1. Ana menüden **QUİZ OLUŞTUR**'a tıkla
+2. Kayıt ol veya giriş yap
+3. Dashboard'dan **Yeni Quiz Oluştur**'a tıkla
+4. Quiz adı, kategori, soru başına süre ve zorluk seviyesini belirle
+5. Soru editöründe sorularını ekle: metin veya resim seç, 4 şıkkı yaz, doğru cevabı işaretle
+6. **Quizi Tamamla** ile kaydet
+
+### Quiz Oynamak (Host olarak)
+
+1. Ana menüden **QUİZE GİR → QUİZ SEÇ** yolunu izle
+2. İstediğin quizi seç
+3. Bir takma ad belirle, oluşturulan PIN'i arkadaşlarınla paylaş
+4. Herkes katıldıktan sonra **OYUNU BAŞLAT**'a bas
+
+### Quiz Oynamak (Oyuncu olarak)
+
+1. Ana menüden **QUİZE GİR → PİN İLE GİRİŞ** yolunu izle
+2. Bir takma ad belirle ve 6 haneli PIN'i gir
+3. Host oyunu başlatana kadar bekleme odasında bekle
+
+---
+
+##  Socket.io Olayları
+
+| Olay | Yön | Açıklama |
+|------|-----|----------|
+| `join_room` | İstemci → Sunucu | Odaya katılma isteği |
+| `player_joined` | Sunucu → İstemci | Yeni oyuncu bilgisi + oyuncu listesi |
+| `start_game` | İstemci → Sunucu | Oyunu başlatma (yalnızca host) |
+| `game_started` | Sunucu → İstemci | Sorular ve süre bilgisi |
+| `submit_answer` | İstemci → Sunucu | Cevap gönderme |
+| `answer_feedback` | Sunucu → İstemci | Doğru/yanlış + puan bilgisi |
+| `leaderboard_update` | Sunucu → İstemci | Anlık sıralama güncellemesi |
+| `finalize_game` | İstemci → Sunucu | Oyunu bitirme isteği |
+| `game_finished` | Sunucu → İstemci | Final sıralama sonuçları |
+
+---
+
+##  Geliştirici Notları
+
+### DEV_MODE
+
+`src/frontend/src/pages/WaitingRoom.js` dosyasında:
+
+```js
+const DEV_MODE = true; // Projeyi teslim ederken false yap
+```
+
+`false` yapıldığında bekleme odasındaki **"TEST: OYUNU BAŞLAT"** butonu otomatik kaybolur.
+
+### Mock Veriler
+
+`src/frontend/src/mockData.js` dosyası geçici test verileri içerir. Backend bağlandıktan sonra bu dosyanın içini yorum satırına alarak (`/* */`) devre dışı bırakılır.
+
+Backend bağlandığında güncellenmeyi gerektiren yerler:
+- `handleLoginClick` / `handleRegisterClick`   → Gerçek API istekleri
+- `mockUserQuizzes`                            → Kullanıcının gerçek quizleri
+- `mockQuizList`                               → Veritabanındaki gerçek quizler
+- `mockActiveQuizQs`                           → Seçilen quizin gerçek soruları
+- `mockLeaderboardData`                        → Gerçek sıralama verileri
+- `finishAndGoToLeaderboard`                   → Gerçek skor hesaplama
+
+
+### Ses Dosyaları
+
+Ses dosyaları `public/sounds/` klasöründe olmalıdır:
+
+```
+public/sounds/click.mp3            → Buton tıklama sesi
+public/sounds/true1.mp3            → Doğru cevap sesi
+public/sounds/false1.mp3           → Yanlış cevap sesi
+public/background-music.mp3        → Arka plan müziği
+```
+
+---
+
+##  Geliştirici
+
+- **Efe Can Özdemir**
+- **Kübra Dereli**
+- **Hilal Çakıroğlu**
+
+---
+
+*Bu proje bir yazılım mühendisliği dersi kapsamında geliştirilmiştir.*
